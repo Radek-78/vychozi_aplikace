@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.8 – 10.06.2026 16:37
+- Wizard: Název a Podtitul vedle sebe v kroku 2 (form-row-2)
+
 ## v2.1.7 – 10.06.2026 16:24
 - Síť filiálek a log. center: CRUD, sync z xlsx
 - wizard: pole sync složky
