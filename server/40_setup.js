@@ -7,7 +7,16 @@
  * DB spreadsheet.
  */
 function isSetupDone_() {
-  return !!PropertiesService.getScriptProperties().getProperty(PROPS.DB_ID);
+  const id = PropertiesService.getScriptProperties().getProperty(PROPS.DB_ID);
+  if (!id) return false;
+  try {
+    SpreadsheetApp.openById(id);
+    return true;
+  } catch (e) {
+    // Spreadsheet byl smazán — vynulujeme property a spustíme wizard znovu
+    PropertiesService.getScriptProperties().deleteProperty(PROPS.DB_ID);
+    return false;
+  }
 }
 
 /** Složka v Drive, ve které leží tento skript, nebo null (root / bez přístupu). */

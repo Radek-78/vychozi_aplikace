@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.0.8 – 10.06.2026 13:38
+- isSetupDone_ ověřuje existenci spreadsheetu
+- při smazání DB se property automaticky vyčistí a spustí se wizard
+
 ## v2.0.7 – 10.06.2026 13:35
 - Oprava auth: access DOMAIN (fix doGet, reload po wizardu, načtení uživatele)
 - jemnější rastr pozadí
