@@ -37,28 +37,28 @@
       <section class="wizard-panel" data-panel="2">
         <div class="form-row-2">
           <label>
-            <span>Název aplikace</span>
+            <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9.5L12 3l9 6.5V21h-6v-6H9v6H3z"/></svg> Název aplikace *</span>
             <input id="wizAppName" type="text" placeholder="Například: Plánování akcí" required>
           </label>
           <label>
-            <span>Podtitul</span>
-            <input id="wizAppSubtitle" type="text" placeholder="Krátký popis aplikace">
+            <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Podtitul</span>
+            <input id="wizAppSubtitle" type="text" placeholder="Správa prodejní sítě Lidl ČR">
           </label>
         </div>
         <div class="form-row-2">
           <label>
-            <span>Vaše jméno (volitelné)</span>
+            <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Vaše jméno (volitelné)</span>
             <input id="wizFirstName" type="text" placeholder="Jan">
           </label>
           <label>
-            <span>Vaše příjmení (volitelné)</span>
+            <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Vaše příjmení (volitelné)</span>
             <input id="wizLastName" type="text" placeholder="Novák">
           </label>
         </div>
         <label>
-          <span>URL složky pro synchronizaci (volitelné)</span>
+          <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> URL složky pro synchronizaci (volitelné)</span>
           <input id="wizSyncFolderUrl" type="url" placeholder="https://drive.google.com/drive/folders/...">
-          <small class="form-hint">Složka v Google Drive obsahující .xlsx soubor s filiálkami. Lze nastavit i později.</small>
+          <small class="form-hint">Složku spravuje T.Kuda — budoucí superadmin musí mít složku nasdílenu. Lze nastavit i později.</small>
         </label>
       </section>
 
@@ -123,7 +123,6 @@
       Ui.setText('#wizTitle', this.info.defaultAppName || boot.appName);
       Ui.setText('#wizEmail', 'Načítám…');
       Ui.setText('#wizFolder', this.info.folderName || 'Kořen „Můj disk"');
-      document.querySelector('#wizAppSubtitle').value = this.info.defaultAppSubtitle || '';
       document.querySelector('#wizNext').disabled = true;
 
       document.querySelector('#wizBack').addEventListener('click', () => this.goTo(this.step - 1));
@@ -163,8 +162,7 @@
       if (this.step === 2) {
         const appName = document.querySelector('#wizAppName').value.trim();
         if (!appName) {
-          Ui.toast('Vyplňte název aplikace.', 'error');
-          document.querySelector('#wizAppName').focus();
+          this.shakeInvalid(document.querySelector('#wizAppName'), 'Název aplikace je povinný.');
           return;
         }
         Ui.setText('#sumAppName', appName);
@@ -257,6 +255,23 @@
           this.goTo(3, 'back');
           Ui.toast(error.message, 'error');
         });
+    },
+
+    shakeInvalid(input, message) {
+      input.classList.remove('is-invalid');
+      void input.offsetWidth;
+      input.classList.add('is-invalid');
+      input.focus();
+      const hint = input.parentElement.querySelector('.field-error');
+      if (hint) hint.remove();
+      const err = document.createElement('small');
+      err.className = 'field-error';
+      err.textContent = message;
+      input.after(err);
+      input.addEventListener('input', () => {
+        input.classList.remove('is-invalid');
+        err.remove();
+      }, { once: true });
     },
 
     runDebug() {

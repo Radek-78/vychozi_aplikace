@@ -1000,6 +1000,29 @@
     color: #c8cdd6;
   }
 
+  input.is-invalid {
+    border-color: var(--lidl-red);
+    animation: shake 0.35s ease;
+  }
+
+  .field-error {
+    color: var(--lidl-red);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0;
+    margin-top: -2px;
+    text-transform: none;
+  }
+
+  @keyframes shake {
+    0%   { transform: translateX(0); }
+    20%  { transform: translateX(-6px); }
+    40%  { transform: translateX(6px); }
+    60%  { transform: translateX(-4px); }
+    80%  { transform: translateX(4px); }
+    100% { transform: translateX(0); }
+  }
+
   .form-hint {
     color: var(--muted);
     font-size: 11px;

@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.17 – 10.06.2026 20:52
+- Wizard krok 2: ikony u polí, oprava podtitulu (placeholder), lepší validace povinných polí, hint sync složky
+
 ## v2.1.16 – 10.06.2026 17:29
 - DB: dbDeserialize_ převádí Date objekty na string při čtení (oprava časových hodnot)
 
