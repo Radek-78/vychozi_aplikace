@@ -35,6 +35,19 @@ function wizardInfo_() {
   };
 }
 
+/** Debug: vrátí info o session pro diagnostiku z klienta. */
+function wizardDebugSession() {
+  try {
+    const active = Session.getActiveUser().getEmail();
+    const effective = Session.getEffectiveUser().getEmail();
+    console.log('wizardDebugSession active=' + active + ' effective=' + effective);
+    return ok_({ active: active, effective: effective });
+  } catch (e) {
+    console.error('wizardDebugSession chyba: ' + e);
+    return fail_(String(e));
+  }
+}
+
 /**
  * Dokončení wizardu: vytvoří DB spreadsheet, založí schéma, zapíše
  * superadmina a nastavení. Chráněno zámkem proti dvojí inicializaci.

@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.0.3 – 10.06.2026 13:17
+- Debug panel pro diagnostiku emailu ve wizardu
+
 ## v2.0.2 – 10.06.2026 13:12
 - Oprava centrování ikon ve wizardu (CSS specifičnost info-row span)
 - email přes getEffectiveUser() jako primární zdroj

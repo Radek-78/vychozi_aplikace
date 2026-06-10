@@ -32,6 +32,7 @@
           </div>
         </div>
         <div class="gate-warning is-hidden" id="wizWarning"></div>
+        <div class="gate-note is-hidden" id="wizDebug" style="font-family:monospace;font-size:11px;background:#f0f4fa;border-radius:4px;padding:8px 10px;line-height:1.7"></div>
       </section>
 
       <section class="wizard-panel" data-panel="2">
@@ -102,6 +103,7 @@
       document.querySelector('#wizBack').addEventListener('click', () => this.goTo(this.step - 1));
       document.querySelector('#wizNext').addEventListener('click', () => this.next());
       this.goTo(1);
+      this.runDebug();
     },
 
     next() {
@@ -145,6 +147,20 @@
       back.classList.toggle('is-hidden', this.step === 1 || this.step === 4);
       next.textContent = this.step === 3 ? 'Inicializovat aplikaci' : 'Pokračovat';
       if (this.step === 4) next.textContent = 'Spustit aplikaci';
+    },
+
+    runDebug() {
+      const dbg = document.querySelector('#wizDebug');
+      dbg.classList.remove('is-hidden');
+      dbg.textContent = 'Bootstrap email: "' + (this.info.email || '') + '" | volám server…';
+      google.script.run
+        .withSuccessHandler((res) => {
+          dbg.textContent = 'Bootstrap: "' + (this.info.email || '') + '" | active: "' + res.data.active + '" | effective: "' + res.data.effective + '"';
+        })
+        .withFailureHandler((err) => {
+          dbg.textContent = 'Bootstrap: "' + (this.info.email || '') + '" | chyba serveru: ' + err.message;
+        })
+        .wizardDebugSession();
     },
 
     initialize() {
