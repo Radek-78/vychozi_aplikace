@@ -1,0 +1,154 @@
+/**
+ * Repository vrstva nad Google Sheets.
+ *
+ * Tabulka = list, první řádek = hlavičky podle DB_SCHEMA. Veškerá čtení
+ * a zápisy běží dávkově přes getValues/setValues, zápisy pod zámkem.
+ *
+ * Nové tabulky projektu se přidávají rozšířením DB_SCHEMA — funkce
+ * dbEnsureSchema_() chybějící listy a sloupce doplní (funguje i jako
+ * migrace při rozšíření šablony).
+ */
+const DB_SCHEMA = {
+  '_users': ['id', 'email', 'name', 'role', 'active', 'created_at', 'created_by', 'updated_at'],
+  '_settings': ['key', 'value', 'updated_at', 'updated_by'],
+  '_audit_log': ['timestamp', 'user', 'action', 'detail'],
+};
+
+let dbHandle_ = null;     // spreadsheet pro aktuální běh skriptu
+let dbLockHeld_ = false;  // reentrantní zámek v rámci jednoho běhu
+
+function dbSpreadsheet_() {
+  if (dbHandle_) return dbHandle_;
+  const id = PropertiesService.getScriptProperties().getProperty(PROPS.DB_ID);
+  if (!id) throw new Error('Databáze není inicializována. Spusťte úvodního průvodce.');
+  dbHandle_ = SpreadsheetApp.openById(id);
+  return dbHandle_;
+}
+
+function dbSheet_(table) {
+  const sheet = dbSpreadsheet_().getSheetByName(table);
+  if (!sheet) throw new Error('Tabulka "' + table + '" v databázi neexistuje.');
+  return sheet;
+}
+
+/** Doplní chybějící listy a hlavičky podle DB_SCHEMA. Nic nemaže. */
+function dbEnsureSchema_(ss) {
+  Object.keys(DB_SCHEMA).forEach((name) => {
+    let sheet = ss.getSheetByName(name);
+    if (!sheet) sheet = ss.insertSheet(name);
+    const headers = DB_SCHEMA[name];
+    const current = sheet.getRange(1, 1, 1, headers.length).getValues()[0];
+    if (headers.some((header, i) => current[i] !== header)) {
+      sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+      sheet.setFrozenRows(1);
+    }
+  });
+}
+
+/** Spustí fn pod script zámkem; vnořená volání zámek nepřebírají znovu. */
+function withLock_(fn) {
+  if (dbLockHeld_) return fn();
+  const lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  dbLockHeld_ = true;
+  try {
+    return fn();
+  } finally {
+    dbLockHeld_ = false;
+    lock.releaseLock();
+  }
+}
+
+/** Vrátí všechny záznamy tabulky jako pole objektů podle hlaviček. */
+function dbGetAll_(table) {
+  const sheet = dbSheet_(table);
+  const headers = DB_SCHEMA[table];
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) return [];
+  const values = sheet.getRange(2, 1, lastRow - 1, headers.length).getValues();
+  return values.map((row) => {
+    const record = {};
+    headers.forEach((header, i) => { record[header] = row[i]; });
+    return record;
+  });
+}
+
+function dbGetById_(table, id) {
+  return dbGetAll_(table).find((record) => record.id === id) || null;
+}
+
+/** Surový zápis řádku podle hlaviček (bez generovaných polí). */
+function dbAppendRow_(table, record) {
+  const headers = DB_SCHEMA[table];
+  withLock_(() => {
+    dbSheet_(table).appendRow(headers.map((header) => (record[header] !== undefined ? record[header] : '')));
+  });
+}
+
+/** Vloží záznam a doplní id, created_at, created_by, updated_at. */
+function dbInsert_(table, data) {
+  const record = Object.assign({}, data, {
+    id: uuid_(),
+    created_at: nowIso_(),
+    created_by: currentEmail_(),
+    updated_at: nowIso_(),
+  });
+  dbAppendRow_(table, record);
+  return record;
+}
+
+/** Aktualizuje záznam podle id, vrací sloučený záznam. */
+function dbUpdate_(table, id, patch) {
+  return withLock_(() => {
+    const sheet = dbSheet_(table);
+    const headers = DB_SCHEMA[table];
+    const lastRow = sheet.getLastRow();
+    if (lastRow < 2) throw new Error('Záznam nenalezen.');
+    const values = sheet.getRange(2, 1, lastRow - 1, headers.length).getValues();
+    const idCol = headers.indexOf('id');
+    const rowIndex = values.findIndex((row) => row[idCol] === id);
+    if (rowIndex === -1) throw new Error('Záznam nenalezen.');
+    const merged = {};
+    headers.forEach((header, i) => { merged[header] = values[rowIndex][i]; });
+    Object.assign(merged, patch, { updated_at: nowIso_() });
+    sheet.getRange(rowIndex + 2, 1, 1, headers.length).setValues([headers.map((header) => merged[header])]);
+    return merged;
+  });
+}
+
+function dbDelete_(table, id) {
+  withLock_(() => {
+    const sheet = dbSheet_(table);
+    const headers = DB_SCHEMA[table];
+    const lastRow = sheet.getLastRow();
+    if (lastRow < 2) throw new Error('Záznam nenalezen.');
+    const values = sheet.getRange(2, 1, lastRow - 1, headers.length).getValues();
+    const idCol = headers.indexOf('id');
+    const rowIndex = values.findIndex((row) => row[idCol] === id);
+    if (rowIndex === -1) throw new Error('Záznam nenalezen.');
+    sheet.deleteRow(rowIndex + 2);
+  });
+}
+
+/* ── Nastavení (klíč/hodnota v listu _settings) ─────────────────── */
+
+function settingsAll_() {
+  const settings = {};
+  dbGetAll_(SHEETS.SETTINGS).forEach((row) => { settings[row.key] = row.value; });
+  return settings;
+}
+
+function settingsSet_(key, value) {
+  withLock_(() => {
+    const sheet = dbSheet_(SHEETS.SETTINGS);
+    const lastRow = sheet.getLastRow();
+    const keys = lastRow > 1 ? sheet.getRange(2, 1, lastRow - 1, 1).getValues() : [];
+    const index = keys.findIndex((row) => row[0] === key);
+    const record = [key, value, nowIso_(), currentEmail_()];
+    if (index === -1) {
+      sheet.appendRow(record);
+    } else {
+      sheet.getRange(index + 2, 1, 1, record.length).setValues([record]);
+    }
+  });
+}

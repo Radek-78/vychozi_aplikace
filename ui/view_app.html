@@ -1,0 +1,481 @@
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <img class="brand-logo" id="brandLogo" alt="Lidl">
+      <span class="brand-text">
+        <strong id="brandName"></strong>
+        <small id="brandSubtitle"></small>
+      </span>
+    </div>
+
+    <nav class="navigation" aria-label="Hlavní navigace">
+      <p>Přehled</p>
+      <button class="nav-link is-active" type="button" data-section="home" data-tooltip="Domů"><svg><use href="#i-home"></use></svg><span>Domů</span></button>
+      <p class="admin-only">Administrace</p>
+      <button class="nav-link admin-only" type="button" data-section="users" data-tooltip="Uživatelé"><svg><use href="#i-users"></use></svg><span>Uživatelé</span></button>
+      <button class="nav-link admin-only" type="button" data-section="settings" data-tooltip="Nastavení"><svg><use href="#i-settings"></use></svg><span>Nastavení</span></button>
+      <button class="nav-link admin-only" type="button" data-section="audit" data-tooltip="Audit"><svg><use href="#i-list"></use></svg><span>Audit</span></button>
+    </nav>
+
+    <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Přepnout postranní panel">
+      <svg><use href="#i-chevron-right"></use></svg>
+    </button>
+
+    <div class="sidebar-user">
+      <span class="avatar" id="sidebarAvatar">?</span>
+      <span>
+        <strong id="sidebarUser"></strong>
+        <small id="sidebarRole"></small>
+      </span>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="breadcrumbs">
+          <span id="crumbApp"></span>
+          <svg width="14" height="14"><use href="#i-chevron-right"></use></svg>
+          <strong id="crumbSection">Domů</strong>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-button" type="button" data-action="reload" aria-label="Obnovit data" title="Obnovit data">
+          <svg><use href="#i-refresh"></use></svg>
+        </button>
+      </div>
+    </header>
+
+    <section class="page" data-page-section="home">
+      <div class="page-header">
+        <div>
+          <p class="kicker">Přehled</p>
+          <h1 id="homeTitle"></h1>
+          <p class="lead" id="homeLead"></p>
+        </div>
+      </div>
+
+      <div class="status-strip" id="statusGrid"></div>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <p class="kicker">Projekt</p>
+            <h2>Moduly</h2>
+          </div>
+        </div>
+        <div class="module-grid" id="moduleGrid">
+          <article class="module-card" data-accent="blue">
+            <span class="module-icon"><svg><use href="#i-plus"></use></svg></span>
+            <div>
+              <h2>První modul</h2>
+              <p>Sem přijde první modul konkrétního projektu — kartu nahraďte vlastní funkcí.</p>
+            </div>
+            <footer>
+              <span class="pill">Šablona</span>
+              <button class="button button-secondary button-small" type="button">Otevřít</button>
+            </footer>
+          </article>
+          <article class="module-card" data-accent="yellow">
+            <span class="module-icon"><svg><use href="#i-folder"></use></svg></span>
+            <div>
+              <h2>Druhý modul</h2>
+              <p>Vzor druhé karty s akcentem. Nepoužité karty odstraňte.</p>
+            </div>
+            <footer>
+              <span class="pill">Šablona</span>
+              <button class="button button-secondary button-small" type="button">Otevřít</button>
+            </footer>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel admin-only">
+        <div class="panel-header">
+          <div>
+            <p class="kicker">Aktivita</p>
+            <h2>Poslední události</h2>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Čas</th><th>Uživatel</th><th>Akce</th><th>Detail</th></tr>
+            </thead>
+            <tbody id="activityRows"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <section class="page is-hidden" data-page-section="users">
+      <div class="page-header">
+        <div>
+          <p class="kicker">Administrace</p>
+          <h1>Uživatelé</h1>
+          <p class="lead">Kdo se do aplikace dostane a s jakou rolí. Zablokovaný uživatel přístup ztrácí okamžitě.</p>
+        </div>
+        <div class="header-actions">
+          <button class="button button-primary" type="button" id="addUserButton"><svg><use href="#i-plus"></use></svg>Přidat uživatele</button>
+        </div>
+      </div>
+
+      <section class="panel">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>E-mail</th><th>Jméno</th><th>Role</th><th>Stav</th><th></th></tr>
+            </thead>
+            <tbody id="userRows"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <section class="page is-hidden" data-page-section="settings">
+      <div class="page-header">
+        <div>
+          <p class="kicker">Administrace</p>
+          <h1>Nastavení</h1>
+          <p class="lead">Základní údaje aplikace. Změny se projeví všem uživatelům po obnovení stránky.</p>
+        </div>
+      </div>
+
+      <section class="panel">
+        <form class="form" id="settingsForm">
+          <label>
+            <span>Název aplikace</span>
+            <input name="appName" type="text" required>
+          </label>
+          <label>
+            <span>Podtitul</span>
+            <input name="appSubtitle" type="text">
+          </label>
+          <div class="form-actions">
+            <button class="button button-primary" type="submit"><svg><use href="#i-check"></use></svg>Uložit nastavení</button>
+          </div>
+        </form>
+      </section>
+    </section>
+
+    <section class="page is-hidden" data-page-section="audit">
+      <div class="page-header">
+        <div>
+          <p class="kicker">Administrace</p>
+          <h1>Audit</h1>
+          <p class="lead">Posledních 100 systémových událostí.</p>
+        </div>
+      </div>
+
+      <section class="panel">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Čas</th><th>Uživatel</th><th>Akce</th><th>Detail</th></tr>
+            </thead>
+            <tbody id="auditRows"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <footer class="statusbar">
+      <span>© 2026 Lidl</span>
+      <span><a href="#" id="version"></a>&nbsp;&nbsp;|&nbsp;&nbsp;Aktualizace: <span id="updatedAt">-</span></span>
+    </footer>
+  </main>
+</div>
+
+<dialog class="modal" id="userModal">
+  <form id="userForm">
+    <header class="modal-header">
+      <span class="modal-icon"><svg><use href="#i-users"></use></svg></span>
+      <div class="modal-header-text">
+        <p class="kicker">Administrace</p>
+        <h2 id="userModalTitle">Přidat uživatele</h2>
+      </div>
+      <button class="modal-close" type="button" data-action="close-user-modal" aria-label="Zavřít">
+        <svg><use href="#i-close"></use></svg>
+      </button>
+    </header>
+    <div class="modal-body">
+      <div class="form form-plain">
+        <input name="id" type="hidden">
+        <label>
+          <span>E-mail</span>
+          <input name="email" type="email" placeholder="jmeno@firma.cz" required>
+        </label>
+        <label>
+          <span>Jméno</span>
+          <input name="name" type="text" placeholder="Jan Novák">
+        </label>
+        <label>
+          <span>Role</span>
+          <select name="role">
+            <option value="USER">Uživatel</option>
+            <option value="ADMIN">Administrátor</option>
+            <option value="SUPERADMIN" id="superadminOption">Superadmin</option>
+          </select>
+        </label>
+        <label>
+          <span>Stav</span>
+          <select name="active">
+            <option value="true">Aktivní</option>
+            <option value="false">Blokován</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <footer class="modal-actions">
+      <button class="button button-secondary" type="button" data-action="close-user-modal"><svg><use href="#i-close"></use></svg>Zrušit</button>
+      <button class="button button-primary" type="submit"><svg><use href="#i-check"></use></svg>Uložit</button>
+    </footer>
+  </form>
+</dialog>
+
+<script>
+  const App = {
+    boot: window.APP_BOOTSTRAP || {},
+    sectionTitles: { home: 'Domů', users: 'Uživatelé', settings: 'Nastavení', audit: 'Audit' },
+    section: 'home',
+    users: [],
+
+    roleLevel(role) {
+      return { SUPERADMIN: 3, ADMIN: 2, USER: 1 }[role] || 0;
+    },
+
+    roleLabel(role) {
+      return { SUPERADMIN: 'Superadmin', ADMIN: 'Administrátor', USER: 'Uživatel' }[role] || role;
+    },
+
+    get isAdmin() {
+      return this.roleLevel(this.boot.user && this.boot.user.role) >= 2;
+    },
+
+    init() {
+      this.applyBranding();
+      this.bindEvents();
+
+      if (!this.isAdmin) {
+        document.querySelectorAll('.admin-only').forEach((node) => node.classList.add('is-hidden'));
+      }
+      if (this.boot.user && this.boot.user.role !== 'SUPERADMIN') {
+        document.querySelector('#superadminOption').disabled = true;
+      }
+
+      this.loadHome();
+    },
+
+    applyBranding() {
+      const user = this.boot.user || {};
+      const displayName = user.name || user.email || 'Neznámý uživatel';
+      document.querySelector('#brandLogo').src = this.boot.logoUrl || '';
+      Ui.setText('#brandName', this.boot.appName);
+      Ui.setText('#brandSubtitle', this.boot.appSubtitle);
+      Ui.setText('#crumbApp', this.boot.appName);
+      Ui.setText('#homeTitle', this.boot.appName);
+      Ui.setText('#homeLead', this.boot.appSubtitle);
+      Ui.setText('#sidebarUser', displayName);
+      Ui.setText('#sidebarRole', this.roleLabel(user.role));
+      Ui.setText('#sidebarAvatar', Ui.getInitials(displayName));
+      Ui.setText('#version', this.boot.version);
+    },
+
+    bindEvents() {
+      if (localStorage.getItem('sidebarCollapsed') === '1') {
+        document.querySelector('.app').classList.add('sidebar-collapsed');
+      }
+      this.syncSidebarToggle();
+
+      document.querySelector('#sidebarToggle').addEventListener('click', () => {
+        const app = document.querySelector('.app');
+        app.classList.toggle('sidebar-collapsed');
+        localStorage.setItem('sidebarCollapsed', app.classList.contains('sidebar-collapsed') ? '1' : '0');
+        this.syncSidebarToggle();
+      });
+
+      document.querySelectorAll('.nav-link').forEach((button) => {
+        button.addEventListener('click', () => this.showSection(button.dataset.section));
+      });
+
+      document.querySelector('[data-action="reload"]').addEventListener('click', () => this.loadSection(this.section));
+
+      document.querySelector('#addUserButton').addEventListener('click', () => this.openUserModal(null));
+
+      document.querySelectorAll('[data-action="close-user-modal"]').forEach((button) => {
+        button.addEventListener('click', () => Ui.closeModal(document.querySelector('#userModal')));
+      });
+
+      document.querySelector('#userForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        this.saveUser(event.submitter);
+      });
+
+      document.querySelector('#settingsForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        this.saveSettings(event.submitter);
+      });
+    },
+
+    showSection(name) {
+      this.section = name;
+      document.querySelectorAll('.nav-link').forEach((item) => {
+        item.classList.toggle('is-active', item.dataset.section === name);
+      });
+      document.querySelectorAll('[data-page-section]').forEach((sectionNode) => {
+        sectionNode.classList.toggle('is-hidden', sectionNode.dataset.pageSection !== name);
+      });
+      Ui.setText('#crumbSection', this.sectionTitles[name] || name);
+      this.loadSection(name);
+    },
+
+    loadSection(name) {
+      if (name === 'home') this.loadHome();
+      if (name === 'users') this.loadUsers();
+      if (name === 'settings') this.loadSettings();
+      if (name === 'audit') this.loadAudit();
+    },
+
+    markUpdated() {
+      Ui.setText('#updatedAt', Ui.formatDateTime(new Date().toISOString()));
+    },
+
+    loadHome() {
+      Ui.call('apiGetHome')
+        .then((data) => {
+          this.renderStats(data.stats || []);
+          this.renderEventRows('#activityRows', data.activity || []);
+          this.markUpdated();
+        })
+        .catch((error) => Ui.toast(error.message, 'error'));
+    },
+
+    renderStats(stats) {
+      document.querySelector('#statusGrid').innerHTML = stats.map((item) => `
+        <div class="status-card" data-tone="${Ui.escape(item.tone || 'neutral')}">
+          <span class="status-icon"><svg><use href="#i-${Ui.escape(item.icon || 'info')}"></use></svg></span>
+          <div>
+            <span>${Ui.escape(item.label)}</span>
+            <strong>${Ui.escape(item.label === 'Role' ? this.roleLabel(item.value) : item.value)}</strong>
+          </div>
+        </div>
+      `).join('');
+    },
+
+    renderEventRows(selector, rows) {
+      document.querySelector(selector).innerHTML = rows.map((row) => `
+        <tr>
+          <td>${Ui.escape(Ui.formatDateTime(row.timestamp))}</td>
+          <td>${Ui.escape(row.user)}</td>
+          <td>${Ui.escape(row.action)}</td>
+          <td>${Ui.escape(row.detail)}</td>
+        </tr>
+      `).join('') || '<tr><td colspan="4">Zatím žádné události.</td></tr>';
+    },
+
+    loadUsers() {
+      Ui.call('apiListUsers')
+        .then((users) => {
+          this.users = users;
+          document.querySelector('#userRows').innerHTML = users.map((user) => `
+            <tr>
+              <td>${Ui.escape(user.email)}</td>
+              <td>${Ui.escape(user.name || '–')}</td>
+              <td><span class="pill">${Ui.escape(this.roleLabel(user.role))}</span></td>
+              <td>${user.active === true ? 'Aktivní' : 'Blokován'}</td>
+              <td><button class="button button-secondary button-small" type="button" data-user-id="${Ui.escape(user.id)}">Upravit</button></td>
+            </tr>
+          `).join('');
+          document.querySelectorAll('[data-user-id]').forEach((button) => {
+            button.addEventListener('click', () => {
+              this.openUserModal(this.users.find((user) => user.id === button.dataset.userId));
+            });
+          });
+          this.markUpdated();
+        })
+        .catch((error) => Ui.toast(error.message, 'error'));
+    },
+
+    openUserModal(user) {
+      const form = document.querySelector('#userForm');
+      form.reset();
+      form.elements.id.value = user ? user.id : '';
+      form.elements.email.value = user ? user.email : '';
+      form.elements.name.value = user ? (user.name || '') : '';
+      form.elements.role.value = user ? user.role : 'USER';
+      form.elements.active.value = user && user.active !== true ? 'false' : 'true';
+      Ui.setText('#userModalTitle', user ? 'Upravit uživatele' : 'Přidat uživatele');
+      Ui.openModal(document.querySelector('#userModal'));
+    },
+
+    saveUser(button) {
+      const form = document.querySelector('#userForm');
+      Ui.setButtonLoading(button, true);
+      Ui.call('apiSaveUser', {
+        id: form.elements.id.value || null,
+        email: form.elements.email.value,
+        name: form.elements.name.value,
+        role: form.elements.role.value,
+        active: form.elements.active.value === 'true',
+      }, { silent: true })
+        .then(() => {
+          Ui.setButtonLoading(button, false);
+          Ui.closeModal(document.querySelector('#userModal'));
+          Ui.toast('Uživatel byl uložen.');
+          this.loadUsers();
+        })
+        .catch((error) => {
+          Ui.setButtonLoading(button, false);
+          Ui.toast(error.message, 'error');
+        });
+    },
+
+    loadSettings() {
+      Ui.call('apiGetSettings')
+        .then((settings) => {
+          const form = document.querySelector('#settingsForm');
+          form.elements.appName.value = settings.appName || '';
+          form.elements.appSubtitle.value = settings.appSubtitle || '';
+          this.markUpdated();
+        })
+        .catch((error) => Ui.toast(error.message, 'error'));
+    },
+
+    saveSettings(button) {
+      const form = document.querySelector('#settingsForm');
+      Ui.setButtonLoading(button, true);
+      Ui.call('apiSaveSettings', {
+        appName: form.elements.appName.value,
+        appSubtitle: form.elements.appSubtitle.value,
+      }, { silent: true })
+        .then((settings) => {
+          Ui.setButtonLoading(button, false);
+          this.boot.appName = settings.appName;
+          this.boot.appSubtitle = settings.appSubtitle;
+          this.applyBranding();
+          Ui.toast('Nastavení bylo uloženo.');
+        })
+        .catch((error) => {
+          Ui.setButtonLoading(button, false);
+          Ui.toast(error.message, 'error');
+        });
+    },
+
+    loadAudit() {
+      Ui.call('apiGetAudit')
+        .then((rows) => {
+          this.renderEventRows('#auditRows', rows);
+          this.markUpdated();
+        })
+        .catch((error) => Ui.toast(error.message, 'error'));
+    },
+
+    syncSidebarToggle() {
+      const app = document.querySelector('.app');
+      const toggle = document.querySelector('#sidebarToggle');
+      const collapsed = app.classList.contains('sidebar-collapsed');
+      toggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+      toggle.setAttribute('title', collapsed ? 'Zobrazit texty panelu' : 'Skrýt texty panelu');
+    },
+  };
+</script>

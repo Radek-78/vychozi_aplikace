@@ -1,0 +1,169 @@
+<div class="gate">
+  <div class="gate-card">
+    <header class="gate-header">
+      <img id="wizLogo" alt="Logo">
+      <div class="gate-header-text">
+        <p class="kicker">Průvodce nastavením</p>
+        <h1 id="wizTitle">Nová aplikace</h1>
+      </div>
+    </header>
+
+    <ol class="wizard-steps" id="wizSteps">
+      <li data-step="1" class="is-active"><i>1</i><span>Účet</span></li>
+      <li data-step="2"><i>2</i><span>Aplikace</span></li>
+      <li data-step="3"><i>3</i><span>Souhrn</span></li>
+    </ol>
+
+    <div class="gate-body">
+      <section class="wizard-panel is-active" data-panel="1">
+        <p class="gate-note">Vítejte! Průvodce provede prvním spuštěním: založí databázi (spreadsheet) a vytvoří účet superadministrátora.</p>
+        <div class="info-row">
+          <span class="status-icon"><svg><use href="#i-user"></use></svg></span>
+          <div>
+            <span>Superadmin</span>
+            <strong id="wizEmail">–</strong>
+          </div>
+        </div>
+        <div class="info-row">
+          <span class="status-icon"><svg><use href="#i-folder"></use></svg></span>
+          <div>
+            <span>Databáze vznikne ve složce</span>
+            <strong id="wizFolder">–</strong>
+          </div>
+        </div>
+        <div class="gate-warning is-hidden" id="wizWarning"></div>
+      </section>
+
+      <section class="wizard-panel" data-panel="2">
+        <label>
+          <span>Název aplikace</span>
+          <input id="wizAppName" type="text" placeholder="Například: Plánování akcí" required>
+        </label>
+        <label>
+          <span>Podtitul</span>
+          <input id="wizAppSubtitle" type="text" placeholder="Krátký popis aplikace">
+        </label>
+        <label>
+          <span>Vaše jméno (volitelné)</span>
+          <input id="wizUserName" type="text" placeholder="Jan Novák">
+        </label>
+      </section>
+
+      <section class="wizard-panel" data-panel="3">
+        <dl class="summary-list">
+          <div><dt>Název aplikace</dt><dd id="sumAppName">–</dd></div>
+          <div><dt>Podtitul</dt><dd id="sumAppSubtitle">–</dd></div>
+          <div><dt>Superadmin</dt><dd id="sumEmail">–</dd></div>
+          <div><dt>Složka databáze</dt><dd id="sumFolder">–</dd></div>
+        </dl>
+        <p class="gate-note">Po potvrzení se vytvoří spreadsheet s databází, zapíše se superadmin a aplikace bude připravena k použití.</p>
+      </section>
+
+      <section class="wizard-panel" data-panel="4">
+        <div class="wizard-success">
+          <span class="success-icon"><svg><use href="#i-check"></use></svg></span>
+          <h2>Aplikace je připravena</h2>
+          <p class="gate-note">Databáze byla vytvořena — <a id="wizDbLink" href="#" target="_blank" rel="noopener">otevřít spreadsheet</a>.</p>
+        </div>
+      </section>
+    </div>
+
+    <footer class="gate-actions">
+      <button class="button button-secondary" type="button" id="wizBack">Zpět</button>
+      <button class="button button-primary" type="button" id="wizNext">Pokračovat</button>
+    </footer>
+  </div>
+</div>
+
+<script>
+  const Wizard = {
+    step: 1,
+    info: (window.APP_BOOTSTRAP && window.APP_BOOTSTRAP.setup) || {},
+
+    init() {
+      const boot = window.APP_BOOTSTRAP || {};
+      document.querySelector('#wizLogo').src = boot.logoUrl || '';
+      Ui.setText('#wizTitle', this.info.defaultAppName || boot.appName);
+      Ui.setText('#wizEmail', this.info.email || 'E-mail se nepodařilo zjistit');
+      Ui.setText('#wizFolder', this.info.folderName || 'Kořen „Můj disk"');
+      document.querySelector('#wizAppSubtitle').value = this.info.defaultAppSubtitle || '';
+
+      const warning = document.querySelector('#wizWarning');
+      if (!this.info.email) {
+        warning.textContent = 'Nepodařilo se zjistit váš e-mail. Otevřete aplikaci přihlášení pod účtem vlastníka skriptu.';
+        warning.classList.remove('is-hidden');
+        document.querySelector('#wizNext').disabled = true;
+      } else if (!this.info.isOwner) {
+        warning.textContent = 'Inicializaci může dokončit pouze vlastník skriptu (' + 'účet, pod kterým je aplikace nasazena).';
+        warning.classList.remove('is-hidden');
+        document.querySelector('#wizNext').disabled = true;
+      }
+
+      document.querySelector('#wizBack').addEventListener('click', () => this.goTo(this.step - 1));
+      document.querySelector('#wizNext').addEventListener('click', () => this.next());
+      this.goTo(1);
+    },
+
+    next() {
+      if (this.step === 4) {
+        window.location.reload();
+        return;
+      }
+      if (this.step === 2) {
+        const appName = document.querySelector('#wizAppName').value.trim();
+        if (!appName) {
+          Ui.toast('Vyplňte název aplikace.', 'error');
+          document.querySelector('#wizAppName').focus();
+          return;
+        }
+        Ui.setText('#sumAppName', appName);
+        Ui.setText('#sumAppSubtitle', document.querySelector('#wizAppSubtitle').value.trim() || '–');
+        Ui.setText('#sumEmail', this.info.email);
+        Ui.setText('#sumFolder', this.info.folderName || 'Kořen „Můj disk"');
+      }
+      if (this.step === 3) {
+        this.initialize();
+        return;
+      }
+      this.goTo(this.step + 1);
+    },
+
+    goTo(step) {
+      this.step = Math.min(Math.max(step, 1), 4);
+
+      document.querySelectorAll('.wizard-panel').forEach((panel) => {
+        panel.classList.toggle('is-active', Number(panel.dataset.panel) === this.step);
+      });
+      document.querySelectorAll('#wizSteps li').forEach((item) => {
+        const index = Number(item.dataset.step);
+        item.classList.toggle('is-active', index === this.step);
+        item.classList.toggle('is-done', index < this.step);
+      });
+
+      const back = document.querySelector('#wizBack');
+      const next = document.querySelector('#wizNext');
+      back.classList.toggle('is-hidden', this.step === 1 || this.step === 4);
+      next.textContent = this.step === 3 ? 'Inicializovat aplikaci' : 'Pokračovat';
+      if (this.step === 4) next.textContent = 'Spustit aplikaci';
+    },
+
+    initialize() {
+      const next = document.querySelector('#wizNext');
+      Ui.setButtonLoading(next, true);
+      Ui.call('setupInitialize', {
+        appName: document.querySelector('#wizAppName').value.trim(),
+        appSubtitle: document.querySelector('#wizAppSubtitle').value.trim(),
+        userName: document.querySelector('#wizUserName').value.trim(),
+      })
+        .then((result) => {
+          Ui.setButtonLoading(next, false);
+          document.querySelector('#wizDbLink').href = result.spreadsheetUrl;
+          this.goTo(4);
+        })
+        .catch((error) => {
+          Ui.setButtonLoading(next, false);
+          Ui.toast(error.message, 'error');
+        });
+    },
+  };
+</script>
