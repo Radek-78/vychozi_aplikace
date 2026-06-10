@@ -64,8 +64,8 @@
 
       <div class="module-grid" id="moduleGrid">
 
-        <!-- 1: Plochá karta -->
-        <article class="module-card" data-accent="blue">
+        <!-- 1: Klasik — bílá s horním pruhem -->
+        <article class="module-card">
           <span class="module-icon"><svg><use href="#i-store"></use></svg></span>
           <div>
             <h2>Filiálky</h2>
@@ -77,55 +77,51 @@
           </footer>
         </article>
 
-        <!-- 2: Gradient -->
+        <!-- 2: Gradient s vodoznakem -->
         <article class="module-card mc--gradient">
-          <span class="module-icon"><svg><use href="#i-sync"></use></svg></span>
+          <span class="mc-watermark"><svg viewBox="0 0 24 24"><use href="#i-sync"></use></svg></span>
           <div>
             <h2>Synchronizace</h2>
             <p>Import dat z externího xlsx souboru.</p>
           </div>
           <footer>
-            <button class="button button-ghost button-small" type="button" data-go-section="sync">Spustit</button>
+            <button class="mc-light-btn" type="button" data-go-section="sync">Spustit</button>
           </footer>
         </article>
 
-        <!-- 3: Stat -->
+        <!-- 3: Stat — obří číslo -->
         <article class="module-card mc--stat">
-          <div class="mc-stat-top">
-            <span class="mc-stat-label">Uživatelé</span>
-            <span class="module-icon mc-icon-sm"><svg><use href="#i-users"></use></svg></span>
-          </div>
-          <div class="mc-stat-value">—</div>
-          <p>Aktivní účty s přístupem.</p>
+          <span class="mc-stat-label">Uživatelé</span>
+          <span class="mc-stat-value" id="statUsers">—</span>
+          <p>aktivních účtů s přístupem</p>
+          <footer>
+            <button class="button button-secondary button-small" type="button" data-go-section="users">Spravovat</button>
+          </footer>
         </article>
 
-        <!-- 4: Horizontální -->
-        <article class="module-card mc--horizontal">
-          <span class="module-icon" style="background:var(--lidl-yellow);color:var(--lidl-dark-blue);flex-shrink:0"><svg><use href="#i-truck"></use></svg></span>
-          <div class="mc-content">
+        <!-- 4: Žlutá plná -->
+        <article class="module-card mc--yellow">
+          <span class="module-icon"><svg><use href="#i-truck"></use></svg></span>
+          <div>
             <h2>Log. centra</h2>
             <p>Správa logistických center LC.</p>
-            <footer>
-              <button class="button button-secondary button-small" type="button" data-go-section="logistics">Správa</button>
-            </footer>
-          </div>
-        </article>
-
-        <!-- 5: Levý pruh -->
-        <article class="module-card mc--left-accent">
-          <span class="mc-icon-bare"><svg width="22" height="22" viewBox="0 0 24 24"><use href="#i-settings"></use></svg></span>
-          <div>
-            <h2>Nastavení</h2>
-            <p>Konfigurace aplikace a brandingu.</p>
           </div>
           <footer>
-            <button class="button button-secondary button-small" type="button" data-go-section="settings">Otevřít</button>
+            <button class="mc-navy-btn" type="button" data-go-section="logistics">Správa</button>
           </footer>
         </article>
 
-        <!-- 6: Tmavá -->
+        <!-- 5: Minimal outline — celá klikací -->
+        <article class="module-card mc--outline" data-go-section="settings" role="button" tabindex="0">
+          <span class="mc-icon-ring"><svg><use href="#i-settings"></use></svg></span>
+          <h2>Nastavení</h2>
+          <p>Konfigurace aplikace a brandingu.</p>
+          <span class="mc-outline-hint">Otevřít →</span>
+        </article>
+
+        <!-- 6: Tmavá s kruhy -->
         <article class="module-card mc--dark">
-          <span class="module-icon" style="background:rgba(255,240,0,0.13);color:var(--lidl-yellow)"><svg><use href="#i-list"></use></svg></span>
+          <span class="module-icon"><svg><use href="#i-list"></use></svg></span>
           <div>
             <h2>Audit</h2>
             <p>Přehled systémových událostí.</p>
@@ -138,9 +134,8 @@
       </div>
 
       <section class="panel admin-only">
-        <div class="panel-header">
+        <div class="panel-header panel-header--compact">
           <div>
-            <p class="kicker">Aktivita</p>
             <h2>Poslední události</h2>
           </div>
           <div class="activity-nav">
@@ -601,7 +596,10 @@
       const d = new Date();
       const days = ['Neděle', 'Pondělí', 'Úterý', 'Středa', 'Čtvrtek', 'Pátek', 'Sobota'];
       const months = ['ledna', 'února', 'března', 'dubna', 'května', 'června', 'července', 'srpna', 'září', 'října', 'listopadu', 'prosince'];
-      Ui.setText('#heroDate', days[d.getDay()] + ', ' + d.getDate() + '. ' + months[d.getMonth()] + ' ' + d.getFullYear());
+      const iso = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+      iso.setUTCDate(iso.getUTCDate() + 4 - (iso.getUTCDay() || 7));
+      const week = Math.ceil(((iso - Date.UTC(iso.getUTCFullYear(), 0, 1)) / 86400000 + 1) / 7);
+      Ui.setText('#heroDate', days[d.getDay()] + ', ' + d.getDate() + '. ' + months[d.getMonth()] + ' ' + d.getFullYear() + ' · ' + week + '. týden');
     },
 
     bindEvents() {
@@ -718,6 +716,9 @@
           if (data.lastSyncAt) {
             Ui.setText('#heroSyncTime', 'Sync: ' + Ui.formatDateTime(data.lastSyncAt));
           }
+          if (data.userCount !== null && data.userCount !== undefined) {
+            Ui.setText('#statUsers', data.userCount);
+          }
           this.markUpdated();
         })
         .catch((error) => Ui.toast(error.message, 'error'));
@@ -734,8 +735,8 @@
           const verb = (n === 1 || n >= 5) ? 'vyžaduje' : 'vyžadují';
           status.textContent = n + ' upozornění ' + verb + ' pozornost';
           status.classList.add('has-warnings');
-        } else if (this.isAdmin) {
-          status.textContent = 'Vše v pořádku';
+        } else {
+          status.textContent = '';
           status.classList.remove('has-warnings');
         }
       }
@@ -758,7 +759,7 @@
 
     renderActivity(rows) {
       const VISIBLE = 5;
-      const ROW_H = 44;
+      const ROW_H = 36;
       this._activityOffset = 0;
       this._activityRows = rows;
       const actionLabels = {
@@ -794,8 +795,7 @@
             <span class="activity-detail">${Ui.escape(row.detail || '')}</span>
           </div>
           <div class="activity-meta">
-            <span>${Ui.escape(row.user || '')}</span>
-            <span>${Ui.escape(Ui.formatDateTime(row.timestamp))}</span>
+            <span>${Ui.escape(row.user || '')} · ${Ui.escape(Ui.formatDateTime(row.timestamp))}</span>
           </div>
         </div>`).join('');
       viewport.style.height = Math.min(rows.length, VISIBLE) * ROW_H + 'px';
@@ -804,7 +804,7 @@
 
     _updateActivityNav() {
       const VISIBLE = 5;
-      const ROW_H = 44;
+      const ROW_H = 36;
       const total = this._activityRows.length;
       const offset = this._activityOffset;
       const track = document.querySelector('#activityTrack');

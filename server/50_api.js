@@ -31,6 +31,7 @@ function apiGetHome() {
       warnings: warnings,
       lastSyncAt: s.lastSyncAt || null,
       activity: isAdmin ? dbGetAll_(SHEETS.AUDIT).slice(-10).reverse() : [],
+      userCount: isAdmin ? dbGetAll_(SHEETS.USERS).filter((u) => u.active === true).length : null,
     };
   });
 }

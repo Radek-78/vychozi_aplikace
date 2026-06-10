@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.29 – 10.06.2026 22:55
+- Home: kompaktní hero s číslem týdne, 6 rozdílných designů modulů (čtverce), kompaktní activity panel, stat karta s počtem uživatelů
+
 ## v2.1.28 – 10.06.2026 22:39
 - Home: footer fix, hero top-left + status, vokativ, 6 module designů, activity scroll nav, tooltip overflow fix, hover lift odstraněn
 
