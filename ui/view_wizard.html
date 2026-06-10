@@ -39,7 +39,6 @@
           <label>
             <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9.5L12 3l9 6.5V21h-6v-6H9v6H3z"/></svg> Název aplikace *</span>
             <input id="wizAppName" type="text" placeholder="Například: Plánování akcí" required>
-            <small class="field-error" id="wizAppNameError"></small>
           </label>
           <label>
             <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Podtitul</span>
@@ -259,16 +258,18 @@
     },
 
     shakeInvalid(input, message) {
+      const original = input.placeholder;
       input.classList.remove('is-invalid');
       void input.offsetWidth;
-      input.classList.add('is-invalid');
+      input.classList.add('is-invalid', 'is-invalid-placeholder');
+      input.placeholder = message;
       input.focus();
-      const err = input.parentElement.querySelector('.field-error');
-      if (err) err.textContent = message;
-      input.addEventListener('input', () => {
-        input.classList.remove('is-invalid');
-        if (err) err.textContent = '';
-      }, { once: true });
+      const restore = () => {
+        input.classList.remove('is-invalid', 'is-invalid-placeholder');
+        input.placeholder = original;
+      };
+      input.addEventListener('input', restore, { once: true });
+      setTimeout(restore, 3000);
     },
 
     runDebug() {

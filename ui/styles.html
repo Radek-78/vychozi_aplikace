@@ -1006,18 +1006,9 @@
     animation: shake 0.35s ease;
   }
 
-  .field-error {
+  input.is-invalid-placeholder::placeholder {
     color: var(--lidl-red);
-    display: block;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0;
-    min-height: 16px;
-    text-transform: none;
-  }
-
-  .field-error:empty {
-    visibility: hidden;
+    opacity: 1;
   }
 
   @keyframes shake {

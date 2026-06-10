@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.19 – 10.06.2026 21:00
+- Wizard: chyba validace jako placeholder v poli (zmizí po 3s), žádná změna velikosti okna
+
 ## v2.1.18 – 10.06.2026 20:56
 - Wizard: validace povinných polí bez zvětšení okna, červené ohraničení při chybě
 
