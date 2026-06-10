@@ -23,8 +23,8 @@ function scriptFolder_() {
 
 /** Data pro úvodní obrazovku wizardu (volá doGet, jen před inicializací). */
 function wizardInfo_() {
-  // getActiveUser() může selhat v "Execute as me" deploymentu — fallback na getEffectiveUser()
-  const email = Session.getActiveUser().getEmail() || Session.getEffectiveUser().getEmail() || '';
+  // getEffectiveUser() vrací vlastníka skriptu spolehlivě v USER_DEPLOYING módu
+  const email = Session.getEffectiveUser().getEmail() || Session.getActiveUser().getEmail() || '';
   const folder = scriptFolder_();
   return {
     email: email,

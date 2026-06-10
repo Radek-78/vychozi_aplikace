@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.0.2 – 10.06.2026 13:12
+- Oprava centrování ikon ve wizardu (CSS specifičnost info-row span)
+- email přes getEffectiveUser() jako primární zdroj
+
 ## v2.0.1 – 10.06.2026 13:08
 - Oprava zjišťování emailu ve wizardu (fallback na getEffectiveUser)
 - vycentrování ikon
