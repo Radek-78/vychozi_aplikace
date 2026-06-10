@@ -209,8 +209,8 @@
       const back = document.querySelector('#wizBack');
       const next = document.querySelector('#wizNext');
       back.classList.toggle('is-hidden', this.step === 1 || this.step === 4);
-      next.disabled = this.step === 1 && !this.emailLoaded;
       Ui.setButtonLoading(next, false);
+      next.disabled = this.step === 1 && !this.emailLoaded;
       next.textContent = this.step === 3 ? 'Inicializovat aplikaci' : (this.step === 4 ? 'Spustit aplikaci' : 'Pokračovat');
     },
 

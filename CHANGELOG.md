@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.23 – 10.06.2026 21:27
+- Wizard: oprava pořadí volání - disabled se nastavuje až po setButtonLoading
+
 ## v2.1.22 – 10.06.2026 21:22
 - Wizard: tlačítko Pokračovat v kroku 1 aktivní až po načtení emailu superadmina
 
