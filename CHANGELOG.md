@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.1.27 – 10.06.2026 22:11
+- Home: redesign — odstraněn topbar, hero s varováním (bell/badge/tooltip), modul grid 6 sloupců, activity list, changelog modal
+- Sidebar: email uživatele
+
 ## v2.1.26 – 10.06.2026 21:44
 - Wizard: sync krok skrytý při prázdné URL
 - odstraněn výchozí podtitul 'Webová aplikace'

@@ -29,72 +29,63 @@
       <span class="avatar" id="sidebarAvatar">?</span>
       <span>
         <strong id="sidebarUser"></strong>
+        <small id="sidebarEmail"></small>
         <small id="sidebarRole"></small>
       </span>
     </div>
   </aside>
 
   <main class="main">
-    <header class="topbar">
-      <div class="topbar-left">
-        <div class="breadcrumbs">
-          <span id="crumbApp"></span>
-          <svg width="14" height="14"><use href="#i-chevron-right"></use></svg>
-          <strong id="crumbSection">Domů</strong>
-        </div>
-      </div>
-      <div class="topbar-right">
-        <button class="icon-button" type="button" data-action="reload" aria-label="Obnovit data" title="Obnovit data">
-          <svg><use href="#i-refresh"></use></svg>
-        </button>
-      </div>
-    </header>
-
     <section class="page" data-page-section="home">
       <div class="home-hero">
         <div>
           <p class="home-hero-greeting" id="heroGreeting"></p>
           <p class="home-hero-app" id="heroApp"></p>
         </div>
-        <p class="home-hero-date" id="heroDate"></p>
-      </div>
-
-      <div id="warningsArea"></div>
-
-      <div class="status-strip" id="statusGrid"></div>
-
-      <section class="panel">
-        <div class="panel-header">
-          <div>
-            <p class="kicker">Projekt</p>
-            <h2>Moduly</h2>
+        <div class="hero-right">
+          <div class="hero-meta">
+            <p class="home-hero-date" id="heroDate"></p>
+            <p class="hero-sync-time" id="heroSyncTime"></p>
+          </div>
+          <div class="hero-actions">
+            <button class="hero-icon-btn" type="button" data-action="reload" aria-label="Obnovit data" title="Obnovit data">
+              <svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-refresh"></use></svg>
+            </button>
+            <div class="warnings-bell admin-only" id="warningsBell" style="display:none">
+              <button class="hero-icon-btn" type="button" id="warningsBellBtn" aria-label="Upozornění">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                <span class="warnings-badge" id="warningsBadge">0</span>
+              </button>
+              <div class="warnings-tooltip" id="warningsTooltip"></div>
+            </div>
           </div>
         </div>
-        <div class="module-grid" id="moduleGrid">
-          <article class="module-card" data-accent="blue">
-            <span class="module-icon"><svg><use href="#i-plus"></use></svg></span>
-            <div>
-              <h2>První modul</h2>
-              <p>Sem přijde první modul konkrétního projektu — kartu nahraďte vlastní funkcí.</p>
-            </div>
-            <footer>
-              <span class="pill">Šablona</span>
-              <button class="button button-secondary button-small" type="button">Otevřít</button>
-            </footer>
-          </article>
-          <article class="module-card" data-accent="yellow">
-            <span class="module-icon"><svg><use href="#i-folder"></use></svg></span>
-            <div>
-              <h2>Druhý modul</h2>
-              <p>Vzor druhé karty s akcentem. Nepoužité karty odstraňte.</p>
-            </div>
-            <footer>
-              <span class="pill">Šablona</span>
-              <button class="button button-secondary button-small" type="button">Otevřít</button>
-            </footer>
-          </article>
-        </div>
-      </section>
+      </div>
+
+      <div class="module-grid" id="moduleGrid">
+        <article class="module-card" data-accent="blue">
+          <span class="module-icon"><svg><use href="#i-plus"></use></svg></span>
+          <div>
+            <h2>První modul</h2>
+            <p>Sem přijde první modul konkrétního projektu — kartu nahraďte vlastní funkcí.</p>
+          </div>
+          <footer>
+            <span class="pill">Šablona</span>
+            <button class="button button-secondary button-small" type="button">Otevřít</button>
+          </footer>
+        </article>
+        <article class="module-card" data-accent="yellow">
+          <span class="module-icon"><svg><use href="#i-folder"></use></svg></span>
+          <div>
+            <h2>Druhý modul</h2>
+            <p>Vzor druhé karty s akcentem. Nepoužité karty odstraňte.</p>
+          </div>
+          <footer>
+            <span class="pill">Šablona</span>
+            <button class="button button-secondary button-small" type="button">Otevřít</button>
+          </footer>
+        </article>
+      </div>
 
       <section class="panel admin-only">
         <div class="panel-header">
@@ -103,14 +94,7 @@
             <h2>Poslední události</h2>
           </div>
         </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr><th>Čas</th><th>Uživatel</th><th>Akce</th><th>Detail</th></tr>
-            </thead>
-            <tbody id="activityRows"></tbody>
-          </table>
-        </div>
+        <div class="activity-list" id="activityRows"></div>
       </section>
     </section>
 
@@ -276,11 +260,23 @@
     </section>
 
     <footer class="statusbar">
-      <span>© 2026 Lidl</span>
-      <span><a href="#" id="version"></a>&nbsp;&nbsp;|&nbsp;&nbsp;Aktualizace: <span id="updatedAt">-</span></span>
+      <span>© <span id="footerYear"></span> Lidl</span>
+      <span><a href="#" id="version" class="version-link"></a>&nbsp;&nbsp;|&nbsp;&nbsp;Aktualizace: <span id="updatedAt">-</span></span>
     </footer>
   </main>
 </div>
+
+<dialog class="modal" id="changelogModal">
+  <div class="modal-header">
+    <span class="modal-icon"><svg><use href="#i-info"></use></svg></span>
+    <div class="modal-header-text">
+      <p class="kicker">Aplikace</p>
+      <h2>Historie změn</h2>
+    </div>
+    <button class="modal-close" type="button" id="closeChangelogModal" aria-label="Zavřít"><svg><use href="#i-close"></use></svg></button>
+  </div>
+  <div class="modal-body" id="changelogBody"></div>
+</dialog>
 
 <dialog class="modal" id="userModal">
   <form id="userForm">
@@ -483,11 +479,12 @@
       document.querySelector('#brandLogo').src = this.boot.logoUrl || '';
       Ui.setText('#brandName', this.boot.appName);
       Ui.setText('#brandSubtitle', this.boot.appSubtitle);
-      Ui.setText('#crumbApp', this.boot.appName);
       Ui.setText('#sidebarUser', displayName);
+      Ui.setText('#sidebarEmail', user.email || '');
       Ui.setText('#sidebarRole', this.roleLabel(user.role));
       Ui.setText('#sidebarAvatar', Ui.getInitials(displayName));
       Ui.setText('#version', this.boot.version);
+      Ui.setText('#footerYear', new Date().getFullYear());
 
       const firstName = user.firstName || '';
       const h = new Date().getHours();
@@ -517,7 +514,21 @@
         button.addEventListener('click', () => this.showSection(button.dataset.section));
       });
 
-      document.querySelector('[data-action="reload"]').addEventListener('click', () => this.loadSection(this.section));
+      document.querySelectorAll('[data-action="reload"]').forEach((btn) => {
+        btn.addEventListener('click', () => this.loadSection(this.section));
+      });
+
+      document.querySelector('#version').addEventListener('click', (e) => { e.preventDefault(); this.openChangelog(); });
+      document.querySelector('#closeChangelogModal').addEventListener('click', () => Ui.closeModal(document.querySelector('#changelogModal')));
+
+      document.querySelector('#warningsBellBtn').addEventListener('click', () => {
+        document.querySelector('#warningsTooltip').classList.toggle('is-visible');
+      });
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('#warningsBell')) {
+          document.querySelector('#warningsTooltip').classList.remove('is-visible');
+        }
+      });
 
       document.querySelector('#addUserButton').addEventListener('click', () => this.openUserModal(null));
       document.querySelectorAll('[data-action="close-user-modal"]').forEach((b) => {
@@ -561,7 +572,6 @@
       document.querySelectorAll('[data-page-section]').forEach((sectionNode) => {
         sectionNode.classList.toggle('is-hidden', sectionNode.dataset.pageSection !== name);
       });
-      Ui.setText('#crumbSection', this.sectionTitles[name] || name);
       this.loadSection(name);
     },
 
@@ -576,31 +586,76 @@
     },
 
     markUpdated() {
-      Ui.setText('#updatedAt', Ui.formatDateTime(new Date().toISOString()));
+      const d = new Date();
+      const date = d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear();
+      const time = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+      Ui.setText('#updatedAt', date + ' ' + time);
     },
 
     loadHome() {
       Ui.call('apiGetHome', null, { silent: true })
         .then((data) => {
-          this.renderStats(data.stats || []);
           this.renderWarnings(data.warnings || []);
-          this.renderEventRows('#activityRows', data.activity || []);
+          this.renderActivity(data.activity || []);
+          if (data.lastSyncAt) {
+            Ui.setText('#heroSyncTime', 'Sync: ' + Ui.formatDateTime(data.lastSyncAt));
+          }
           this.markUpdated();
         })
         .catch((error) => Ui.toast(error.message, 'error'));
     },
 
     renderWarnings(warnings) {
-      document.querySelector('#warningsArea').innerHTML = warnings.map((w) => `
-        <div class="warning-bar">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      const bell = document.querySelector('#warningsBell');
+      const badge = document.querySelector('#warningsBadge');
+      const tooltip = document.querySelector('#warningsTooltip');
+      if (!warnings.length) { bell.style.display = 'none'; return; }
+      bell.style.display = 'block';
+      badge.textContent = warnings.length;
+      tooltip.innerHTML = warnings.map((w) => `
+        <div class="tooltip-warning-item">
           <span>${Ui.escape(w.message)}</span>
-          ${w.section ? `<button class="warning-action" type="button" data-section="${Ui.escape(w.section)}">${Ui.escape(w.action)}</button>` : ''}
+          ${w.section ? `<button class="tooltip-warning-action" type="button" data-section="${Ui.escape(w.section)}">${Ui.escape(w.action)}</button>` : ''}
         </div>
       `).join('');
-      document.querySelectorAll('.warning-action').forEach((btn) => {
-        btn.addEventListener('click', () => this.showSection(btn.dataset.section));
+      tooltip.querySelectorAll('.tooltip-warning-action').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          tooltip.classList.remove('is-visible');
+          this.showSection(btn.dataset.section);
+        });
       });
+    },
+
+    renderActivity(rows) {
+      const actionLabels = { setup: 'Inicializace', sync_run: 'Synchronizace', user_create: 'Nový uživatel', user_update: 'Uživatel', settings_update: 'Nastavení' };
+      const actionIcons = { setup: 'settings', sync_run: 'sync', user_create: 'user', user_update: 'user', settings_update: 'settings' };
+      document.querySelector('#activityRows').innerHTML = rows.length
+        ? rows.map((row) => `
+          <div class="activity-row">
+            <span class="activity-icon"><svg width="14" height="14" viewBox="0 0 24 24"><use href="#i-${Ui.escape(actionIcons[row.action] || 'info')}"></use></svg></span>
+            <div class="activity-main">
+              <span class="activity-label">${Ui.escape(actionLabels[row.action] || row.action)}</span>
+              <span class="activity-detail">${Ui.escape(row.detail || '')}</span>
+            </div>
+            <div class="activity-meta">
+              <span>${Ui.escape(row.user || '')}</span>
+              <span>${Ui.escape(Ui.formatDateTime(row.timestamp))}</span>
+            </div>
+          </div>`).join('')
+        : '<p class="activity-empty">Zatím žádná aktivita.</p>';
+    },
+
+    openChangelog() {
+      Ui.call('apiGetChangelog', null, { silent: true })
+        .then((entries) => {
+          document.querySelector('#changelogBody').innerHTML = entries.map((e) => `
+            <div class="changelog-entry">
+              <div class="changelog-version">${Ui.escape(e.version)}<span class="changelog-date">${Ui.escape(e.date)}</span></div>
+              <p>${Ui.escape(e.message)}</p>
+            </div>`).join('');
+          Ui.openModal(document.querySelector('#changelogModal'));
+        })
+        .catch(() => Ui.openModal(document.querySelector('#changelogModal')));
     },
 
     renderStats(stats) {

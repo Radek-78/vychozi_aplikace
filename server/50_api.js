@@ -10,9 +10,9 @@ function apiGetCurrentUser() {
 function apiGetHome() {
   return guard_(ROLES.USER, (user) => {
     const isAdmin = (ROLE_LEVEL[user.role] || 0) >= ROLE_LEVEL[ROLES.ADMIN];
+    const s = isAdmin ? settingsAll_() : {};
     const warnings = [];
     if (isAdmin) {
-      const s = settingsAll_();
       if (!s.syncFolderUrl) {
         warnings.push({ key: 'no_sync_folder', message: 'Není nastavena složka pro synchronizaci filiálek.', action: 'Nastavit', section: 'sync' });
       } else {
@@ -28,13 +28,8 @@ function apiGetHome() {
       }
     }
     return {
-      stats: [
-        { label: 'Stav systému', value: 'V pořádku', tone: 'success', icon: 'check' },
-        { label: 'Přihlášen', value: userDisplayName_(user) || user.email, tone: 'info', icon: 'user' },
-        { label: 'Role', value: user.role, tone: 'neutral', icon: 'users' },
-        { label: 'Verze', value: CONFIG.version, tone: 'neutral', icon: 'info' },
-      ],
       warnings: warnings,
+      lastSyncAt: s.lastSyncAt || null,
       activity: isAdmin ? dbGetAll_(SHEETS.AUDIT).slice(-10).reverse() : [],
     };
   });
