@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.9 – 10.06.2026 16:57
+- Sync: konverze .xlsx na dočasný Google Sheet před čtením (Drive Advanced Service)
+
 ## v2.1.8 – 10.06.2026 16:37
 - Wizard: Název a Podtitul vedle sebe v kroku 2 (form-row-2)
 

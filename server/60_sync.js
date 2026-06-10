@@ -50,17 +50,30 @@ function apiRunSync() {
     if (!xlsxFile) throw new Error('Ve složce nebyl nalezen žádný soubor .xlsx.');
 
     let ss;
+    let tempSheetId = null;
     try {
-      ss = SpreadsheetApp.openById(xlsxFile.getId());
+      const copy = Drive.Files.copy(
+        { name: '__sync_tmp__', mimeType: 'application/vnd.google-apps.spreadsheet' },
+        xlsxFile.getId()
+      );
+      tempSheetId = copy.id;
+      ss = SpreadsheetApp.openById(tempSheetId);
     } catch (e) {
-      throw new Error('Nepodařilo se otevřít soubor "' + xlsxFile.getName() + '": ' + e.message);
+      throw new Error('Nepodařilo se převést soubor "' + xlsxFile.getName() + '" na Google Sheet: ' + e.message);
     }
 
-    const result = {
-      fileName: xlsxFile.getName(),
-      stores: syncStores_(ss, settings),
-      logistics: syncLogistics_(ss, settings),
-    };
+    let result;
+    try {
+      result = {
+        fileName: xlsxFile.getName(),
+        stores: syncStores_(ss, settings),
+        logistics: syncLogistics_(ss, settings),
+      };
+    } finally {
+      if (tempSheetId) {
+        try { Drive.Files.remove(tempSheetId); } catch (_) {}
+      }
+    }
 
     settingsSet_('lastSyncAt', nowIso_());
     settingsSet_('lastSyncResult', JSON.stringify(result));
