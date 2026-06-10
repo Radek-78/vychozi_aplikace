@@ -207,7 +207,11 @@
         </label>
         <label>
           <span>Jméno</span>
-          <input name="name" type="text" placeholder="Jan Novák">
+          <input name="firstName" type="text" placeholder="Jan">
+        </label>
+        <label>
+          <span>Příjmení</span>
+          <input name="lastName" type="text" placeholder="Novák">
         </label>
         <label>
           <span>Role</span>
@@ -281,7 +285,7 @@
 
     applyBranding() {
       const user = this.boot.user || {};
-      const displayName = user.name || user.email || 'Neznámý uživatel';
+      const displayName = [user.firstName, user.lastName].filter(Boolean).join(' ').trim() || user.email || 'Neznámý uživatel';
       document.querySelector('#brandLogo').src = this.boot.logoUrl || '';
       Ui.setText('#brandName', this.boot.appName);
       Ui.setText('#brandSubtitle', this.boot.appSubtitle);
@@ -393,7 +397,7 @@
           document.querySelector('#userRows').innerHTML = users.map((user) => `
             <tr>
               <td>${Ui.escape(user.email)}</td>
-              <td>${Ui.escape(user.name || '–')}</td>
+              <td>${Ui.escape([user.firstName, user.lastName].filter(Boolean).join(' ').trim() || '–')}</td>
               <td><span class="pill">${Ui.escape(this.roleLabel(user.role))}</span></td>
               <td>${user.active === true ? 'Aktivní' : 'Blokován'}</td>
               <td><button class="button button-secondary button-small" type="button" data-user-id="${Ui.escape(user.id)}">Upravit</button></td>
@@ -414,7 +418,8 @@
       form.reset();
       form.elements.id.value = user ? user.id : '';
       form.elements.email.value = user ? user.email : '';
-      form.elements.name.value = user ? (user.name || '') : '';
+      form.elements.firstName.value = user ? (user.firstName || '') : '';
+      form.elements.lastName.value = user ? (user.lastName || '') : '';
       form.elements.role.value = user ? user.role : 'USER';
       form.elements.active.value = user && user.active !== true ? 'false' : 'true';
       Ui.setText('#userModalTitle', user ? 'Upravit uživatele' : 'Přidat uživatele');
@@ -427,7 +432,8 @@
       Ui.call('apiSaveUser', {
         id: form.elements.id.value || null,
         email: form.elements.email.value,
-        name: form.elements.name.value,
+        firstName: form.elements.firstName.value,
+        lastName: form.elements.lastName.value,
         role: form.elements.role.value,
         active: form.elements.active.value === 'true',
       }, { silent: true })

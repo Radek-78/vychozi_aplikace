@@ -12,6 +12,10 @@ function fail_(message) {
   return { ok: false, error: String(message && message.message ? message.message : message) };
 }
 
+function userDisplayName_(user) {
+  return [user.firstName, user.lastName].filter(Boolean).join(' ').trim() || user.email || '';
+}
+
 function uuid_() {
   return Utilities.getUuid();
 }

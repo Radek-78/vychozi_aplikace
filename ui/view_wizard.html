@@ -45,7 +45,11 @@
         </label>
         <label>
           <span>Vaše jméno (volitelné)</span>
-          <input id="wizUserName" type="text" placeholder="Jan Novák">
+          <input id="wizFirstName" type="text" placeholder="Jan">
+        </label>
+        <label>
+          <span>Vaše příjmení (volitelné)</span>
+          <input id="wizLastName" type="text" placeholder="Novák">
         </label>
       </section>
 
@@ -78,6 +82,7 @@
 <script>
   const Wizard = {
     step: 1,
+    appUrl: null,
     info: (window.APP_BOOTSTRAP && window.APP_BOOTSTRAP.setup) || {},
 
     init() {
@@ -117,7 +122,7 @@
 
     next() {
       if (this.step === 4) {
-        window.location.reload();
+        window.location.href = this.appUrl || window.location.href;
         return;
       }
       if (this.step === 2) {
@@ -178,9 +183,11 @@
       Ui.call('setupInitialize', {
         appName: document.querySelector('#wizAppName').value.trim(),
         appSubtitle: document.querySelector('#wizAppSubtitle').value.trim(),
-        userName: document.querySelector('#wizUserName').value.trim(),
+        firstName: document.querySelector('#wizFirstName').value.trim(),
+        lastName: document.querySelector('#wizLastName').value.trim(),
       })
         .then((result) => {
+          this.appUrl = result.appUrl;
           Ui.setButtonLoading(next, false);
           document.querySelector('#wizDbLink').href = result.spreadsheetUrl;
           this.goTo(4);

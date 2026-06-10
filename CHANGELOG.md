@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.1.0 – 10.06.2026 13:53
+- Spustit aplikaci naviguje přes appUrl ze serveru
+- jméno/příjmení jako samostatná pole v DB a UI
+- rastr vždy viditelný (padding 48px)
+- userDisplayName_ helper
+
 ## v2.0.9 – 10.06.2026 13:44
 - Auth uživatele přesunuta do klienta přes apiGetCurrentUser
 - doGet už neřeší identitu (getActiveUser nefunguje v doGet kontextu)

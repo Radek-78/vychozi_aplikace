@@ -13,7 +13,7 @@ function apiGetHome() {
     return {
       stats: [
         { label: 'Stav systému', value: 'V pořádku', tone: 'success', icon: 'check' },
-        { label: 'Přihlášen', value: user.name || user.email, tone: 'info', icon: 'user' },
+        { label: 'Přihlášen', value: userDisplayName_(user) || user.email, tone: 'info', icon: 'user' },
         { label: 'Role', value: user.role, tone: 'neutral', icon: 'users' },
         { label: 'Verze', value: CONFIG.version, tone: 'neutral', icon: 'info' },
       ],
@@ -32,6 +32,8 @@ function apiSaveUser(payload) {
   return guard_(ROLES.ADMIN, (actor) => {
     const email = String((payload && payload.email) || '').trim().toLowerCase();
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw new Error('Zadejte platný e-mail.');
+    const firstName = String((payload && payload.firstName) || '').trim();
+    const lastName = String((payload && payload.lastName) || '').trim();
 
     const role = String((payload && payload.role) || ROLES.USER).toUpperCase();
     if (!ROLES[role]) throw new Error('Neplatná role.');
@@ -67,7 +69,8 @@ function apiSaveUser(payload) {
 
     const data = {
       email: email,
-      name: String((payload && payload.name) || '').trim(),
+      firstName: firstName,
+      lastName: lastName,
       role: role,
       active: active,
     };

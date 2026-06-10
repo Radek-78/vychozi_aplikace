@@ -72,7 +72,8 @@ function setupInitialize(payload) {
     const appName = String((payload && payload.appName) || '').trim();
     if (!appName) return fail_('Vyplňte název aplikace.');
     const appSubtitle = String((payload && payload.appSubtitle) || '').trim();
-    const userName = String((payload && payload.userName) || '').trim();
+    const firstName = String((payload && payload.firstName) || '').trim();
+    const lastName = String((payload && payload.lastName) || '').trim();
 
     return withLock_(() => {
       if (isSetupDone_()) return fail_('Aplikace už je inicializována.');
@@ -93,7 +94,8 @@ function setupInitialize(payload) {
 
       dbInsert_(SHEETS.USERS, {
         email: email,
-        name: userName,
+        firstName: firstName,
+        lastName: lastName,
         role: ROLES.SUPERADMIN,
         active: true,
       });
@@ -104,6 +106,7 @@ function setupInitialize(payload) {
 
       return ok_({
         spreadsheetUrl: ss.getUrl(),
+        appUrl: ScriptApp.getService().getUrl(),
         folderName: folder ? folder.getName() : null,
       });
     });
