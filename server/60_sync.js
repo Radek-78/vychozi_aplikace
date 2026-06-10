@@ -52,10 +52,10 @@ function apiRunSync() {
     let ss;
     let tempSheetId = null;
     try {
-      const copy = Drive.Files.copy(
-        { name: '__sync_tmp__', mimeType: 'application/vnd.google-apps.spreadsheet' },
-        xlsxFile.getId()
-      );
+      const scriptFolder = scriptFolder_();
+      const copyMeta = { name: '__sync_tmp__', mimeType: 'application/vnd.google-apps.spreadsheet' };
+      if (scriptFolder) copyMeta.parents = [scriptFolder.getId()];
+      const copy = Drive.Files.copy(copyMeta, xlsxFile.getId());
       tempSheetId = copy.id;
       ss = SpreadsheetApp.openById(tempSheetId);
     } catch (e) {

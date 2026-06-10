@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.10 – 10.06.2026 17:01
+- Sync: dočasný Sheet se vytvoří ve složce skriptu, ne v kořeni Disku
+
 ## v2.1.9 – 10.06.2026 16:57
 - Sync: konverze .xlsx na dočasný Google Sheet před čtením (Drive Advanced Service)
 
