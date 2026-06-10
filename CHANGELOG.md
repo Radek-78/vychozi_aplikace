@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.1.4 – 10.06.2026 14:17
+- Oprava načítání brandu (APP_BOOTSTRAP před view includes)
+- rastr na loader obrazovce
+- skrytí loaderu při navigaci menu
+- SVG ikony v status kartách
+
 ## v2.1.3 – 10.06.2026 14:00
 - Jméno a příjmení vedle sebe i ve wizardu (form-row-2)
 

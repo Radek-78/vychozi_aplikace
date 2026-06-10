@@ -50,6 +50,9 @@
       </symbol>
     </svg>
 
+    <script>
+      window.APP_BOOTSTRAP = <?!= bootstrapJson ?>;
+    </script>
     <? if (app.page === 'app') { ?>
       <?!= include('ui/view_app'); ?>
     <? } else if (app.page === 'wizard') { ?>
@@ -91,9 +94,6 @@
 
     <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
 
-    <script>
-      window.APP_BOOTSTRAP = <?!= bootstrapJson ?>;
-    </script>
     <?!= include('ui/core'); ?>
   </body>
 </html>

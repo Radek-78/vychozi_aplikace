@@ -187,7 +187,7 @@
         appSubtitle: document.querySelector('#wizAppSubtitle').value.trim(),
         firstName: document.querySelector('#wizFirstName').value.trim(),
         lastName: document.querySelector('#wizLastName').value.trim(),
-      })
+      }, { silent: true })
         .then((result) => {
           this.appUrl = result.appUrl;
           Ui.setButtonLoading(next, false);
