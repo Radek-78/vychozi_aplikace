@@ -59,6 +59,8 @@
         <p class="home-hero-date" id="heroDate"></p>
       </div>
 
+      <div id="warningsArea"></div>
+
       <div class="status-strip" id="statusGrid"></div>
 
       <section class="panel">
@@ -581,10 +583,24 @@
       Ui.call('apiGetHome', null, { silent: true })
         .then((data) => {
           this.renderStats(data.stats || []);
+          this.renderWarnings(data.warnings || []);
           this.renderEventRows('#activityRows', data.activity || []);
           this.markUpdated();
         })
         .catch((error) => Ui.toast(error.message, 'error'));
+    },
+
+    renderWarnings(warnings) {
+      document.querySelector('#warningsArea').innerHTML = warnings.map((w) => `
+        <div class="warning-bar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>${Ui.escape(w.message)}</span>
+          ${w.section ? `<button class="warning-action" type="button" data-section="${Ui.escape(w.section)}">${Ui.escape(w.action)}</button>` : ''}
+        </div>
+      `).join('');
+      document.querySelectorAll('.warning-action').forEach((btn) => {
+        btn.addEventListener('click', () => this.showSection(btn.dataset.section));
+      });
     },
 
     renderStats(stats) {

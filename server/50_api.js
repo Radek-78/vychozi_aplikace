@@ -10,6 +10,23 @@ function apiGetCurrentUser() {
 function apiGetHome() {
   return guard_(ROLES.USER, (user) => {
     const isAdmin = (ROLE_LEVEL[user.role] || 0) >= ROLE_LEVEL[ROLES.ADMIN];
+    const warnings = [];
+    if (isAdmin) {
+      const s = settingsAll_();
+      if (!s.syncFolderUrl) {
+        warnings.push({ key: 'no_sync_folder', message: 'Není nastavena složka pro synchronizaci filiálek.', action: 'Nastavit', section: 'sync' });
+      } else {
+        try {
+          const folderId = extractFolderIdFromUrl_(s.syncFolderUrl);
+          if (folderId) DriveApp.getFolderById(folderId);
+        } catch (e) {
+          warnings.push({ key: 'sync_folder_inaccessible', message: 'Složka pro synchronizaci filiálek není přístupná.', action: 'Zkontrolovat', section: 'sync' });
+        }
+      }
+      if (!s.lastSyncAt) {
+        warnings.push({ key: 'never_synced', message: 'Synchronizace filiálek nebyla ještě nikdy spuštěna.', action: 'Synchronizovat', section: 'sync' });
+      }
+    }
     return {
       stats: [
         { label: 'Stav systému', value: 'V pořádku', tone: 'success', icon: 'check' },
@@ -17,6 +34,7 @@ function apiGetHome() {
         { label: 'Role', value: user.role, tone: 'neutral', icon: 'users' },
         { label: 'Verze', value: CONFIG.version, tone: 'neutral', icon: 'info' },
       ],
+      warnings: warnings,
       activity: isAdmin ? dbGetAll_(SHEETS.AUDIT).slice(-10).reverse() : [],
     };
   });

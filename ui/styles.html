@@ -559,6 +559,46 @@
 
   /* ── Home hero ───────────────────────────────────── */
 
+  .warning-bar {
+    align-items: center;
+    background: #fff8e1;
+    border: 1px solid #f5c842;
+    border-left: 4px solid #f5c842;
+    border-radius: var(--radius);
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 10px 14px;
+  }
+
+  .warning-bar svg {
+    color: #b45309;
+    flex-shrink: 0;
+  }
+
+  .warning-bar span {
+    color: #78350f;
+    flex: 1;
+    font-size: 13px;
+  }
+
+  .warning-action {
+    background: none;
+    border: 1px solid #b45309;
+    border-radius: 4px;
+    color: #b45309;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    white-space: nowrap;
+  }
+
+  .warning-action:hover {
+    background: #b45309;
+    color: #fff;
+  }
+
   .home-hero {
     align-items: flex-end;
     background-color: var(--lidl-dark-blue);
@@ -1006,19 +1046,14 @@
     animation: shake 0.35s ease;
   }
 
-  .input-check-row {
+  .label-with-status {
     align-items: center;
     display: flex;
-    gap: 8px;
-  }
-
-  .input-check-row input {
-    flex: 1;
-    min-width: 0;
+    justify-content: space-between;
+    text-transform: uppercase;
   }
 
   .folder-status {
-    flex-shrink: 0;
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0;
@@ -1026,8 +1061,8 @@
     white-space: nowrap;
   }
 
-  .folder-status.is-ok    { color: #007a45; }
-  .folder-status.is-error { color: var(--lidl-red); }
+  .folder-status.is-ok       { color: #007a45; }
+  .folder-status.is-error    { color: var(--lidl-red); }
   .folder-status.is-checking { color: var(--muted); }
 
   input.is-invalid-placeholder::placeholder {

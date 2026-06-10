@@ -56,12 +56,12 @@
           </label>
         </div>
         <label>
-          <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> URL složky pro synchronizaci (volitelné)</span>
-          <div class="input-check-row">
-            <input id="wizSyncFolderUrl" type="url" placeholder="https://drive.google.com/drive/folders/..." value="https://drive.google.com/drive/folders/1DX1VFWt5fAztALgMdVGJvLwQEjm-t83B">
+          <span class="label-with-status">
+            <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> URL složky pro synchronizaci (volitelné)</span>
             <span id="wizFolderStatus" class="folder-status"></span>
-          </div>
-          <small class="form-hint" id="wizFolderHint">Složku spravuje T.Kuda — budoucí superadmin musí mít složku nasdílenu. Lze nastavit i později.</small>
+          </span>
+          <input id="wizSyncFolderUrl" type="url" placeholder="https://drive.google.com/drive/folders/..." value="https://drive.google.com/drive/folders/1DX1VFWt5fAztALgMdVGJvLwQEjm-t83B">
+          <small class="form-hint">Složku spravuje T.Kuda — budoucí superadmin musí mít složku nasdílenu. Lze nastavit i později.</small>
         </label>
       </section>
 
@@ -117,6 +117,7 @@
   const Wizard = {
     step: 1,
     appUrl: null,
+    folderAccessOk: false,
     info: (window.APP_BOOTSTRAP && window.APP_BOOTSTRAP.setup) || {},
     _progressTimer: null,
 
@@ -250,10 +251,14 @@
           steps.forEach((el) => { el.classList.remove('is-active'); el.classList.add('is-done'); });
           this.appUrl = result.appUrl;
           document.querySelector('#wizDbLink').href = result.spreadsheetUrl;
-          setTimeout(() => {
-            Ui.setButtonLoading(next, false);
-            this.goTo(4);
-          }, 700);
+          const finish = () => { Ui.setButtonLoading(next, false); this.goTo(4); };
+          if (this.folderAccessOk) {
+            Ui.call('apiRunSync', null, { silent: true })
+              .then(() => setTimeout(finish, 400))
+              .catch(() => setTimeout(finish, 400));
+          } else {
+            setTimeout(finish, 700);
+          }
         })
         .catch((error) => {
           clearInterval(this._progressTimer);
@@ -272,6 +277,7 @@
       status.className = 'folder-status is-checking';
       google.script.run
         .withSuccessHandler((res) => {
+          this.folderAccessOk = res.data.ok;
           if (res.data.ok) {
             status.textContent = '✓ ' + res.data.message;
             status.className = 'folder-status is-ok';

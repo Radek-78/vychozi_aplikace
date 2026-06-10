@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.1.21 – 10.06.2026 21:15
+- Wizard: status přístupu ve štítku pole, první sync po init
+- Home: varování o chybějící konfiguraci
+
 ## v2.1.20 – 10.06.2026 21:04
 - Wizard: předvyplněná URL sync složky, automatická kontrola přístupu ke složce
 
