@@ -3,6 +3,10 @@
  * Každý endpoint je obalený guard_() — vrací { ok, data } / { ok, error }.
  */
 
+function apiGetCurrentUser() {
+  return guard_(ROLES.USER, (user) => user);
+}
+
 function apiGetHome() {
   return guard_(ROLES.USER, (user) => {
     const isAdmin = (ROLE_LEVEL[user.role] || 0) >= ROLE_LEVEL[ROLES.ADMIN];

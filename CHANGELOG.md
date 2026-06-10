@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.0.9 – 10.06.2026 13:44
+- Auth uživatele přesunuta do klienta přes apiGetCurrentUser
+- doGet už neřeší identitu (getActiveUser nefunguje v doGet kontextu)
+
 ## v2.0.8 – 10.06.2026 13:38
 - isSetupDone_ ověřuje existenci spreadsheetu
 - při smazání DB se property automaticky vyčistí a spustí se wizard

@@ -8,28 +8,25 @@
  */
 function doGet() {
   let page = 'wizard';
-  let user = null;
   let settings = {};
 
   try {
     if (isSetupDone_()) {
-      user = getCurrentUser_();
-      page = user ? 'app' : 'denied';
-      if (user) settings = settingsAll_();
+      page = 'app';
+      settings = settingsAll_();
     }
   } catch (e) {
     console.error(e);
-    page = 'denied';
   }
 
+  // Identita uživatele se načítá klientsky přes apiGetCurrentUser (getActiveUser nefunguje v doGet)
   const data = {
     page: page,
     appName: settings.appName || CONFIG.defaultAppName,
     appSubtitle: settings.appSubtitle || CONFIG.defaultAppSubtitle,
     logoUrl: CONFIG.logoUrl,
     version: CONFIG.version,
-    userEmail: currentEmail_(),
-    user: user ? { email: user.email, name: user.name, role: user.role } : null,
+    user: null,
     setup: page === 'wizard' ? wizardInfo_() : null,
   };
 

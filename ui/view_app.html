@@ -253,17 +253,30 @@
     },
 
     init() {
+      google.script.run
+        .withSuccessHandler((res) => this.onUserLoaded(res.data))
+        .withFailureHandler((err) => this.onUserDenied(err.message))
+        .apiGetCurrentUser();
+    },
+
+    onUserLoaded(user) {
+      this.boot.user = user;
       this.applyBranding();
       this.bindEvents();
-
       if (!this.isAdmin) {
         document.querySelectorAll('.admin-only').forEach((node) => node.classList.add('is-hidden'));
       }
-      if (this.boot.user && this.boot.user.role !== 'SUPERADMIN') {
+      if (user.role !== 'SUPERADMIN') {
         document.querySelector('#superadminOption').disabled = true;
       }
-
+      Ui.hideLoader();
       this.loadHome();
+    },
+
+    onUserDenied(message) {
+      const loader = document.querySelector('#appLoader');
+      loader.innerHTML = '<div class="loader-inner"><strong>Přístup odepřen</strong><span>' +
+        (message || 'Nemáte přístup do aplikace.') + '</span></div>';
     },
 
     applyBranding() {
