@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.1.12 – 10.06.2026 17:13
+- LC modal: placeholdery BNL/Brandýs
+- placeholder barva světle šedá globálně
+
 ## v2.1.11 – 10.06.2026 17:05
 - Sync: odstraněna synchronizace LC z xlsx (LC se zakládají ručně)
 
