@@ -57,8 +57,11 @@
         </div>
         <label>
           <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> URL složky pro synchronizaci (volitelné)</span>
-          <input id="wizSyncFolderUrl" type="url" placeholder="https://drive.google.com/drive/folders/...">
-          <small class="form-hint">Složku spravuje T.Kuda — budoucí superadmin musí mít složku nasdílenu. Lze nastavit i později.</small>
+          <div class="input-check-row">
+            <input id="wizSyncFolderUrl" type="url" placeholder="https://drive.google.com/drive/folders/..." value="https://drive.google.com/drive/folders/1DX1VFWt5fAztALgMdVGJvLwQEjm-t83B">
+            <span id="wizFolderStatus" class="folder-status"></span>
+          </div>
+          <small class="form-hint" id="wizFolderHint">Složku spravuje T.Kuda — budoucí superadmin musí mít složku nasdílenu. Lze nastavit i později.</small>
         </label>
       </section>
 
@@ -127,6 +130,7 @@
 
       document.querySelector('#wizBack').addEventListener('click', () => this.goTo(this.step - 1));
       document.querySelector('#wizNext').addEventListener('click', () => this.next());
+      document.querySelector('#wizSyncFolderUrl').addEventListener('change', () => this.checkFolderAccess());
       this.goTo(1);
 
       google.script.run
@@ -194,6 +198,8 @@
         item.classList.toggle('is-done', index < this.step);
       });
 
+      if (this.step === 2) this.checkFolderAccess();
+
       const card = document.querySelector('.gate-card');
       card.dataset.state = this.step === 4 ? 'success' : '';
 
@@ -255,6 +261,30 @@
           this.goTo(3, 'back');
           Ui.toast(error.message, 'error');
         });
+    },
+
+    checkFolderAccess() {
+      const url = document.querySelector('#wizSyncFolderUrl').value.trim();
+      const status = document.querySelector('#wizFolderStatus');
+      const hint = document.querySelector('#wizFolderHint');
+      if (!url) { status.textContent = ''; status.className = 'folder-status'; return; }
+      status.textContent = 'Ověřuji přístup…';
+      status.className = 'folder-status is-checking';
+      google.script.run
+        .withSuccessHandler((res) => {
+          if (res.data.ok) {
+            status.textContent = '✓ ' + res.data.message;
+            status.className = 'folder-status is-ok';
+          } else {
+            status.textContent = '✗ ' + res.data.message;
+            status.className = 'folder-status is-error';
+          }
+        })
+        .withFailureHandler(() => {
+          status.textContent = '✗ Kontrolu se nepodařilo provést.';
+          status.className = 'folder-status is-error';
+        })
+        .wizardCheckFolderAccess(url);
     },
 
     shakeInvalid(input, message) {

@@ -44,6 +44,18 @@ function wizardInfo_() {
   };
 }
 
+/** Ověří, zda má aktuální uživatel přístup ke složce zadané URL. */
+function wizardCheckFolderAccess(url) {
+  try {
+    const folderId = extractFolderIdFromUrl_(url || '');
+    if (!folderId) return ok_({ ok: false, message: 'Nepodařilo se rozpoznat ID složky z URL.' });
+    const folder = DriveApp.getFolderById(folderId);
+    return ok_({ ok: true, message: 'Přístup potvrzen: „' + folder.getName() + '"' });
+  } catch (e) {
+    return ok_({ ok: false, message: 'Přístup odepřen nebo složka neexistuje.' });
+  }
+}
+
 /** Vrátí email a složku pro wizard — volá se z klienta přes google.script.run. */
 function wizardGetOwnerEmail() {
   try {

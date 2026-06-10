@@ -1006,6 +1006,30 @@
     animation: shake 0.35s ease;
   }
 
+  .input-check-row {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+  }
+
+  .input-check-row input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .folder-status {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    white-space: nowrap;
+  }
+
+  .folder-status.is-ok    { color: #007a45; }
+  .folder-status.is-error { color: var(--lidl-red); }
+  .folder-status.is-checking { color: var(--muted); }
+
   input.is-invalid-placeholder::placeholder {
     color: var(--lidl-red);
     opacity: 1;

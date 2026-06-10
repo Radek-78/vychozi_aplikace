@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.20 – 10.06.2026 21:04
+- Wizard: předvyplněná URL sync složky, automatická kontrola přístupu ke složce
+
 ## v2.1.19 – 10.06.2026 21:00
 - Wizard: chyba validace jako placeholder v poli (zmizí po 3s), žádná změna velikosti okna
 
