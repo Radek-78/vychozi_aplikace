@@ -7,20 +7,55 @@
   const Ui = {
     loader: null,
     toastRegion: null,
+    _busyCount: 0,
 
     init() {
       this.loader = document.querySelector('#appLoader');
       this.toastRegion = document.querySelector('#toastRegion');
+
+      const overlay = document.createElement('div');
+      overlay.className = 'busy-overlay';
+      overlay.id = 'busyOverlay';
+      overlay.innerHTML =
+        '<div class="busy-box">' +
+        '<span class="sp-ring">' +
+        '<svg class="sp-ring-svg" viewBox="0 0 64 64">' +
+        '<circle class="sp-ring-track" cx="32" cy="32" r="19"></circle>' +
+        '<circle class="sp-ring-arc" cx="32" cy="32" r="19"></circle>' +
+        '</svg>' +
+        '<img class="sp-logo sp-ring-logo" alt="" src="' + ((window.APP_BOOTSTRAP || {}).logoUrl || '') + '">' +
+        '</span>' +
+        '<span class="busy-label" id="busyLabel"></span>' +
+        '</div>';
+      document.body.appendChild(overlay);
+    },
+
+    busy(label) {
+      this._busyCount++;
+      const overlay = document.querySelector('#busyOverlay');
+      if (!overlay) return;
+      document.querySelector('#busyLabel').textContent = label || 'Pracuji…';
+      overlay.classList.add('is-visible');
+    },
+
+    endBusy() {
+      this._busyCount = Math.max(0, this._busyCount - 1);
+      if (this._busyCount === 0) {
+        const overlay = document.querySelector('#busyOverlay');
+        if (overlay) overlay.classList.remove('is-visible');
+      }
     },
 
     call(functionName, payload, options) {
       const settings = options || {};
       if (!settings.silent) this.showLoader();
+      if (settings.busy) this.busy(settings.busy);
 
       return new Promise((resolve, reject) => {
         google.script.run
           .withSuccessHandler((result) => {
             if (!settings.silent) this.hideLoader();
+            if (settings.busy) this.endBusy();
             if (result && result.ok) {
               resolve(result.data);
             } else {
@@ -29,6 +64,7 @@
           })
           .withFailureHandler((error) => {
             if (!settings.silent) this.hideLoader();
+            if (settings.busy) this.endBusy();
             reject(error);
           })[functionName](payload);
       });

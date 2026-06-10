@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.1.31 – 10.06.2026 23:21
+- Home: všechny moduly v designu bočního pruhu s barevnými variantami
+- globální busy overlay s rozmazáním a popisem akce u všech načítání
+
 ## v2.1.30 – 10.06.2026 23:09
 - Home: hero dvouřádková pravá strana, activity panel u spodního okraje, 6 nových designů modulů (boční pruh, kruh, závorky, diagonála, vstupenka, typo)
 

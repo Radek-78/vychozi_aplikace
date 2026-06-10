@@ -64,7 +64,6 @@
 
       <div class="module-grid" id="moduleGrid">
 
-        <!-- 1: Boční pruh -->
         <article class="module-card mc--sidebar">
           <div class="mc-side">
             <svg><use href="#i-store"></use></svg>
@@ -79,29 +78,40 @@
           </div>
         </article>
 
-        <!-- 2: Kruhová záře -->
-        <article class="module-card mc--circle">
-          <span class="mc-circle-icon"><svg><use href="#i-sync"></use></svg></span>
-          <h2>Synchronizace</h2>
-          <p>Import dat z externího xlsx souboru.</p>
-          <footer>
-            <button class="button button-primary button-small" type="button" data-go-section="sync">Spustit</button>
-          </footer>
+        <article class="module-card mc--sidebar">
+          <div class="mc-side mc-side--light">
+            <svg><use href="#i-sync"></use></svg>
+            <i></i>
+          </div>
+          <div class="mc-body">
+            <h2>Synchronizace</h2>
+            <p>Import dat z externího xlsx souboru.</p>
+            <footer>
+              <button class="button button-secondary button-small" type="button" data-go-section="sync">Spustit</button>
+            </footer>
+          </div>
         </article>
 
-        <!-- 3: Rohové závorky -->
-        <article class="module-card mc--brackets">
-          <span class="mc-bare-icon"><svg width="30" height="30" viewBox="0 0 24 24"><use href="#i-users"></use></svg></span>
-          <h2>Uživatelé</h2>
-          <p><span id="statUsers">—</span> aktivních účtů s přístupem</p>
-          <button class="mc-link-btn" type="button" data-go-section="users">Spravovat →</button>
+        <article class="module-card mc--sidebar">
+          <div class="mc-side mc-side--dark">
+            <svg><use href="#i-users"></use></svg>
+            <i></i>
+          </div>
+          <div class="mc-body">
+            <h2>Uživatelé</h2>
+            <p><span id="statUsers">—</span> aktivních účtů s přístupem.</p>
+            <footer>
+              <button class="button button-secondary button-small" type="button" data-go-section="users">Spravovat</button>
+            </footer>
+          </div>
         </article>
 
-        <!-- 4: Diagonála -->
-        <article class="module-card mc--diagonal">
-          <div class="mc-diag-top"></div>
-          <span class="mc-diag-icon"><svg><use href="#i-truck"></use></svg></span>
-          <div class="mc-diag-body">
+        <article class="module-card mc--sidebar">
+          <div class="mc-side mc-side--yellow">
+            <svg><use href="#i-truck"></use></svg>
+            <i></i>
+          </div>
+          <div class="mc-body">
             <h2>Log. centra</h2>
             <p>Správa logistických center LC.</p>
             <footer>
@@ -110,28 +120,32 @@
           </div>
         </article>
 
-        <!-- 5: Vstupenka -->
-        <article class="module-card mc--ticket">
-          <div class="mc-ticket-top">
-            <span class="module-icon"><svg><use href="#i-settings"></use></svg></span>
+        <article class="module-card mc--sidebar">
+          <div class="mc-side mc-side--green">
+            <svg><use href="#i-settings"></use></svg>
+            <i></i>
+          </div>
+          <div class="mc-body">
             <h2>Nastavení</h2>
             <p>Konfigurace aplikace a brandingu.</p>
-          </div>
-          <div class="mc-ticket-stub">
-            <small>Administrace</small>
-            <button class="button button-secondary button-small" type="button" data-go-section="settings">Otevřít</button>
+            <footer>
+              <button class="button button-secondary button-small" type="button" data-go-section="settings">Otevřít</button>
+            </footer>
           </div>
         </article>
 
-        <!-- 6: Typo pozadí -->
-        <article class="module-card mc--type">
-          <span class="mc-type-bg"><svg viewBox="0 0 24 24"><use href="#i-list"></use></svg></span>
-          <h2>Audit</h2>
-          <p>Přehled systémových událostí.</p>
-          <footer>
-            <span class="pill">Log</span>
-            <button class="button button-secondary button-small" type="button" data-go-section="audit">Zobrazit</button>
-          </footer>
+        <article class="module-card mc--sidebar">
+          <div class="mc-side mc-side--red">
+            <svg><use href="#i-list"></use></svg>
+            <i></i>
+          </div>
+          <div class="mc-body">
+            <h2>Audit</h2>
+            <p>Přehled systémových událostí.</p>
+            <footer>
+              <button class="button button-secondary button-small" type="button" data-go-section="audit">Zobrazit</button>
+            </footer>
+          </div>
         </article>
 
       </div>
@@ -712,7 +726,7 @@
     },
 
     loadHome() {
-      Ui.call('apiGetHome', null, { silent: true })
+      Ui.call('apiGetHome', null, { silent: true, busy: 'Načítám přehled…' })
         .then((data) => {
           this.renderWarnings(data.warnings || []);
           this.renderActivity(data.activity || []);
@@ -819,7 +833,7 @@
     },
 
     openChangelog() {
-      Ui.call('apiGetChangelog', null, { silent: true })
+      Ui.call('apiGetChangelog', null, { silent: true, busy: 'Načítám historii změn…' })
         .then((entries) => {
           document.querySelector('#changelogBody').innerHTML = entries.map((e) => `
             <div class="changelog-entry">
@@ -855,7 +869,7 @@
     },
 
     loadUsers() {
-      Ui.call('apiListUsers', null, { silent: true })
+      Ui.call('apiListUsers', null, { silent: true, busy: 'Načítám uživatele…' })
         .then((users) => {
           this.users = users;
           document.querySelector('#userRows').innerHTML = users.map((user) => `
@@ -900,7 +914,7 @@
         lastName: form.elements.lastName.value,
         role: form.elements.role.value,
         active: form.elements.active.value === 'true',
-      }, { silent: true })
+      }, { silent: true, busy: 'Ukládám uživatele…' })
         .then(() => {
           Ui.setButtonLoading(button, false);
           Ui.closeModal(document.querySelector('#userModal'));
@@ -914,7 +928,7 @@
     },
 
     loadSettings() {
-      Ui.call('apiGetSettings', null, { silent: true })
+      Ui.call('apiGetSettings', null, { silent: true, busy: 'Načítám nastavení…' })
         .then((settings) => {
           const form = document.querySelector('#settingsForm');
           form.elements.appName.value = settings.appName || '';
@@ -930,7 +944,7 @@
       Ui.call('apiSaveSettings', {
         appName: form.elements.appName.value,
         appSubtitle: form.elements.appSubtitle.value,
-      }, { silent: true })
+      }, { silent: true, busy: 'Ukládám nastavení…' })
         .then((settings) => {
           Ui.setButtonLoading(button, false);
           this.boot.appName = settings.appName;
@@ -945,7 +959,7 @@
     },
 
     loadAudit() {
-      Ui.call('apiGetAudit', null, { silent: true })
+      Ui.call('apiGetAudit', null, { silent: true, busy: 'Načítám audit…' })
         .then((rows) => {
           this.renderEventRows('#auditRows', rows);
           this.markUpdated();
@@ -956,7 +970,7 @@
     /* ── Filiálky ─────────────────────────────────── */
 
     loadStores() {
-      Ui.call('apiListStores', null, { silent: true })
+      Ui.call('apiListStores', null, { silent: true, busy: 'Načítám filiálky…' })
         .then((stores) => {
           this.stores = stores;
           document.querySelector('#storeRows').innerHTML = stores.length
@@ -1025,7 +1039,7 @@
         temporarily_closed: form.elements.temporarily_closed.checked,
       };
       HOUR_FIELDS.forEach((f) => { payload[f] = form.elements[f].value; });
-      Ui.call('apiSaveStore', payload, { silent: true })
+      Ui.call('apiSaveStore', payload, { silent: true, busy: 'Ukládám filiálku…' })
         .then(() => {
           Ui.setButtonLoading(button, false);
           Ui.closeModal(document.querySelector('#storeModal'));
@@ -1038,7 +1052,7 @@
     /* ── Logistická centra ────────────────────────── */
 
     loadLogistics() {
-      Ui.call('apiListLogistics', null, { silent: true })
+      Ui.call('apiListLogistics', null, { silent: true, busy: 'Načítám logistická centra…' })
         .then((list) => {
           this.logistics = list;
           document.querySelector('#logisticRows').innerHTML = list.length
@@ -1080,7 +1094,7 @@
         name: form.elements.name.value,
         abbreviation: form.elements.abbreviation.value,
         active: form.elements.active.value === 'true',
-      }, { silent: true })
+      }, { silent: true, busy: 'Ukládám logistické centrum…' })
         .then(() => {
           Ui.setButtonLoading(button, false);
           Ui.closeModal(document.querySelector('#logisticModal'));
@@ -1093,7 +1107,7 @@
     /* ── Synchronizace ────────────────────────────── */
 
     loadSync() {
-      Ui.call('apiGetSyncSettings', null, { silent: true })
+      Ui.call('apiGetSyncSettings', null, { silent: true, busy: 'Načítám konfiguraci…' })
         .then((s) => {
           const form = document.querySelector('#syncSettingsForm');
           form.elements.syncFolderUrl.value = s.syncFolderUrl || '';
@@ -1119,7 +1133,7 @@
         syncStoresSheet: form.elements.syncStoresSheet.value,
         syncTempClosedPrefix: form.elements.syncTempClosedPrefix.value,
         syncLogisticsSheet: form.elements.syncLogisticsSheet.value,
-      }, { silent: true })
+      }, { silent: true, busy: 'Ukládám konfiguraci…' })
         .then(() => { Ui.setButtonLoading(button, false); Ui.toast('Konfigurace uložena.'); })
         .catch((e) => { Ui.setButtonLoading(button, false); Ui.toast(e.message, 'error'); });
     },
@@ -1129,7 +1143,7 @@
       Ui.setButtonLoading(button, true);
       document.querySelector('#syncResultArea').innerHTML =
         '<p style="color:var(--muted);font-size:13px">⏳ Synchronizace probíhá, prosím čekejte — může trvat až minutu…</p>';
-      Ui.call('apiRunSync', null, { silent: true })
+      Ui.call('apiRunSync', null, { silent: true, busy: 'Synchronizuji data… může to trvat až minutu' })
         .then((result) => {
           Ui.setButtonLoading(button, false);
           this.renderSyncResult(new Date().toISOString(), result, true);

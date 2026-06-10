@@ -1183,190 +1183,43 @@
   .mc--sidebar p { color: var(--muted); font-size: 11px; line-height: 1.5; }
   .mc--sidebar footer { border-top: 1px solid var(--line-soft); justify-content: flex-end; margin-top: auto; padding-top: 10px; }
 
-  /* 2: Kruhová záře — ikona v kruhu na středu */
-  .mc--circle {
-    align-items: center;
-    border: 1px solid var(--line-soft);
-    gap: 6px;
-    justify-content: center;
-    text-align: center;
-  }
-  .mc--circle::before {
-    background: radial-gradient(circle, #dcebfb 0%, transparent 68%);
-    content: "";
-    height: 220px;
-    left: 50%;
-    position: absolute;
-    top: -60px;
-    transform: translateX(-50%);
-    width: 220px;
-  }
-  .mc-circle-icon {
-    align-items: center;
-    background: var(--lidl-blue);
-    border-radius: 50%;
-    box-shadow: 0 0 0 8px rgba(0, 80, 170, 0.1);
-    color: var(--white);
-    display: inline-flex;
-    height: 54px;
-    justify-content: center;
-    margin-bottom: 6px;
-    position: relative;
-    width: 54px;
-  }
-  .mc-circle-icon svg { height: 24px; width: 24px; }
-  .mc--circle h2 { font-size: 15px; margin: 0; position: relative; }
-  .mc--circle p { color: var(--muted); font-size: 11px; margin: 0; position: relative; }
-  .mc--circle footer { border: none; margin-top: 8px; padding: 0; position: relative; }
+  /* Barevné varianty bočního pruhu */
+  .mc-side--dark   { background: var(--lidl-dark-blue); }
+  .mc-side--light  { background: var(--lidl-light-blue); }
+  .mc-side--yellow { background: var(--lidl-yellow); color: var(--lidl-dark-blue); }
+  .mc-side--yellow i { background: var(--lidl-dark-blue); }
+  .mc-side--red    { background: var(--lidl-red); }
+  .mc-side--green  { background: #007a45; }
 
-  /* 3: Rohové závorky — žluté brackety */
-  .mc--brackets {
-    align-items: center;
-    border: 1px solid var(--line-soft);
-    gap: 6px;
-    justify-content: center;
-    text-align: center;
-  }
-  .mc--brackets::before {
-    border-left: 3px solid var(--lidl-yellow);
-    border-top: 3px solid var(--lidl-yellow);
-    content: "";
-    height: 24px;
-    left: 12px;
-    position: absolute;
-    top: 12px;
-    width: 24px;
-  }
-  .mc--brackets::after {
-    border-bottom: 3px solid var(--lidl-yellow);
-    border-right: 3px solid var(--lidl-yellow);
-    bottom: 12px;
-    content: "";
-    height: 24px;
-    position: absolute;
-    right: 12px;
-    width: 24px;
-  }
-  .mc--brackets .mc-bare-icon { color: var(--lidl-dark-blue); margin-bottom: 4px; }
-  .mc--brackets .mc-bare-icon svg { height: 30px; width: 30px; }
-  .mc--brackets h2 { font-size: 15px; margin: 0; }
-  .mc--brackets p { color: var(--muted); font-size: 11px; margin: 0; max-width: 80%; }
-  .mc-link-btn {
-    background: none;
-    border: none;
-    color: var(--lidl-blue);
-    cursor: pointer;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    margin-top: 8px;
-    padding: 4px;
-    text-transform: uppercase;
-  }
-  .mc-link-btn:hover { text-decoration: underline; }
+  /* ── Busy overlay ────────────────────────────────── */
 
-  /* 4: Diagonála — šikmý tmavý vrch, ikona na řezu */
-  .mc--diagonal {
-    border: 1px solid var(--line-soft);
-    gap: 0;
-    padding: 0;
-  }
-  .mc-diag-top {
-    background: linear-gradient(120deg, var(--lidl-blue), var(--lidl-dark-blue));
-    clip-path: polygon(0 0, 100% 0, 100% 58%, 0 100%);
-    flex-shrink: 0;
-    height: 44%;
-  }
-  .mc-diag-icon {
+  .busy-overlay {
     align-items: center;
-    background: var(--lidl-yellow);
-    border: 3px solid var(--white);
-    border-radius: 12px;
+    backdrop-filter: blur(5px);
+    background: rgba(240, 244, 250, 0.55);
+    display: none;
+    inset: 0;
+    justify-content: center;
+    position: fixed;
+    z-index: 80;
+  }
+
+  .busy-overlay.is-visible {
+    display: flex;
+  }
+
+  .busy-box {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .busy-label {
     color: var(--lidl-dark-blue);
-    display: inline-flex;
-    height: 46px;
-    justify-content: center;
-    position: absolute;
-    right: 16px;
-    top: calc(44% - 30px);
-    width: 46px;
-  }
-  .mc-diag-icon svg { height: 20px; width: 20px; }
-  .mc-diag-body {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    gap: 4px;
-    padding: 4px 16px 14px;
-  }
-  .mc--diagonal h2 { font-size: 14px; margin: 0; }
-  .mc--diagonal p { color: var(--muted); font-size: 11px; margin: 0; }
-  .mc--diagonal footer { border: none; margin-top: auto; padding: 0; }
-
-  /* 5: Vstupenka — perforace a útržek */
-  .mc--ticket {
-    border: 1px solid var(--line);
-    gap: 0;
-    padding: 0;
-  }
-  .mc-ticket-top {
-    background-color: var(--lidl-dark-blue);
-    background-image: radial-gradient(circle at 88% 15%, rgba(255, 240, 0, 0.2) 0%, transparent 40%);
-    color: var(--white);
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    gap: 6px;
-    padding: 16px;
-  }
-  .mc-ticket-top .module-icon { background: rgba(255, 255, 255, 0.14); color: var(--lidl-yellow); }
-  .mc--ticket h2 { color: var(--white); font-size: 14px; margin: 0; }
-  .mc--ticket .mc-ticket-top p { color: rgba(255, 255, 255, 0.55); font-size: 11px; margin: 0; }
-  .mc-ticket-stub {
-    align-items: center;
-    border-top: 2px dashed var(--line);
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 16px;
-    position: relative;
-  }
-  .mc-ticket-stub::before,
-  .mc-ticket-stub::after {
-    background: var(--page);
-    border-radius: 50%;
-    content: "";
-    height: 14px;
-    position: absolute;
-    top: -8px;
-    width: 14px;
-  }
-  .mc-ticket-stub::before { left: -8px; }
-  .mc-ticket-stub::after { right: -8px; }
-  .mc-ticket-stub small {
-    color: var(--muted);
-    font-size: 10px;
+    font-size: 13px;
     font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
   }
-
-  /* 6: Typo — obří průsvitná ikona jako pozadí */
-  .mc--type {
-    border: 1px solid var(--line-soft);
-    border-bottom: 3px solid var(--lidl-red);
-    justify-content: flex-end;
-  }
-  .mc-type-bg {
-    color: rgba(0, 80, 170, 0.07);
-    pointer-events: none;
-    position: absolute;
-    right: -22px;
-    top: -26px;
-  }
-  .mc-type-bg svg { height: 150px; width: 150px; }
-  .mc--type h2 { font-size: 15px; margin: 0; position: relative; }
-  .mc--type p { color: var(--muted); font-size: 11px; margin: 0; position: relative; }
-  .mc--type footer { border-top-color: var(--line-soft); position: relative; }
 
   tr.is-muted td {
     color: var(--muted);
