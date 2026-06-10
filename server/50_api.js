@@ -244,6 +244,17 @@ function apiDeleteStore(id) {
   });
 }
 
+function apiToggleStoreActive(id) {
+  return guard_(ROLES.ADMIN, () => {
+    const store = dbGetById_(SHEETS.STORES, id);
+    if (!store) throw new Error('Filiálka nenalezena.');
+    const newActive = store.active !== true;
+    dbUpdate_(SHEETS.STORES, id, { active: newActive, manually_inactive: !newActive });
+    audit_('store_toggle', store.code + ' ' + store.name + ' → ' + (newActive ? 'aktivíní' : 'neaktivní (ručně)'));
+    return null;
+  });
+}
+
 /* ── Logistics ──────────────────────────────────────────────────── */
 
 function apiListLogistics() {

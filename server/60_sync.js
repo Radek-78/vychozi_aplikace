@@ -127,16 +127,22 @@ function syncStores_(ss, settings) {
       const tempClosed = tempCodes.has(existing.code);
       const patch = buildStorePatch_(xlsxRow, tempClosed, now);
 
-      const changed = storeDiffers_(existing, patch);
-      const wasInactive = existing.active !== true;
-
-      if (changed || wasInactive) {
-        newRecords.push(Object.assign({}, existing, patch));
-        if (wasInactive) stats.reactivated++;
-        else stats.updated++;
-      } else {
-        newRecords.push(existing);
+      if (existing.manually_inactive === true) {
+        // Ručně deaktivovaná filiálka — sync ji neaktivuje zpět
+        newRecords.push(Object.assign({}, existing, patch, { active: false, manually_inactive: true }));
         stats.unchanged++;
+      } else {
+        const changed = storeDiffers_(existing, patch);
+        const wasInactive = existing.active !== true;
+
+        if (changed || wasInactive) {
+          newRecords.push(Object.assign({}, existing, patch));
+          if (wasInactive) stats.reactivated++;
+          else stats.updated++;
+        } else {
+          newRecords.push(existing);
+          stats.unchanged++;
+        }
       }
       xlsxMap.delete(existing.code);
     }

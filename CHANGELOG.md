@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.32 – 11.06.2026 00:09
+- UI: section-bar layout pro všechny záložky, sort/filter na sloupcích tabulek, Lidl ikony (SVG sprite), filiálky: deaktivace tlačítkem, manually_inactive přes sync
+
 ## v2.1.31 – 10.06.2026 23:21
 - Home: všechny moduly v designu bočního pruhu s barevnými variantami
 - globální busy overlay s rozmazáním a popisem akce u všech načítání
