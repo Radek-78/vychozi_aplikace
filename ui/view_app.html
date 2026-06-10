@@ -47,12 +47,12 @@
     </header>
 
     <section class="page" data-page-section="home">
-      <div class="page-header">
+      <div class="home-hero">
         <div>
-          <p class="kicker">Přehled</p>
-          <h1 id="homeTitle"></h1>
-          <p class="lead" id="homeLead"></p>
+          <p class="home-hero-greeting" id="heroGreeting"></p>
+          <p class="home-hero-app" id="heroApp"></p>
         </div>
+        <p class="home-hero-date" id="heroDate"></p>
       </div>
 
       <div class="status-strip" id="statusGrid"></div>
@@ -292,12 +292,20 @@
       Ui.setText('#brandName', this.boot.appName);
       Ui.setText('#brandSubtitle', this.boot.appSubtitle);
       Ui.setText('#crumbApp', this.boot.appName);
-      Ui.setText('#homeTitle', this.boot.appName);
-      Ui.setText('#homeLead', this.boot.appSubtitle);
       Ui.setText('#sidebarUser', displayName);
       Ui.setText('#sidebarRole', this.roleLabel(user.role));
       Ui.setText('#sidebarAvatar', Ui.getInitials(displayName));
       Ui.setText('#version', this.boot.version);
+
+      const firstName = user.firstName || '';
+      const h = new Date().getHours();
+      const greet = h < 5 ? 'Dobrou noc' : h < 12 ? 'Dobré ráno' : h < 18 ? 'Dobrý den' : 'Dobrý večer';
+      Ui.setText('#heroGreeting', greet + (firstName ? ', ' + firstName + '!' : '!'));
+      Ui.setText('#heroApp', this.boot.appName || '');
+      const d = new Date();
+      const days = ['Neděle', 'Pondělí', 'Úterý', 'Středa', 'Čtvrtek', 'Pátek', 'Sobota'];
+      const months = ['ledna', 'února', 'března', 'dubna', 'května', 'června', 'července', 'srpna', 'září', 'října', 'listopadu', 'prosince'];
+      Ui.setText('#heroDate', days[d.getDay()] + ', ' + d.getDate() + '. ' + months[d.getMonth()] + ' ' + d.getFullYear());
     },
 
     bindEvents() {

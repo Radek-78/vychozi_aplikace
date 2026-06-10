@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.6 – 10.06.2026 14:45
+- Redesign úvodní stránky: hero uvítací banner s pozdravem a datem, oddělené status karty se stínem, zaoblené ikony, hover efekt na module kartách
+
 ## v2.1.5 – 10.06.2026 14:32
 - Wizard UX: symetrické kroky se spojovací čarou, přechody mezi kroky, konstantní výška, progress panel při inicializaci, loading na Spustit aplikaci
 

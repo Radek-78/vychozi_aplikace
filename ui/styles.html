@@ -557,31 +557,85 @@
 
   /* ── Status strip ────────────────────────────────── */
 
-  .status-strip {
-    background: var(--white);
-    border: 1px solid var(--line);
+  /* ── Home hero ───────────────────────────────────── */
+
+  .home-hero {
+    align-items: flex-end;
+    background-color: var(--lidl-dark-blue);
+    background-image:
+      radial-gradient(ellipse at 92% -15%, rgba(255, 240, 0, 0.22) 0%, transparent 42%),
+      radial-gradient(circle at 110% 110%, rgba(0, 80, 170, 0.6) 0%, transparent 50%),
+      radial-gradient(circle, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+    background-size: 100%, 100%, 24px 24px;
     border-radius: var(--radius);
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    color: var(--white);
+    display: flex;
+    justify-content: space-between;
     overflow: hidden;
+    padding: 28px 30px 22px;
+    position: relative;
+  }
+
+  .home-hero::after {
+    background: var(--lidl-yellow);
+    bottom: 0;
+    content: "";
+    height: 3px;
+    left: 0;
+    position: absolute;
+    right: 0;
+  }
+
+  .home-hero-greeting {
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.15;
+    margin: 0 0 5px;
+  }
+
+  .home-hero-app {
+    color: rgba(255, 255, 255, 0.48);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  .home-hero-date {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 13px;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  /* ── Status strip ─────────────────────────────── */
+
+  .status-strip {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .status-card {
     align-items: center;
-    border-right: 1px solid var(--line-soft);
-    box-shadow: none;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: 0 1px 4px rgba(0, 36, 102, 0.04);
     display: flex;
     gap: 14px;
     padding: 16px 18px;
+    transition: box-shadow 0.15s ease;
   }
 
-  .status-card:last-child {
-    border-right: none;
+  .status-card:hover {
+    box-shadow: 0 3px 12px rgba(0, 36, 102, 0.1);
   }
 
   .status-icon {
     align-items: center;
-    border-radius: 50%;
+    border-radius: 8px;
     display: inline-flex;
     flex-shrink: 0;
     height: 40px;
@@ -667,32 +721,39 @@
   .module-card {
     background: var(--white);
     border: 1px solid var(--line-soft);
-    border-left: 4px solid var(--lidl-blue);
     border-radius: var(--radius);
+    border-top: 3px solid var(--lidl-blue);
     display: flex;
     flex-direction: column;
     gap: 10px;
     min-height: 160px;
-    padding: 16px;
+    padding: 18px;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .module-card:hover {
+    box-shadow: 0 6px 20px rgba(0, 36, 102, 0.1);
+    transform: translateY(-2px);
   }
 
   .module-card[data-accent="yellow"] {
-    border-left-color: #d4b800;
+    border-top-color: #d4b800;
   }
 
   .module-card[data-accent="red"] {
-    border-left-color: var(--lidl-red);
+    border-top-color: var(--lidl-red);
   }
 
   .module-icon {
     align-items: center;
     background: var(--lidl-blue);
+    border-radius: 8px;
     color: var(--white);
     display: inline-flex;
+    flex-shrink: 0;
     height: 38px;
     justify-content: center;
     width: 38px;
-    flex-shrink: 0;
   }
 
   .module-icon svg {
@@ -1404,15 +1465,6 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .status-card:nth-child(2) {
-      border-right: none;
-    }
-
-    .status-card:nth-child(1),
-    .status-card:nth-child(2) {
-      border-bottom: 1px solid var(--line-soft);
-    }
-
     .content-grid {
       grid-template-columns: 1fr;
     }
@@ -1887,15 +1939,6 @@
   @media (max-width: 560px) {
     .status-strip {
       grid-template-columns: 1fr;
-    }
-
-    .status-card {
-      border-right: none;
-      border-bottom: 1px solid var(--line-soft);
-    }
-
-    .status-card:last-child {
-      border-bottom: none;
     }
 
     .module-grid,
