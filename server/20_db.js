@@ -21,7 +21,7 @@ const DB_SCHEMA = {
   ],
   'logistics': [
     'id', 'code', 'name', 'abbreviation',
-    'active', 'synced_at', 'created_at', 'created_by', 'updated_at',
+    'active', 'created_at', 'created_by', 'updated_at',
   ],
 };
 

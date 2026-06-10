@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.14 – 10.06.2026 17:19
+- DB schema logistics: odstraněn sloupec synced_at (LC se nesynchronizují)
+
 ## v2.1.13 – 10.06.2026 17:17
 - Sync: oprava formátu časových buněk z xlsx (Date→H:mm string)
 
