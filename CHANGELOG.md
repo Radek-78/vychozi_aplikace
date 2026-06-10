@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.18 – 10.06.2026 20:56
+- Wizard: validace povinných polí bez zvětšení okna, červené ohraničení při chybě
+
 ## v2.1.17 – 10.06.2026 20:52
 - Wizard krok 2: ikony u polí, oprava podtitulu (placeholder), lepší validace povinných polí, hint sync složky
 
