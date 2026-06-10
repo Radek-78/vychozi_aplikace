@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.22 – 10.06.2026 21:22
+- Wizard: tlačítko Pokračovat v kroku 1 aktivní až po načtení emailu superadmina
+
 ## v2.1.21 – 10.06.2026 21:15
 - Wizard: status přístupu ve štítku pole, první sync po init
 - Home: varování o chybějící konfiguraci

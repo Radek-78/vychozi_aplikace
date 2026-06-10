@@ -118,6 +118,7 @@
     step: 1,
     appUrl: null,
     folderAccessOk: false,
+    emailLoaded: false,
     info: (window.APP_BOOTSTRAP && window.APP_BOOTSTRAP.setup) || {},
     _progressTimer: null,
 
@@ -152,6 +153,7 @@
         warning.textContent = 'Nepodařilo se zjistit váš e-mail. Otevřete aplikaci přihlášení pod účtem vlastníka skriptu.';
         warning.classList.remove('is-hidden');
       } else {
+        this.emailLoaded = true;
         document.querySelector('#wizNext').disabled = false;
       }
     },
@@ -207,7 +209,7 @@
       const back = document.querySelector('#wizBack');
       const next = document.querySelector('#wizNext');
       back.classList.toggle('is-hidden', this.step === 1 || this.step === 4);
-      next.disabled = this.step === 1 && !this.info.email;
+      next.disabled = this.step === 1 && !this.emailLoaded;
       Ui.setButtonLoading(next, false);
       next.textContent = this.step === 3 ? 'Inicializovat aplikaci' : (this.step === 4 ? 'Spustit aplikaci' : 'Pokračovat');
     },
