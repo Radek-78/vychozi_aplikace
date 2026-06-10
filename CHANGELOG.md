@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.0.7 – 10.06.2026 13:35
+- Oprava auth: access DOMAIN (fix doGet, reload po wizardu, načtení uživatele)
+- jemnější rastr pozadí
+
+## v2.0.6 – 10.06.2026 13:33
+- Oprava auth: access ANYONE_WITH_GOOGLE_LINK (fix doGet, reload po wizardu, načtení uživatele)
+- jemnější rastr pozadí
+
 ## v2.0.5 – 10.06.2026 13:23
 - Složka skriptu načítána přes google.script.run (stejný fix jako email)
 
