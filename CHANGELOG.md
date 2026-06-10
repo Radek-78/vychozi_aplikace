@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.25 – 10.06.2026 21:37
+- Wizard: Dokončuji vždy poslední krok, sync krok jen při potvrzeném přístupu ke složce
+
 ## v2.1.24 – 10.06.2026 21:32
 - Wizard: krok načítání filiálek v progress panelu (zobrazí se jen při potvrzeném přístupu ke složce)
 

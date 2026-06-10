@@ -90,13 +90,13 @@
             <span class="wiz-step-icon"></span>
             <span>Zapisuji nastavení…</span>
           </div>
-          <div class="wiz-step" data-wiz-step="done">
-            <span class="wiz-step-icon"></span>
-            <span>Dokončuji…</span>
-          </div>
           <div class="wiz-step is-hidden" data-wiz-step="sync">
             <span class="wiz-step-icon"></span>
             <span>Načítám data filiálek…</span>
+          </div>
+          <div class="wiz-step" data-wiz-step="done">
+            <span class="wiz-step-icon"></span>
+            <span>Dokončuji…</span>
           </div>
         </div>
       </section>
@@ -234,17 +234,20 @@
       this.showProgressPanel();
 
       const syncStep = document.querySelector('[data-wiz-step="sync"]');
+      const doneStep = document.querySelector('[data-wiz-step="done"]');
       if (this.folderAccessOk) syncStep.classList.remove('is-hidden');
-      const steps = Array.from(document.querySelectorAll('.wiz-step:not(.is-hidden)'));
-      const initSteps = steps.filter((s) => s.dataset.wizStep !== 'sync');
-      initSteps[0].classList.add('is-active');
+      // Kroky animované timerem: vše kromě sync a done
+      const timerSteps = Array.from(document.querySelectorAll('.wiz-step:not(.is-hidden)')).filter(
+        (s) => s.dataset.wizStep !== 'sync' && s.dataset.wizStep !== 'done'
+      );
+      timerSteps[0].classList.add('is-active');
       let stepIdx = 0;
       this._progressTimer = setInterval(() => {
-        if (stepIdx < initSteps.length - 1) {
-          initSteps[stepIdx].classList.remove('is-active');
-          initSteps[stepIdx].classList.add('is-done');
+        if (stepIdx < timerSteps.length - 1) {
+          timerSteps[stepIdx].classList.remove('is-active');
+          timerSteps[stepIdx].classList.add('is-done');
           stepIdx++;
-          initSteps[stepIdx].classList.add('is-active');
+          timerSteps[stepIdx].classList.add('is-active');
         }
       }, 1800);
 
@@ -257,16 +260,21 @@
       }, { silent: true })
         .then((result) => {
           clearInterval(this._progressTimer);
-          initSteps.forEach((el) => { el.classList.remove('is-active'); el.classList.add('is-done'); });
+          timerSteps.forEach((el) => { el.classList.remove('is-active'); el.classList.add('is-done'); });
           this.appUrl = result.appUrl;
           document.querySelector('#wizDbLink').href = result.spreadsheetUrl;
-          const finish = () => { Ui.setButtonLoading(next, false); this.goTo(4); };
+          const finish = () => {
+            doneStep.classList.remove('is-active');
+            doneStep.classList.add('is-done');
+            setTimeout(() => { Ui.setButtonLoading(next, false); this.goTo(4); }, 400);
+          };
           if (this.folderAccessOk) {
             syncStep.classList.add('is-active');
             Ui.call('apiRunSync', null, { silent: true })
-              .then(() => { syncStep.classList.remove('is-active'); syncStep.classList.add('is-done'); setTimeout(finish, 400); })
-              .catch(() => setTimeout(finish, 400));
+              .then(() => { syncStep.classList.remove('is-active'); syncStep.classList.add('is-done'); doneStep.classList.add('is-active'); setTimeout(finish, 600); })
+              .catch(() => { syncStep.classList.remove('is-active'); doneStep.classList.add('is-active'); setTimeout(finish, 600); });
           } else {
+            doneStep.classList.add('is-active');
             setTimeout(finish, 700);
           }
         })
