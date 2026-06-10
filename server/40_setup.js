@@ -35,15 +35,13 @@ function wizardInfo_() {
   };
 }
 
-/** Debug: vrátí info o session pro diagnostiku z klienta. */
-function wizardDebugSession() {
+/** Vrátí email vlastníka skriptu — volá se z klienta přes google.script.run. */
+function wizardGetOwnerEmail() {
   try {
-    const active = Session.getActiveUser().getEmail();
-    const effective = Session.getEffectiveUser().getEmail();
-    console.log('wizardDebugSession active=' + active + ' effective=' + effective);
-    return ok_({ active: active, effective: effective });
+    const email = Session.getEffectiveUser().getEmail() || Session.getActiveUser().getEmail() || '';
+    return ok_({ email: email, isOwner: true });
   } catch (e) {
-    console.error('wizardDebugSession chyba: ' + e);
+    console.error('wizardGetOwnerEmail chyba: ' + e);
     return fail_(String(e));
   }
 }

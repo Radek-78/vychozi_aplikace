@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.0.4 – 10.06.2026 13:19
+- Email ve wizardu načítán přes google.script.run místo doGet bootstrapu
+
 ## v2.0.3 – 10.06.2026 13:17
 - Debug panel pro diagnostiku emailu ve wizardu
 

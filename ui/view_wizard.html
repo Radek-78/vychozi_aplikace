@@ -32,7 +32,6 @@
           </div>
         </div>
         <div class="gate-warning is-hidden" id="wizWarning"></div>
-        <div class="gate-note is-hidden" id="wizDebug" style="font-family:monospace;font-size:11px;background:#f0f4fa;border-radius:4px;padding:8px 10px;line-height:1.7"></div>
       </section>
 
       <section class="wizard-panel" data-panel="2">
@@ -85,25 +84,32 @@
       const boot = window.APP_BOOTSTRAP || {};
       document.querySelector('#wizLogo').src = boot.logoUrl || '';
       Ui.setText('#wizTitle', this.info.defaultAppName || boot.appName);
-      Ui.setText('#wizEmail', this.info.email || 'E-mail se nepodařilo zjistit');
+      Ui.setText('#wizEmail', 'Načítám…');
       Ui.setText('#wizFolder', this.info.folderName || 'Kořen „Můj disk"');
       document.querySelector('#wizAppSubtitle').value = this.info.defaultAppSubtitle || '';
-
-      const warning = document.querySelector('#wizWarning');
-      if (!this.info.email) {
-        warning.textContent = 'Nepodařilo se zjistit váš e-mail. Otevřete aplikaci přihlášení pod účtem vlastníka skriptu.';
-        warning.classList.remove('is-hidden');
-        document.querySelector('#wizNext').disabled = true;
-      } else if (!this.info.isOwner) {
-        warning.textContent = 'Inicializaci může dokončit pouze vlastník skriptu (' + 'účet, pod kterým je aplikace nasazena).';
-        warning.classList.remove('is-hidden');
-        document.querySelector('#wizNext').disabled = true;
-      }
+      document.querySelector('#wizNext').disabled = true;
 
       document.querySelector('#wizBack').addEventListener('click', () => this.goTo(this.step - 1));
       document.querySelector('#wizNext').addEventListener('click', () => this.next());
       this.goTo(1);
-      this.runDebug();
+
+      google.script.run
+        .withSuccessHandler((res) => this.onEmailLoaded(res.data.email))
+        .withFailureHandler(() => this.onEmailLoaded(''))
+        .wizardGetOwnerEmail();
+    },
+
+    onEmailLoaded(email) {
+      this.info.email = email;
+      Ui.setText('#wizEmail', email || 'E-mail se nepodařilo zjistit');
+      Ui.setText('#sumEmail', email);
+      const warning = document.querySelector('#wizWarning');
+      if (!email) {
+        warning.textContent = 'Nepodařilo se zjistit váš e-mail. Otevřete aplikaci přihlášení pod účtem vlastníka skriptu.';
+        warning.classList.remove('is-hidden');
+      } else {
+        document.querySelector('#wizNext').disabled = false;
+      }
     },
 
     next() {
