@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.0.5 – 10.06.2026 13:23
+- Složka skriptu načítána přes google.script.run (stejný fix jako email)
+
 ## v2.0.4 – 10.06.2026 13:19
 - Email ve wizardu načítán přes google.script.run místo doGet bootstrapu
 

@@ -35,11 +35,12 @@ function wizardInfo_() {
   };
 }
 
-/** Vrátí email vlastníka skriptu — volá se z klienta přes google.script.run. */
+/** Vrátí email a složku pro wizard — volá se z klienta přes google.script.run. */
 function wizardGetOwnerEmail() {
   try {
     const email = Session.getEffectiveUser().getEmail() || Session.getActiveUser().getEmail() || '';
-    return ok_({ email: email, isOwner: true });
+    const folder = scriptFolder_();
+    return ok_({ email: email, folderName: folder ? folder.getName() : null });
   } catch (e) {
     console.error('wizardGetOwnerEmail chyba: ' + e);
     return fail_(String(e));

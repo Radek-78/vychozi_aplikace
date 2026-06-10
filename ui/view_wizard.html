@@ -94,15 +94,18 @@
       this.goTo(1);
 
       google.script.run
-        .withSuccessHandler((res) => this.onEmailLoaded(res.data.email))
-        .withFailureHandler(() => this.onEmailLoaded(''))
+        .withSuccessHandler((res) => this.onEmailLoaded(res.data.email, res.data.folderName))
+        .withFailureHandler(() => this.onEmailLoaded('', null))
         .wizardGetOwnerEmail();
     },
 
-    onEmailLoaded(email) {
+    onEmailLoaded(email, folderName) {
       this.info.email = email;
+      this.info.folderName = folderName;
       Ui.setText('#wizEmail', email || 'E-mail se nepodařilo zjistit');
+      Ui.setText('#wizFolder', folderName || 'Kořen „Můj disk"');
       Ui.setText('#sumEmail', email);
+      Ui.setText('#sumFolder', folderName || 'Kořen „Můj disk"');
       const warning = document.querySelector('#wizWarning');
       if (!email) {
         warning.textContent = 'Nepodařilo se zjistit váš e-mail. Otevřete aplikaci přihlášení pod účtem vlastníka skriptu.';
