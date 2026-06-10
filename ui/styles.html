@@ -1530,14 +1530,25 @@
     padding: 20px 22px;
   }
 
+  .gate-body.wizard-body {
+    padding: 0;
+  }
+
   .gate-actions {
     align-items: center;
     background: #f5f8fc;
     border-top: 1px solid var(--line-soft);
     display: flex;
     gap: 10px;
-    justify-content: space-between;
     padding: 14px 22px;
+  }
+
+  .gate-actions #wizNext {
+    margin-left: auto;
+  }
+
+  .gate-actions .is-hidden {
+    visibility: hidden;
   }
 
   .gate-note {
@@ -1590,12 +1601,30 @@
 
   /* ── Wizard ──────────────────────────────────────── */
 
+  @keyframes wizSlideForward {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes wizSlideBack {
+    from { opacity: 0; transform: translateX(-20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
   .wizard-steps {
     border-bottom: 1px solid var(--line-soft);
     display: flex;
-    gap: 6px;
+    gap: 0;
+    list-style: none;
     margin: 0;
     padding: 14px 22px;
+    transition: opacity 0.2s ease;
+  }
+
+  .gate-card[data-state="progress"] .wizard-steps,
+  .gate-card[data-state="success"] .wizard-steps {
+    opacity: 0;
+    pointer-events: none;
   }
 
   .wizard-steps li {
@@ -1603,10 +1632,30 @@
     color: var(--muted);
     display: flex;
     flex: 1;
-    font-size: 11px;
+    flex-direction: column;
+    font-size: 10px;
     font-weight: 700;
-    gap: 8px;
+    gap: 5px;
+    letter-spacing: 0.04em;
     list-style: none;
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .wizard-steps li + li::before {
+    background: var(--line-soft);
+    content: "";
+    height: 1px;
+    left: calc(-50% + 13px);
+    position: absolute;
+    right: calc(50% + 13px);
+    top: 12px;
+    transition: background 0.3s ease;
+  }
+
+  .wizard-steps li.is-done + li::before {
+    background: var(--lidl-blue);
   }
 
   .wizard-steps i {
@@ -1618,9 +1667,12 @@
     flex-shrink: 0;
     font-size: 11px;
     font-style: normal;
-    height: 22px;
+    height: 24px;
     justify-content: center;
-    width: 22px;
+    position: relative;
+    transition: background 0.2s ease, color 0.2s ease;
+    width: 24px;
+    z-index: 1;
   }
 
   .wizard-steps li.is-active {
@@ -1637,6 +1689,11 @@
     color: var(--white);
   }
 
+  .wizard-body {
+    min-height: 260px;
+    overflow: hidden;
+  }
+
   .wizard-panel {
     display: none;
   }
@@ -1644,6 +1701,92 @@
   .wizard-panel.is-active {
     display: grid;
     gap: 14px;
+    padding: 20px 22px;
+  }
+
+  .wizard-body[data-dir="forward"] .wizard-panel.is-active {
+    animation: wizSlideForward 0.25s ease;
+  }
+
+  .wizard-body[data-dir="back"] .wizard-panel.is-active {
+    animation: wizSlideBack 0.25s ease;
+  }
+
+  /* ── Wizard progress ────────────────────── */
+
+  .wizard-progress {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    padding: 8px 0 4px;
+  }
+
+  .wizard-progress-title {
+    color: var(--muted);
+    font-size: 12px;
+    margin: 0 0 6px;
+  }
+
+  .wiz-step {
+    align-items: center;
+    border-radius: var(--radius);
+    color: var(--muted);
+    display: flex;
+    font-size: 13px;
+    gap: 12px;
+    padding: 6px 0;
+    transition: color 0.2s ease;
+    width: 100%;
+  }
+
+  .wiz-step.is-active { color: var(--text); }
+  .wiz-step.is-done { color: var(--text); }
+
+  .wiz-step-icon {
+    align-items: center;
+    border-radius: 50%;
+    display: inline-flex;
+    flex-shrink: 0;
+    height: 22px;
+    justify-content: center;
+    width: 22px;
+  }
+
+  .wiz-step .wiz-step-icon::after {
+    border: 2px solid var(--line-soft);
+    border-radius: 50%;
+    content: "";
+    display: block;
+    height: 14px;
+    transition: border-color 0.2s ease;
+    width: 14px;
+  }
+
+  .wiz-step.is-active .wiz-step-icon::after {
+    border-color: var(--lidl-blue);
+    border-top-color: transparent;
+    animation: spin 0.7s linear infinite;
+  }
+
+  .wiz-step.is-done .wiz-step-icon {
+    background: var(--lidl-blue);
+    color: var(--white);
+  }
+
+  .wiz-step.is-done .wiz-step-icon::after {
+    border: none;
+    content: "✓";
+    color: var(--white);
+    font-size: 11px;
+    font-weight: 700;
+    height: auto;
+    width: auto;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
   }
 
   .summary-list {

@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.5 – 10.06.2026 14:32
+- Wizard UX: symetrické kroky se spojovací čarou, přechody mezi kroky, konstantní výška, progress panel při inicializaci, loading na Spustit aplikaci
+
 ## v2.1.4 – 10.06.2026 14:17
 - Oprava načítání brandu (APP_BOOTSTRAP před view includes)
 - rastr na loader obrazovce

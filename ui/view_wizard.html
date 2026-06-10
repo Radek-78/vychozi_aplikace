@@ -14,7 +14,7 @@
       <li data-step="3"><i>3</i><span>Souhrn</span></li>
     </ol>
 
-    <div class="gate-body">
+    <div class="gate-body wizard-body" id="wizBody">
       <section class="wizard-panel is-active" data-panel="1">
         <p class="gate-note">Vítejte! Průvodce provede prvním spuštěním: založí databázi (spreadsheet) a vytvoří účet superadministrátora.</p>
         <div class="info-row">
@@ -65,9 +65,31 @@
         <p class="gate-note">Po potvrzení se vytvoří spreadsheet s databází, zapíše se superadmin a aplikace bude připravena k použití.</p>
       </section>
 
+      <section class="wizard-panel" data-panel="progress">
+        <div class="wizard-progress">
+          <p class="wizard-progress-title">Inicializuji aplikaci, prosím čekejte…</p>
+          <div class="wiz-step" data-wiz-step="db">
+            <span class="wiz-step-icon"></span>
+            <span>Vytvářím databázi…</span>
+          </div>
+          <div class="wiz-step" data-wiz-step="user">
+            <span class="wiz-step-icon"></span>
+            <span>Registruji superadmina…</span>
+          </div>
+          <div class="wiz-step" data-wiz-step="settings">
+            <span class="wiz-step-icon"></span>
+            <span>Zapisuji nastavení…</span>
+          </div>
+          <div class="wiz-step" data-wiz-step="done">
+            <span class="wiz-step-icon"></span>
+            <span>Dokončuji…</span>
+          </div>
+        </div>
+      </section>
+
       <section class="wizard-panel" data-panel="4">
         <div class="wizard-success">
-          <span class="success-icon"><svg><use href="#i-check"></use></svg></span>
+          <span class="success-icon"><svg width="24" height="24" viewBox="0 0 24 24"><use href="#i-check"></use></svg></span>
           <h2>Aplikace je připravena</h2>
           <p class="gate-note">Databáze byla vytvořena — <a id="wizDbLink" href="#" target="_blank" rel="noopener">otevřít spreadsheet</a>.</p>
         </div>
@@ -86,6 +108,7 @@
     step: 1,
     appUrl: null,
     info: (window.APP_BOOTSTRAP && window.APP_BOOTSTRAP.setup) || {},
+    _progressTimer: null,
 
     init() {
       const boot = window.APP_BOOTSTRAP || {};
@@ -124,7 +147,10 @@
 
     next() {
       if (this.step === 4) {
-        window.location.href = this.appUrl || window.location.href;
+        const next = document.querySelector('#wizNext');
+        next.textContent = 'Přesměrovávám…';
+        Ui.setButtonLoading(next, true);
+        setTimeout(() => { window.location.href = this.appUrl || window.location.href; }, 300);
         return;
       }
       if (this.step === 2) {
@@ -146,8 +172,13 @@
       this.goTo(this.step + 1);
     },
 
-    goTo(step) {
+    goTo(step, dir) {
+      const prev = this.step;
       this.step = Math.min(Math.max(step, 1), 4);
+      const direction = dir || (step >= prev ? 'forward' : 'back');
+
+      const body = document.querySelector('#wizBody');
+      body.dataset.dir = direction;
 
       document.querySelectorAll('.wizard-panel').forEach((panel) => {
         panel.classList.toggle('is-active', Number(panel.dataset.panel) === this.step);
@@ -158,11 +189,66 @@
         item.classList.toggle('is-done', index < this.step);
       });
 
+      const card = document.querySelector('.gate-card');
+      card.dataset.state = this.step === 4 ? 'success' : '';
+
       const back = document.querySelector('#wizBack');
       const next = document.querySelector('#wizNext');
       back.classList.toggle('is-hidden', this.step === 1 || this.step === 4);
-      next.textContent = this.step === 3 ? 'Inicializovat aplikaci' : 'Pokračovat';
-      if (this.step === 4) next.textContent = 'Spustit aplikaci';
+      next.disabled = this.step === 1 && !this.info.email;
+      Ui.setButtonLoading(next, false);
+      next.textContent = this.step === 3 ? 'Inicializovat aplikaci' : (this.step === 4 ? 'Spustit aplikaci' : 'Pokračovat');
+    },
+
+    showProgressPanel() {
+      const body = document.querySelector('#wizBody');
+      body.dataset.dir = 'forward';
+      document.querySelectorAll('.wizard-panel').forEach((panel) => {
+        panel.classList.toggle('is-active', panel.dataset.panel === 'progress');
+      });
+      document.querySelector('.gate-card').dataset.state = 'progress';
+      document.querySelector('#wizBack').classList.add('is-hidden');
+    },
+
+    initialize() {
+      const next = document.querySelector('#wizNext');
+      Ui.setButtonLoading(next, true);
+      this.showProgressPanel();
+
+      const steps = Array.from(document.querySelectorAll('.wiz-step'));
+      steps[0].classList.add('is-active');
+      let stepIdx = 0;
+      this._progressTimer = setInterval(() => {
+        if (stepIdx < steps.length - 1) {
+          steps[stepIdx].classList.remove('is-active');
+          steps[stepIdx].classList.add('is-done');
+          stepIdx++;
+          steps[stepIdx].classList.add('is-active');
+        }
+      }, 1800);
+
+      Ui.call('setupInitialize', {
+        appName: document.querySelector('#wizAppName').value.trim(),
+        appSubtitle: document.querySelector('#wizAppSubtitle').value.trim(),
+        firstName: document.querySelector('#wizFirstName').value.trim(),
+        lastName: document.querySelector('#wizLastName').value.trim(),
+      }, { silent: true })
+        .then((result) => {
+          clearInterval(this._progressTimer);
+          steps.forEach((el) => { el.classList.remove('is-active'); el.classList.add('is-done'); });
+          this.appUrl = result.appUrl;
+          document.querySelector('#wizDbLink').href = result.spreadsheetUrl;
+          setTimeout(() => {
+            Ui.setButtonLoading(next, false);
+            this.goTo(4);
+          }, 700);
+        })
+        .catch((error) => {
+          clearInterval(this._progressTimer);
+          steps.forEach((el) => { el.classList.remove('is-active'); el.classList.remove('is-done'); });
+          this.goTo(3, 'back');
+          Ui.toast(error.message, 'error');
+        });
     },
 
     runDebug() {
@@ -177,27 +263,6 @@
           dbg.textContent = 'Bootstrap: "' + (this.info.email || '') + '" | chyba serveru: ' + err.message;
         })
         .wizardDebugSession();
-    },
-
-    initialize() {
-      const next = document.querySelector('#wizNext');
-      Ui.setButtonLoading(next, true);
-      Ui.call('setupInitialize', {
-        appName: document.querySelector('#wizAppName').value.trim(),
-        appSubtitle: document.querySelector('#wizAppSubtitle').value.trim(),
-        firstName: document.querySelector('#wizFirstName').value.trim(),
-        lastName: document.querySelector('#wizLastName').value.trim(),
-      }, { silent: true })
-        .then((result) => {
-          this.appUrl = result.appUrl;
-          Ui.setButtonLoading(next, false);
-          document.querySelector('#wizDbLink').href = result.spreadsheetUrl;
-          this.goTo(4);
-        })
-        .catch((error) => {
-          Ui.setButtonLoading(next, false);
-          Ui.toast(error.message, 'error');
-        });
     },
   };
 </script>
