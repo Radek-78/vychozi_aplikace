@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.16 – 10.06.2026 17:29
+- DB: dbDeserialize_ převádí Date objekty na string při čtení (oprava časových hodnot)
+
 ## v2.1.15 – 10.06.2026 17:22
 - Debug: tlačítko a funkce apiDebugStores pro diagnostiku načítání filiálek
 

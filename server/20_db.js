@@ -79,9 +79,21 @@ function dbGetAll_(table) {
   const values = sheet.getRange(2, 1, lastRow - 1, headers.length).getValues();
   return values.map((row) => {
     const record = {};
-    headers.forEach((header, i) => { record[header] = row[i]; });
+    headers.forEach((header, i) => { record[header] = dbDeserialize_(row[i]); });
     return record;
   });
+}
+
+function dbDeserialize_(val) {
+  if (val instanceof Date) {
+    if (val.getFullYear() === 1899 && val.getMonth() === 11 && val.getDate() === 30) {
+      const h = val.getHours();
+      const m = val.getMinutes();
+      return h + ':' + (m < 10 ? '0' + m : m);
+    }
+    return val.toISOString();
+  }
+  return val;
 }
 
 function dbGetById_(table, id) {
