@@ -67,7 +67,6 @@ function apiRunSync() {
       result = {
         fileName: xlsxFile.getName(),
         stores: syncStores_(ss, settings),
-        logistics: syncLogistics_(ss, settings),
       };
     } finally {
       if (tempSheetId) {
@@ -79,8 +78,7 @@ function apiRunSync() {
     settingsSet_('lastSyncResult', JSON.stringify(result));
     audit_('sync_run',
       'Soubor: ' + result.fileName +
-      ' | Filiálky: +' + result.stores.added + ' u' + result.stores.updated + ' d' + result.stores.deactivated +
-      ' | LC: +' + result.logistics.added + ' u' + result.logistics.updated + ' d' + result.logistics.deactivated
+      ' | Filiálky: +' + result.stores.added + ' u' + result.stores.updated + ' d' + result.stores.deactivated
     );
     return result;
   });

@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.11 – 10.06.2026 17:05
+- Sync: odstraněna synchronizace LC z xlsx (LC se zakládají ručně)
+
 ## v2.1.10 – 10.06.2026 17:01
 - Sync: dočasný Sheet se vytvoří ve složce skriptu, ne v kořeni Disku
 
