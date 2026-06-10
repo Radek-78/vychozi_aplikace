@@ -290,7 +290,7 @@
       const url = document.querySelector('#wizSyncFolderUrl').value.trim();
       const status = document.querySelector('#wizFolderStatus');
       const hint = document.querySelector('#wizFolderHint');
-      if (!url) { status.textContent = ''; status.className = 'folder-status'; return; }
+      if (!url) { status.textContent = ''; status.className = 'folder-status'; this.folderAccessOk = false; return; }
       status.textContent = 'Ověřuji přístup…';
       status.className = 'folder-status is-checking';
       google.script.run

@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.1.26 – 10.06.2026 21:44
+- Wizard: sync krok skrytý při prázdné URL
+- odstraněn výchozí podtitul 'Webová aplikace'
+
 ## v2.1.25 – 10.06.2026 21:37
 - Wizard: Dokončuji vždy poslední krok, sync krok jen při potvrzeném přístupu ke složce
 
