@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.28 – 10.06.2026 22:39
+- Home: footer fix, hero top-left + status, vokativ, 6 module designů, activity scroll nav, tooltip overflow fix, hover lift odstraněn
+
 ## v2.1.27 – 10.06.2026 22:11
 - Home: redesign — odstraněn topbar, hero s varováním (bell/badge/tooltip), modul grid 6 sloupců, activity list, changelog modal
 - Sidebar: email uživatele

@@ -40,7 +40,7 @@
       <div class="home-hero">
         <div>
           <p class="home-hero-greeting" id="heroGreeting"></p>
-          <p class="home-hero-app" id="heroApp"></p>
+          <p class="hero-status" id="heroStatus"></p>
         </div>
         <div class="hero-right">
           <div class="hero-meta">
@@ -48,9 +48,6 @@
             <p class="hero-sync-time" id="heroSyncTime"></p>
           </div>
           <div class="hero-actions">
-            <button class="hero-icon-btn" type="button" data-action="reload" aria-label="Obnovit data" title="Obnovit data">
-              <svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-refresh"></use></svg>
-            </button>
             <div class="warnings-bell admin-only" id="warningsBell" style="display:none">
               <button class="hero-icon-btn" type="button" id="warningsBellBtn" aria-label="Upozornění">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
@@ -58,33 +55,86 @@
               </button>
               <div class="warnings-tooltip" id="warningsTooltip"></div>
             </div>
+            <button class="hero-icon-btn" type="button" data-action="reload" aria-label="Obnovit data" title="Obnovit data">
+              <svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-refresh"></use></svg>
+            </button>
           </div>
         </div>
       </div>
 
       <div class="module-grid" id="moduleGrid">
+
+        <!-- 1: Plochá karta -->
         <article class="module-card" data-accent="blue">
-          <span class="module-icon"><svg><use href="#i-plus"></use></svg></span>
+          <span class="module-icon"><svg><use href="#i-store"></use></svg></span>
           <div>
-            <h2>První modul</h2>
-            <p>Sem přijde první modul konkrétního projektu — kartu nahraďte vlastní funkcí.</p>
+            <h2>Filiálky</h2>
+            <p>Správa a přehled sítě prodejen v systému.</p>
           </div>
           <footer>
-            <span class="pill">Šablona</span>
-            <button class="button button-secondary button-small" type="button">Otevřít</button>
+            <span class="pill">Síť</span>
+            <button class="button button-secondary button-small" type="button" data-go-section="stores">Otevřít</button>
           </footer>
         </article>
-        <article class="module-card" data-accent="yellow">
-          <span class="module-icon"><svg><use href="#i-folder"></use></svg></span>
+
+        <!-- 2: Gradient -->
+        <article class="module-card mc--gradient">
+          <span class="module-icon"><svg><use href="#i-sync"></use></svg></span>
           <div>
-            <h2>Druhý modul</h2>
-            <p>Vzor druhé karty s akcentem. Nepoužité karty odstraňte.</p>
+            <h2>Synchronizace</h2>
+            <p>Import dat z externího xlsx souboru.</p>
           </div>
           <footer>
-            <span class="pill">Šablona</span>
-            <button class="button button-secondary button-small" type="button">Otevřít</button>
+            <button class="button button-ghost button-small" type="button" data-go-section="sync">Spustit</button>
           </footer>
         </article>
+
+        <!-- 3: Stat -->
+        <article class="module-card mc--stat">
+          <div class="mc-stat-top">
+            <span class="mc-stat-label">Uživatelé</span>
+            <span class="module-icon mc-icon-sm"><svg><use href="#i-users"></use></svg></span>
+          </div>
+          <div class="mc-stat-value">—</div>
+          <p>Aktivní účty s přístupem.</p>
+        </article>
+
+        <!-- 4: Horizontální -->
+        <article class="module-card mc--horizontal">
+          <span class="module-icon" style="background:var(--lidl-yellow);color:var(--lidl-dark-blue);flex-shrink:0"><svg><use href="#i-truck"></use></svg></span>
+          <div class="mc-content">
+            <h2>Log. centra</h2>
+            <p>Správa logistických center LC.</p>
+            <footer>
+              <button class="button button-secondary button-small" type="button" data-go-section="logistics">Správa</button>
+            </footer>
+          </div>
+        </article>
+
+        <!-- 5: Levý pruh -->
+        <article class="module-card mc--left-accent">
+          <span class="mc-icon-bare"><svg width="22" height="22" viewBox="0 0 24 24"><use href="#i-settings"></use></svg></span>
+          <div>
+            <h2>Nastavení</h2>
+            <p>Konfigurace aplikace a brandingu.</p>
+          </div>
+          <footer>
+            <button class="button button-secondary button-small" type="button" data-go-section="settings">Otevřít</button>
+          </footer>
+        </article>
+
+        <!-- 6: Tmavá -->
+        <article class="module-card mc--dark">
+          <span class="module-icon" style="background:rgba(255,240,0,0.13);color:var(--lidl-yellow)"><svg><use href="#i-list"></use></svg></span>
+          <div>
+            <h2>Audit</h2>
+            <p>Přehled systémových událostí.</p>
+          </div>
+          <footer>
+            <button class="mc-dark-btn" type="button" data-go-section="audit">Zobrazit</button>
+          </footer>
+        </article>
+
       </div>
 
       <section class="panel admin-only">
@@ -93,8 +143,18 @@
             <p class="kicker">Aktivita</p>
             <h2>Poslední události</h2>
           </div>
+          <div class="activity-nav">
+            <button class="act-nav-btn" id="activityUp" type="button" aria-label="Novější" disabled>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+            </button>
+            <button class="act-nav-btn" id="activityDown" type="button" aria-label="Starší">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+          </div>
         </div>
-        <div class="activity-list" id="activityRows"></div>
+        <div class="activity-viewport" id="activityViewport">
+          <div class="activity-track" id="activityTrack"></div>
+        </div>
       </section>
     </section>
 
@@ -433,6 +493,54 @@
     users: [],
     stores: [],
     logistics: [],
+    _activityOffset: 0,
+    _activityRows: [],
+
+    toVocative(name) {
+      if (!name) return '';
+      const map = {
+        'Adam':'Adame','Aleš':'Aleši','Alexandr':'Alexandře',
+        'Bohumil':'Bohumile','David':'Davide','Daniel':'Danieli',
+        'Filip':'Filipe','František':'Františku',
+        'Jakub':'Jakube','Jan':'Jane','Jaroslav':'Jaroslav',
+        'Jiří':'Jiří','Josef':'Josefe','Karel':'Karle',
+        'Ladislav':'Ladislave','Lukáš':'Lukáši','Marek':'Marku',
+        'Martin':'Martine','Michal':'Michale','Milan':'Milane',
+        'Miloš':'Miloši','Miroslav':'Miroslave','Ondřej':'Ondřeji',
+        'Pavel':'Pavle','Petr':'Petře','Radek':'Radku',
+        'Robert':'Roberte','Roman':'Romane','Stanislav':'Stanislave',
+        'Tomáš':'Tomáši','Václav':'Václave','Vladimír':'Vladimíre',
+        'Vojtěch':'Vojtěchu','Zdeněk':'Zdeňku','Patrik':'Patriku',
+        'Dominik':'Dominiku','Luboš':'Luboši','Radoslav':'Radoslave',
+        'Alena':'Aleno','Andrea':'Andreo','Anna':'Anno',
+        'Barbora':'Barbaro','Dana':'Dano','Denisa':'Deniso',
+        'Eva':'Evo','Hana':'Hano','Helena':'Heleno',
+        'Ivana':'Ivano','Jana':'Jano','Julie':'Julie',
+        'Karolína':'Karolíno','Kateřina':'Kateřino','Klára':'Kláro',
+        'Lenka':'Lenko','Lucie':'Lucie','Markéta':'Markéto',
+        'Marie':'Marie','Martina':'Martino','Michaela':'Michaelo',
+        'Monika':'Moniko','Natálie':'Natálie','Nikola':'Nikolo',
+        'Pavlína':'Pavlíno','Petra':'Petro','Radka':'Radko',
+        'Renata':'Renato','Simona':'Simono','Tereza':'Terezo',
+        'Veronika':'Veroniko','Zuzana':'Zuzano','Jitka':'Jitko',
+        'Věra':'Věro','Blanka':'Blanko','Iveta':'Iveto','Marta':'Marto',
+      };
+      if (map[name]) return map[name];
+      if (/a$/i.test(name)) return name.slice(0, -1) + 'o';
+      if (/ie$/i.test(name)) return name;
+      if (/ek$/i.test(name)) return name.slice(0, -2) + 'ku';
+      if (/el$/i.test(name)) return name.slice(0, -2) + 'le';
+      if (/[áa][sš]$/i.test(name) || /[šžč]$/i.test(name)) return name + 'i';
+      if (/[aio]l$/i.test(name)) return name + 'e';
+      if (/[aeo]v$/i.test(name)) return name + 'e';
+      if (/[aei]n$/i.test(name)) return name + 'e';
+      if (/[aei]d$/i.test(name)) return name + 'e';
+      if (/[aei]p$/i.test(name)) return name + 'e';
+      if (/[aeu]b$/i.test(name)) return name + 'e';
+      if (/[^e]k$/i.test(name)) return name + 'u';
+      if (/r$/i.test(name)) return name + 'e';
+      return name;
+    },
 
     roleLevel(role) {
       return { SUPERADMIN: 3, ADMIN: 2, USER: 1 }[role] || 0;
@@ -489,8 +597,7 @@
       const firstName = user.firstName || '';
       const h = new Date().getHours();
       const greet = h < 5 ? 'Dobrou noc' : h < 12 ? 'Dobré ráno' : h < 18 ? 'Dobrý den' : 'Dobrý večer';
-      Ui.setText('#heroGreeting', greet + (firstName ? ', ' + firstName + '!' : '!'));
-      Ui.setText('#heroApp', this.boot.appName || '');
+      Ui.setText('#heroGreeting', greet + (firstName ? ', ' + this.toVocative(firstName) + '!' : '!'));
       const d = new Date();
       const days = ['Neděle', 'Pondělí', 'Úterý', 'Středa', 'Čtvrtek', 'Pátek', 'Sobota'];
       const months = ['ledna', 'února', 'března', 'dubna', 'května', 'června', 'července', 'srpna', 'září', 'října', 'listopadu', 'prosince'];
@@ -562,6 +669,17 @@
         e.preventDefault(); this.saveSyncSettings(e.submitter);
       });
       document.querySelector('#runSyncButton').addEventListener('click', () => this.runSync());
+
+      document.querySelectorAll('[data-go-section]').forEach((btn) => {
+        btn.addEventListener('click', () => this.showSection(btn.dataset.goSection));
+      });
+
+      document.querySelector('#activityUp').addEventListener('click', () => {
+        if (this._activityOffset > 0) { this._activityOffset--; this._updateActivityNav(); }
+      });
+      document.querySelector('#activityDown').addEventListener('click', () => {
+        if (this._activityOffset < this._activityRows.length - 5) { this._activityOffset++; this._updateActivityNav(); }
+      });
     },
 
     showSection(name) {
@@ -609,6 +727,18 @@
       const bell = document.querySelector('#warningsBell');
       const badge = document.querySelector('#warningsBadge');
       const tooltip = document.querySelector('#warningsTooltip');
+      const status = document.querySelector('#heroStatus');
+      if (status) {
+        if (warnings.length) {
+          const n = warnings.length;
+          const verb = (n === 1 || n >= 5) ? 'vyžaduje' : 'vyžadují';
+          status.textContent = n + ' upozornění ' + verb + ' pozornost';
+          status.classList.add('has-warnings');
+        } else if (this.isAdmin) {
+          status.textContent = 'Vše v pořádku';
+          status.classList.remove('has-warnings');
+        }
+      }
       if (!warnings.length) { bell.style.display = 'none'; return; }
       bell.style.display = 'block';
       badge.textContent = warnings.length;
@@ -627,22 +757,62 @@
     },
 
     renderActivity(rows) {
-      const actionLabels = { setup: 'Inicializace', sync_run: 'Synchronizace', user_create: 'Nový uživatel', user_update: 'Uživatel', settings_update: 'Nastavení' };
-      const actionIcons = { setup: 'settings', sync_run: 'sync', user_create: 'user', user_update: 'user', settings_update: 'settings' };
-      document.querySelector('#activityRows').innerHTML = rows.length
-        ? rows.map((row) => `
-          <div class="activity-row">
-            <span class="activity-icon"><svg width="14" height="14" viewBox="0 0 24 24"><use href="#i-${Ui.escape(actionIcons[row.action] || 'info')}"></use></svg></span>
-            <div class="activity-main">
-              <span class="activity-label">${Ui.escape(actionLabels[row.action] || row.action)}</span>
-              <span class="activity-detail">${Ui.escape(row.detail || '')}</span>
-            </div>
-            <div class="activity-meta">
-              <span>${Ui.escape(row.user || '')}</span>
-              <span>${Ui.escape(Ui.formatDateTime(row.timestamp))}</span>
-            </div>
-          </div>`).join('')
-        : '<p class="activity-empty">Zatím žádná aktivita.</p>';
+      const VISIBLE = 5;
+      const ROW_H = 44;
+      this._activityOffset = 0;
+      this._activityRows = rows;
+      const actionLabels = {
+        setup: 'Inicializace', sync_run: 'Synchronizace',
+        user_create: 'Nový uživatel', user_update: 'Úprava uživatele',
+        settings_update: 'Nastavení', store_create: 'Nová filiálka',
+        store_update: 'Filiálka', store_delete: 'Filiálka smazána',
+        logistic_create: 'Nové LC', logistic_update: 'LC',
+        logistic_delete: 'LC smazáno', sync_settings_update: 'Nastavení sync',
+      };
+      const actionIcons = {
+        setup: 'settings', sync_run: 'sync',
+        user_create: 'users', user_update: 'users',
+        settings_update: 'settings', store_create: 'store',
+        store_update: 'store', store_delete: 'store',
+        logistic_create: 'truck', logistic_update: 'truck',
+        logistic_delete: 'truck', sync_settings_update: 'settings',
+      };
+      const track = document.querySelector('#activityTrack');
+      const viewport = document.querySelector('#activityViewport');
+      if (!rows.length) {
+        track.innerHTML = '<p class="activity-empty">Zatím žádná aktivita.</p>';
+        viewport.style.height = 'auto';
+        document.querySelector('#activityUp').disabled = true;
+        document.querySelector('#activityDown').disabled = true;
+        return;
+      }
+      track.innerHTML = rows.map((row) => `
+        <div class="activity-row">
+          <span class="activity-icon"><svg width="13" height="13" viewBox="0 0 24 24"><use href="#i-${Ui.escape(actionIcons[row.action] || 'info')}"></use></svg></span>
+          <div class="activity-main">
+            <span class="activity-label">${Ui.escape(actionLabels[row.action] || row.action)}</span>
+            <span class="activity-detail">${Ui.escape(row.detail || '')}</span>
+          </div>
+          <div class="activity-meta">
+            <span>${Ui.escape(row.user || '')}</span>
+            <span>${Ui.escape(Ui.formatDateTime(row.timestamp))}</span>
+          </div>
+        </div>`).join('');
+      viewport.style.height = Math.min(rows.length, VISIBLE) * ROW_H + 'px';
+      this._updateActivityNav();
+    },
+
+    _updateActivityNav() {
+      const VISIBLE = 5;
+      const ROW_H = 44;
+      const total = this._activityRows.length;
+      const offset = this._activityOffset;
+      const track = document.querySelector('#activityTrack');
+      if (track) track.style.transform = `translateY(${-offset * ROW_H}px)`;
+      const up = document.querySelector('#activityUp');
+      const down = document.querySelector('#activityDown');
+      if (up) up.disabled = offset <= 0;
+      if (down) down.disabled = offset >= Math.max(0, total - VISIBLE);
     },
 
     openChangelog() {
