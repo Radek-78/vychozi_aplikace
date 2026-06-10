@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.24 – 10.06.2026 21:32
+- Wizard: krok načítání filiálek v progress panelu (zobrazí se jen při potvrzeném přístupu ke složce)
+
 ## v2.1.23 – 10.06.2026 21:27
 - Wizard: oprava pořadí volání - disabled se nastavuje až po setButtonLoading
 

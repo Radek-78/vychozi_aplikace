@@ -94,6 +94,10 @@
             <span class="wiz-step-icon"></span>
             <span>Dokončuji…</span>
           </div>
+          <div class="wiz-step is-hidden" data-wiz-step="sync">
+            <span class="wiz-step-icon"></span>
+            <span>Načítám data filiálek…</span>
+          </div>
         </div>
       </section>
 
@@ -229,15 +233,18 @@
       Ui.setButtonLoading(next, true);
       this.showProgressPanel();
 
-      const steps = Array.from(document.querySelectorAll('.wiz-step'));
-      steps[0].classList.add('is-active');
+      const syncStep = document.querySelector('[data-wiz-step="sync"]');
+      if (this.folderAccessOk) syncStep.classList.remove('is-hidden');
+      const steps = Array.from(document.querySelectorAll('.wiz-step:not(.is-hidden)'));
+      const initSteps = steps.filter((s) => s.dataset.wizStep !== 'sync');
+      initSteps[0].classList.add('is-active');
       let stepIdx = 0;
       this._progressTimer = setInterval(() => {
-        if (stepIdx < steps.length - 1) {
-          steps[stepIdx].classList.remove('is-active');
-          steps[stepIdx].classList.add('is-done');
+        if (stepIdx < initSteps.length - 1) {
+          initSteps[stepIdx].classList.remove('is-active');
+          initSteps[stepIdx].classList.add('is-done');
           stepIdx++;
-          steps[stepIdx].classList.add('is-active');
+          initSteps[stepIdx].classList.add('is-active');
         }
       }, 1800);
 
@@ -250,13 +257,14 @@
       }, { silent: true })
         .then((result) => {
           clearInterval(this._progressTimer);
-          steps.forEach((el) => { el.classList.remove('is-active'); el.classList.add('is-done'); });
+          initSteps.forEach((el) => { el.classList.remove('is-active'); el.classList.add('is-done'); });
           this.appUrl = result.appUrl;
           document.querySelector('#wizDbLink').href = result.spreadsheetUrl;
           const finish = () => { Ui.setButtonLoading(next, false); this.goTo(4); };
           if (this.folderAccessOk) {
+            syncStep.classList.add('is-active');
             Ui.call('apiRunSync', null, { silent: true })
-              .then(() => setTimeout(finish, 400))
+              .then(() => { syncStep.classList.remove('is-active'); syncStep.classList.add('is-done'); setTimeout(finish, 400); })
               .catch(() => setTimeout(finish, 400));
           } else {
             setTimeout(finish, 700);
