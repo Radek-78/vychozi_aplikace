@@ -23,7 +23,8 @@ function scriptFolder_() {
 
 /** Data pro úvodní obrazovku wizardu (volá doGet, jen před inicializací). */
 function wizardInfo_() {
-  const email = currentEmail_();
+  // getActiveUser() může selhat v "Execute as me" deploymentu — fallback na getEffectiveUser()
+  const email = Session.getActiveUser().getEmail() || Session.getEffectiveUser().getEmail() || '';
   const folder = scriptFolder_();
   return {
     email: email,
