@@ -74,6 +74,7 @@ function setupInitialize(payload) {
     const appSubtitle = String((payload && payload.appSubtitle) || '').trim();
     const firstName = String((payload && payload.firstName) || '').trim();
     const lastName = String((payload && payload.lastName) || '').trim();
+    const syncFolderUrl = String((payload && payload.syncFolderUrl) || '').trim();
 
     return withLock_(() => {
       if (isSetupDone_()) return fail_('Aplikace už je inicializována.');
@@ -101,6 +102,7 @@ function setupInitialize(payload) {
       });
       settingsSet_('appName', appName);
       settingsSet_('appSubtitle', appSubtitle);
+      if (syncFolderUrl) settingsSet_('syncFolderUrl', syncFolderUrl);
       audit_('setup', 'Inicializace aplikace. DB: ' + ss.getId()
         + (folder ? ', složka: ' + folder.getName() : ', složka: kořen Disku'));
 

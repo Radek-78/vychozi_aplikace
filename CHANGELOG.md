@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.1.7 – 10.06.2026 16:24
+- Síť filiálek a log. center: CRUD, sync z xlsx
+- wizard: pole sync složky
+- CSS: modal-wide, form-hint, is-muted
+
 ## v2.1.6 – 10.06.2026 14:45
 - Redesign úvodní stránky: hero uvítací banner s pozdravem a datem, oddělené status karty se stínem, zaoblené ikony, hover efekt na module kartách
 

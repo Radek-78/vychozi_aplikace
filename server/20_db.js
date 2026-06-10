@@ -12,6 +12,17 @@ const DB_SCHEMA = {
   '_users': ['id', 'email', 'firstName', 'lastName', 'role', 'active', 'created_at', 'created_by', 'updated_at'],
   '_settings': ['key', 'value', 'updated_at', 'updated_by'],
   '_audit_log': ['timestamp', 'user', 'action', 'detail'],
+  'stores': [
+    'id', 'code', 'name', 'lc_code', 'phone', 'area_manager', 'regional_manager', 'rm_phone',
+    'mon_open', 'mon_close', 'tue_open', 'tue_close', 'wed_open', 'wed_close',
+    'thu_open', 'thu_close', 'fri_open', 'fri_close', 'sat_open', 'sat_close',
+    'sun_open', 'sun_close',
+    'temporarily_closed', 'active', 'synced_at', 'created_at', 'created_by', 'updated_at',
+  ],
+  'logistics': [
+    'id', 'code', 'name', 'abbreviation',
+    'active', 'synced_at', 'created_at', 'created_by', 'updated_at',
+  ],
 };
 
 let dbHandle_ = null;     // spreadsheet pro aktuální běh skriptu
@@ -113,6 +124,27 @@ function dbUpdate_(table, id, patch) {
     Object.assign(merged, patch, { updated_at: nowIso_() });
     sheet.getRange(rowIndex + 2, 1, 1, headers.length).setValues([headers.map((header) => merged[header])]);
     return merged;
+  });
+}
+
+/**
+ * Nahradí celý obsah tabulky novými záznamy v jedné dávce.
+ * Používá se při synchronizaci — výrazně rychlejší než jednotlivé UPDATE/INSERT.
+ */
+function dbBatchReplace_(table, records) {
+  withLock_(() => {
+    const sheet = dbSheet_(table);
+    const headers = DB_SCHEMA[table];
+    const oldLastRow = sheet.getLastRow();
+    if (oldLastRow > 1) {
+      sheet.getRange(2, 1, oldLastRow - 1, headers.length).clearContent();
+    }
+    if (records.length > 0) {
+      const values = records.map((record) =>
+        headers.map((h) => (record[h] !== undefined && record[h] !== null) ? record[h] : '')
+      );
+      sheet.getRange(2, 1, values.length, headers.length).setValues(values);
+    }
   });
 }
 

@@ -793,6 +793,11 @@
     padding-top: 10px;
   }
 
+  tr.is-muted td {
+    color: var(--muted);
+    opacity: 0.65;
+  }
+
   .pill {
     background: #e5eef9;
     border-radius: 3px;
@@ -808,6 +813,117 @@
     font-size: 12px;
     min-height: 28px;
     padding: 4px 10px;
+  }
+
+  /* ── Panel body ──────────────────────────────────── */
+
+  .panel-body {
+    padding: 20px;
+  }
+
+  /* ── Hours grid (opening hours in store modal) ───── */
+
+  .hours-grid {
+    display: grid;
+    gap: 6px;
+  }
+
+  .hours-row {
+    align-items: center;
+    display: grid;
+    gap: 8px;
+    grid-template-columns: 86px 1fr 12px 1fr;
+  }
+
+  .hours-row > span:first-child {
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .hours-dash {
+    color: var(--muted);
+    text-align: center;
+  }
+
+  /* ── Sync result ──────────────────────────────────── */
+
+  .sync-result {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .sync-result-header {
+    align-items: center;
+    border-bottom: 1px solid var(--line-soft);
+    display: flex;
+    gap: 10px;
+    padding: 14px 18px;
+  }
+
+  .sync-result-header strong {
+    flex: 1;
+  }
+
+  .sync-result-timestamp {
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .sync-badge {
+    align-items: center;
+    border-radius: 50%;
+    display: inline-flex;
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 700;
+    height: 26px;
+    justify-content: center;
+    width: 26px;
+  }
+
+  .sync-badge.is-success { background: #e4f5ee; color: #007a45; }
+  .sync-badge.is-error   { background: #fde8e8; color: var(--lidl-red); }
+
+  .sync-result-body {
+    padding: 14px 18px;
+    display: grid;
+    gap: 12px;
+  }
+
+  .sync-result-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .sync-result-row > span {
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .sync-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .pill.is-green  { background: #e4f5ee; color: #007a45; }
+  .pill.is-orange { background: #fff3e0; color: #b45309; }
+  .pill.is-red    { background: #fde8e8; color: var(--lidl-red); }
+  .pill.is-blue   { background: #dbeafe; color: #1d4ed8; }
+
+  .sync-errors {
+    border-top: 1px solid var(--line-soft);
+    color: var(--lidl-red);
+    font-size: 12px;
+    margin-top: 4px;
+    padding-top: 10px;
   }
 
   /* ── Content grid ────────────────────────────────── */
@@ -877,6 +993,15 @@
     gap: 6px;
     letter-spacing: 0.04em;
     text-transform: uppercase;
+  }
+
+  .form-hint {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0;
+    margin-top: -2px;
+    text-transform: none;
   }
 
   input,
@@ -1043,6 +1168,10 @@
     overflow: hidden;
     padding: 0;
     width: 100%;
+  }
+
+  .modal.modal-wide {
+    max-width: min(680px, calc(100vw - 32px));
   }
 
   .modal::backdrop {

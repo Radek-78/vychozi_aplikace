@@ -11,6 +11,10 @@
     <nav class="navigation" aria-label="Hlavní navigace">
       <p>Přehled</p>
       <button class="nav-link is-active" type="button" data-section="home" data-tooltip="Domů"><svg><use href="#i-home"></use></svg><span>Domů</span></button>
+      <p class="admin-only">Síť</p>
+      <button class="nav-link admin-only" type="button" data-section="stores" data-tooltip="Filiálky"><svg><use href="#i-store"></use></svg><span>Filiálky</span></button>
+      <button class="nav-link admin-only" type="button" data-section="logistics" data-tooltip="Log. centra"><svg><use href="#i-truck"></use></svg><span>Log. centra</span></button>
+      <button class="nav-link admin-only" type="button" data-section="sync" data-tooltip="Synchronizace"><svg><use href="#i-sync"></use></svg><span>Synchronizace</span></button>
       <p class="admin-only">Administrace</p>
       <button class="nav-link admin-only" type="button" data-section="users" data-tooltip="Uživatelé"><svg><use href="#i-users"></use></svg><span>Uživatelé</span></button>
       <button class="nav-link admin-only" type="button" data-section="settings" data-tooltip="Nastavení"><svg><use href="#i-settings"></use></svg><span>Nastavení</span></button>
@@ -166,16 +170,104 @@
           <p class="lead">Posledních 100 systémových událostí.</p>
         </div>
       </div>
-
       <section class="panel">
         <div class="table-wrap">
           <table>
-            <thead>
-              <tr><th>Čas</th><th>Uživatel</th><th>Akce</th><th>Detail</th></tr>
-            </thead>
+            <thead><tr><th>Čas</th><th>Uživatel</th><th>Akce</th><th>Detail</th></tr></thead>
             <tbody id="auditRows"></tbody>
           </table>
         </div>
+      </section>
+    </section>
+
+    <section class="page is-hidden" data-page-section="stores">
+      <div class="page-header">
+        <div>
+          <p class="kicker">Síť</p>
+          <h1>Filiálky</h1>
+          <p class="lead">Seznam filiálek. Data primárně pochází ze synchronizace — ruční úpravy budou přepsány při dalším importu.</p>
+        </div>
+        <div class="header-actions">
+          <button class="button button-secondary" type="button" id="addStoreButton"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-plus"></use></svg>Přidat filiálku</button>
+        </div>
+      </div>
+      <section class="panel">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Č.p.</th><th>Název</th><th>LC</th><th>Region. manažer</th><th>Stav</th><th></th></tr></thead>
+            <tbody id="storeRows"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <section class="page is-hidden" data-page-section="logistics">
+      <div class="page-header">
+        <div>
+          <p class="kicker">Síť</p>
+          <h1>Logistická centra</h1>
+          <p class="lead">Zkratka LC musí odpovídat hodnotám ve sloupci LC synchronizačního souboru.</p>
+        </div>
+        <div class="header-actions">
+          <button class="button button-secondary" type="button" id="addLogisticButton"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-plus"></use></svg>Přidat LC</button>
+        </div>
+      </div>
+      <section class="panel">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Č.</th><th>Zkratka</th><th>Název</th><th>Stav</th><th></th></tr></thead>
+            <tbody id="logisticRows"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <section class="page is-hidden" data-page-section="sync">
+      <div class="page-header">
+        <div>
+          <p class="kicker">Síť</p>
+          <h1>Synchronizace</h1>
+          <p class="lead">Ruční import z externího .xlsx souboru. Systém najde nejnovější soubor v zadané složce, porovná ho s databází a provede změny.</p>
+        </div>
+      </div>
+
+      <section class="panel">
+        <div class="panel-header"><div><h2>Konfigurace</h2></div></div>
+        <div class="panel-body">
+          <form class="form" id="syncSettingsForm">
+            <label>
+              <span>URL složky v Google Drive</span>
+              <input name="syncFolderUrl" type="text" placeholder="https://drive.google.com/drive/folders/...">
+            </label>
+            <div class="form-row-2">
+              <label>
+                <span>Název listu — filiálky</span>
+                <input name="syncStoresSheet" type="text" placeholder="VTBZL_export">
+              </label>
+              <label>
+                <span>Prefix listu — dočasné zavření</span>
+                <input name="syncTempClosedPrefix" type="text" placeholder="Dočasné zavření">
+              </label>
+            </div>
+            <label>
+              <span>Název listu — logistická centra</span>
+              <input name="syncLogisticsSheet" type="text" placeholder="LC">
+            </label>
+            <div class="form-actions">
+              <button class="button button-secondary" type="submit" id="saveSyncSettingsButton"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-check"></use></svg>Uložit konfiguraci</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div><h2>Spustit synchronizaci</h2><p class="lead" style="margin-top:4px">Systém porovná soubor s databází a aktualizuje záznamy.</p></div>
+          <div class="header-actions">
+            <button class="button button-primary" type="button" id="runSyncButton"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-sync"></use></svg>Spustit synchronizaci</button>
+          </div>
+        </div>
+        <div class="panel-body" id="syncResultArea"></div>
       </section>
     </section>
 
@@ -239,12 +331,108 @@
   </form>
 </dialog>
 
+<dialog class="modal modal-wide" id="storeModal">
+  <form id="storeForm">
+    <header class="modal-header">
+      <span class="modal-icon"><svg><use href="#i-store"></use></svg></span>
+      <div class="modal-header-text">
+        <p class="kicker">Síť</p>
+        <h2 id="storeModalTitle">Přidat filiálku</h2>
+      </div>
+      <button class="modal-close" type="button" data-action="close-store-modal" aria-label="Zavřít"><svg><use href="#i-close"></use></svg></button>
+    </header>
+    <div class="modal-body">
+      <div class="form form-plain">
+        <input name="id" type="hidden">
+        <div class="form-row-2">
+          <label><span>Číslo prodejny *</span><input name="code" type="text" placeholder="001" required maxlength="3"></label>
+          <label><span>Název *</span><input name="name" type="text" placeholder="Praha – Wenceslas Sq." required></label>
+        </div>
+        <div class="form-row-2">
+          <label><span>LC (zkratka)</span><input name="lc_code" type="text" placeholder="ZAB" maxlength="4"></label>
+          <label><span>Telefon prodejny</span><input name="phone" type="text" placeholder="+420 ..."></label>
+        </div>
+        <div class="form-row-2">
+          <label><span>Oblastní manažer (VT)</span><input name="area_manager" type="text"></label>
+          <label><span>Regionální manažer (RM)</span><input name="regional_manager" type="text"></label>
+        </div>
+        <div class="form-row-2">
+          <label><span>Telefon RM</span><input name="rm_phone" type="text" placeholder="+420 ..."></label>
+          <label><span>Stav</span>
+            <select name="active">
+              <option value="true">Aktivní</option>
+              <option value="false">Neaktivní</option>
+            </select>
+          </label>
+        </div>
+        <label style="flex-direction:row;align-items:center;gap:10px;cursor:pointer">
+          <input name="temporarily_closed" type="checkbox" style="width:auto;margin:0">
+          <span style="margin:0">Dočasně uzavřena</span>
+        </label>
+        <p class="kicker" style="margin-top:10px">Otevírací doba</p>
+        <div class="hours-grid">
+          <div class="hours-row"><span>Pondělí</span><input name="mon_open" type="text" placeholder="06:00"><span class="hours-dash">–</span><input name="mon_close" type="text" placeholder="22:00"></div>
+          <div class="hours-row"><span>Úterý</span><input name="tue_open" type="text" placeholder="06:00"><span class="hours-dash">–</span><input name="tue_close" type="text" placeholder="22:00"></div>
+          <div class="hours-row"><span>Středa</span><input name="wed_open" type="text" placeholder="06:00"><span class="hours-dash">–</span><input name="wed_close" type="text" placeholder="22:00"></div>
+          <div class="hours-row"><span>Čtvrtek</span><input name="thu_open" type="text" placeholder="06:00"><span class="hours-dash">–</span><input name="thu_close" type="text" placeholder="22:00"></div>
+          <div class="hours-row"><span>Pátek</span><input name="fri_open" type="text" placeholder="06:00"><span class="hours-dash">–</span><input name="fri_close" type="text" placeholder="22:00"></div>
+          <div class="hours-row"><span>Sobota</span><input name="sat_open" type="text" placeholder="06:00"><span class="hours-dash">–</span><input name="sat_close" type="text" placeholder="22:00"></div>
+          <div class="hours-row"><span>Neděle</span><input name="sun_open" type="text" placeholder="06:00"><span class="hours-dash">–</span><input name="sun_close" type="text" placeholder="22:00"></div>
+        </div>
+      </div>
+    </div>
+    <footer class="modal-actions">
+      <button class="button button-secondary" type="button" data-action="close-store-modal"><svg><use href="#i-close"></use></svg>Zrušit</button>
+      <button class="button button-primary" type="submit"><svg><use href="#i-check"></use></svg>Uložit</button>
+    </footer>
+  </form>
+</dialog>
+
+<dialog class="modal" id="logisticModal">
+  <form id="logisticForm">
+    <header class="modal-header">
+      <span class="modal-icon"><svg><use href="#i-truck"></use></svg></span>
+      <div class="modal-header-text">
+        <p class="kicker">Síť</p>
+        <h2 id="logisticModalTitle">Přidat logistické centrum</h2>
+      </div>
+      <button class="modal-close" type="button" data-action="close-logistic-modal" aria-label="Zavřít"><svg><use href="#i-close"></use></svg></button>
+    </header>
+    <div class="modal-body">
+      <div class="form form-plain">
+        <input name="id" type="hidden">
+        <div class="form-row-2">
+          <label><span>Číslo LC *</span><input name="code" type="text" placeholder="1" required></label>
+          <label><span>Zkratka * (2–4 písmena)</span><input name="abbreviation" type="text" placeholder="ZAB" maxlength="4" required></label>
+        </div>
+        <label><span>Název (město) *</span><input name="name" type="text" placeholder="Záblacany" required></label>
+        <label><span>Stav</span>
+          <select name="active">
+            <option value="true">Aktivní</option>
+            <option value="false">Neaktivní</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <footer class="modal-actions">
+      <button class="button button-secondary" type="button" data-action="close-logistic-modal"><svg><use href="#i-close"></use></svg>Zrušit</button>
+      <button class="button button-primary" type="submit"><svg><use href="#i-check"></use></svg>Uložit</button>
+    </footer>
+  </form>
+</dialog>
+
 <script>
   const App = {
     boot: window.APP_BOOTSTRAP || {},
-    sectionTitles: { home: 'Domů', users: 'Uživatelé', settings: 'Nastavení', audit: 'Audit' },
+    sectionTitles: {
+      home: 'Domů',
+      stores: 'Filiálky', logistics: 'Logistická centra', sync: 'Synchronizace',
+      users: 'Uživatelé', settings: 'Nastavení', audit: 'Audit',
+    },
     section: 'home',
     users: [],
+    stores: [],
+    logistics: [],
 
     roleLevel(role) {
       return { SUPERADMIN: 3, ADMIN: 2, USER: 1 }[role] || 0;
@@ -328,20 +516,36 @@
       document.querySelector('[data-action="reload"]').addEventListener('click', () => this.loadSection(this.section));
 
       document.querySelector('#addUserButton').addEventListener('click', () => this.openUserModal(null));
-
-      document.querySelectorAll('[data-action="close-user-modal"]').forEach((button) => {
-        button.addEventListener('click', () => Ui.closeModal(document.querySelector('#userModal')));
+      document.querySelectorAll('[data-action="close-user-modal"]').forEach((b) => {
+        b.addEventListener('click', () => Ui.closeModal(document.querySelector('#userModal')));
+      });
+      document.querySelector('#userForm').addEventListener('submit', (e) => {
+        e.preventDefault(); this.saveUser(e.submitter);
+      });
+      document.querySelector('#settingsForm').addEventListener('submit', (e) => {
+        e.preventDefault(); this.saveSettings(e.submitter);
       });
 
-      document.querySelector('#userForm').addEventListener('submit', (event) => {
-        event.preventDefault();
-        this.saveUser(event.submitter);
+      document.querySelector('#addStoreButton').addEventListener('click', () => this.openStoreModal(null));
+      document.querySelectorAll('[data-action="close-store-modal"]').forEach((b) => {
+        b.addEventListener('click', () => Ui.closeModal(document.querySelector('#storeModal')));
+      });
+      document.querySelector('#storeForm').addEventListener('submit', (e) => {
+        e.preventDefault(); this.saveStore(e.submitter);
       });
 
-      document.querySelector('#settingsForm').addEventListener('submit', (event) => {
-        event.preventDefault();
-        this.saveSettings(event.submitter);
+      document.querySelector('#addLogisticButton').addEventListener('click', () => this.openLogisticModal(null));
+      document.querySelectorAll('[data-action="close-logistic-modal"]').forEach((b) => {
+        b.addEventListener('click', () => Ui.closeModal(document.querySelector('#logisticModal')));
       });
+      document.querySelector('#logisticForm').addEventListener('submit', (e) => {
+        e.preventDefault(); this.saveLogistic(e.submitter);
+      });
+
+      document.querySelector('#syncSettingsForm').addEventListener('submit', (e) => {
+        e.preventDefault(); this.saveSyncSettings(e.submitter);
+      });
+      document.querySelector('#runSyncButton').addEventListener('click', () => this.runSync());
     },
 
     showSection(name) {
@@ -359,6 +563,9 @@
     loadSection(name) {
       if (name === 'home') this.loadHome();
       if (name === 'users') this.loadUsers();
+      if (name === 'stores') this.loadStores();
+      if (name === 'logistics') this.loadLogistics();
+      if (name === 'sync') this.loadSync();
       if (name === 'settings') this.loadSettings();
       if (name === 'audit') this.loadAudit();
     },
@@ -497,6 +704,230 @@
           this.markUpdated();
         })
         .catch((error) => Ui.toast(error.message, 'error'));
+    },
+
+    /* ── Filiálky ─────────────────────────────────── */
+
+    loadStores() {
+      Ui.call('apiListStores', null, { silent: true })
+        .then((stores) => {
+          this.stores = stores;
+          document.querySelector('#storeRows').innerHTML = stores.length
+            ? stores.map((s) => `
+              <tr class="${s.active === false ? 'is-muted' : ''}">
+                <td><strong>${Ui.escape(s.code)}</strong></td>
+                <td>${Ui.escape(s.name)}${s.temporarily_closed ? ' <span class="pill is-orange">Dočasně uzavřena</span>' : ''}</td>
+                <td>${Ui.escape(s.lc_code || '–')}</td>
+                <td>${Ui.escape(s.regional_manager || '–')}</td>
+                <td>${s.active === false ? '<span class="pill is-red">Neaktivní</span>' : '<span class="pill is-green">Aktivní</span>'}</td>
+                <td><button class="button button-secondary button-small" type="button" data-store-id="${Ui.escape(s.id)}">Upravit</button></td>
+              </tr>`).join('')
+            : '<tr><td colspan="6">Žádné filiálky. Spusťte synchronizaci nebo přidejte ručně.</td></tr>';
+          document.querySelectorAll('[data-store-id]').forEach((btn) => {
+            btn.addEventListener('click', () => this.openStoreModal(this.stores.find((s) => s.id === btn.dataset.storeId)));
+          });
+          this.markUpdated();
+        })
+        .catch((e) => Ui.toast(e.message, 'error'));
+    },
+
+    openStoreModal(store) {
+      const form = document.querySelector('#storeForm');
+      form.reset();
+      const HOUR_FIELDS = ['mon_open','mon_close','tue_open','tue_close','wed_open','wed_close',
+        'thu_open','thu_close','fri_open','fri_close','sat_open','sat_close','sun_open','sun_close'];
+      form.elements.id.value = store ? store.id : '';
+      form.elements.code.value = store ? (store.code || '') : '';
+      form.elements.name.value = store ? (store.name || '') : '';
+      form.elements.lc_code.value = store ? (store.lc_code || '') : '';
+      form.elements.phone.value = store ? (store.phone || '') : '';
+      form.elements.area_manager.value = store ? (store.area_manager || '') : '';
+      form.elements.regional_manager.value = store ? (store.regional_manager || '') : '';
+      form.elements.rm_phone.value = store ? (store.rm_phone || '') : '';
+      form.elements.active.value = store && store.active === false ? 'false' : 'true';
+      form.elements.temporarily_closed.checked = store ? store.temporarily_closed === true : false;
+      HOUR_FIELDS.forEach((f) => { form.elements[f].value = store ? (store[f] || '') : ''; });
+      Ui.setText('#storeModalTitle', store ? 'Upravit filiálku' : 'Přidat filiálku');
+      Ui.openModal(document.querySelector('#storeModal'));
+    },
+
+    saveStore(button) {
+      const form = document.querySelector('#storeForm');
+      Ui.setButtonLoading(button, true);
+      const HOUR_FIELDS = ['mon_open','mon_close','tue_open','tue_close','wed_open','wed_close',
+        'thu_open','thu_close','fri_open','fri_close','sat_open','sat_close','sun_open','sun_close'];
+      const payload = {
+        id: form.elements.id.value || null,
+        code: form.elements.code.value,
+        name: form.elements.name.value,
+        lc_code: form.elements.lc_code.value,
+        phone: form.elements.phone.value,
+        area_manager: form.elements.area_manager.value,
+        regional_manager: form.elements.regional_manager.value,
+        rm_phone: form.elements.rm_phone.value,
+        active: form.elements.active.value === 'true',
+        temporarily_closed: form.elements.temporarily_closed.checked,
+      };
+      HOUR_FIELDS.forEach((f) => { payload[f] = form.elements[f].value; });
+      Ui.call('apiSaveStore', payload, { silent: true })
+        .then(() => {
+          Ui.setButtonLoading(button, false);
+          Ui.closeModal(document.querySelector('#storeModal'));
+          Ui.toast('Filiálka byla uložena.');
+          this.loadStores();
+        })
+        .catch((e) => { Ui.setButtonLoading(button, false); Ui.toast(e.message, 'error'); });
+    },
+
+    /* ── Logistická centra ────────────────────────── */
+
+    loadLogistics() {
+      Ui.call('apiListLogistics', null, { silent: true })
+        .then((list) => {
+          this.logistics = list;
+          document.querySelector('#logisticRows').innerHTML = list.length
+            ? list.map((lc) => `
+              <tr class="${lc.active === false ? 'is-muted' : ''}">
+                <td>${Ui.escape(lc.code)}</td>
+                <td><strong>${Ui.escape(lc.abbreviation)}</strong></td>
+                <td>${Ui.escape(lc.name)}</td>
+                <td>${lc.active === false ? '<span class="pill is-red">Neaktivní</span>' : '<span class="pill is-green">Aktivní</span>'}</td>
+                <td><button class="button button-secondary button-small" type="button" data-lc-id="${Ui.escape(lc.id)}">Upravit</button></td>
+              </tr>`).join('')
+            : '<tr><td colspan="5">Žádná logistická centra.</td></tr>';
+          document.querySelectorAll('[data-lc-id]').forEach((btn) => {
+            btn.addEventListener('click', () => this.openLogisticModal(this.logistics.find((lc) => lc.id === btn.dataset.lcId)));
+          });
+          this.markUpdated();
+        })
+        .catch((e) => Ui.toast(e.message, 'error'));
+    },
+
+    openLogisticModal(lc) {
+      const form = document.querySelector('#logisticForm');
+      form.reset();
+      form.elements.id.value = lc ? lc.id : '';
+      form.elements.code.value = lc ? (lc.code || '') : '';
+      form.elements.name.value = lc ? (lc.name || '') : '';
+      form.elements.abbreviation.value = lc ? (lc.abbreviation || '') : '';
+      form.elements.active.value = lc && lc.active === false ? 'false' : 'true';
+      Ui.setText('#logisticModalTitle', lc ? 'Upravit logistické centrum' : 'Přidat logistické centrum');
+      Ui.openModal(document.querySelector('#logisticModal'));
+    },
+
+    saveLogistic(button) {
+      const form = document.querySelector('#logisticForm');
+      Ui.setButtonLoading(button, true);
+      Ui.call('apiSaveLogistic', {
+        id: form.elements.id.value || null,
+        code: form.elements.code.value,
+        name: form.elements.name.value,
+        abbreviation: form.elements.abbreviation.value,
+        active: form.elements.active.value === 'true',
+      }, { silent: true })
+        .then(() => {
+          Ui.setButtonLoading(button, false);
+          Ui.closeModal(document.querySelector('#logisticModal'));
+          Ui.toast('Logistické centrum bylo uloženo.');
+          this.loadLogistics();
+        })
+        .catch((e) => { Ui.setButtonLoading(button, false); Ui.toast(e.message, 'error'); });
+    },
+
+    /* ── Synchronizace ────────────────────────────── */
+
+    loadSync() {
+      Ui.call('apiGetSyncSettings', null, { silent: true })
+        .then((s) => {
+          const form = document.querySelector('#syncSettingsForm');
+          form.elements.syncFolderUrl.value = s.syncFolderUrl || '';
+          form.elements.syncStoresSheet.value = s.syncStoresSheet || '';
+          form.elements.syncTempClosedPrefix.value = s.syncTempClosedPrefix || '';
+          form.elements.syncLogisticsSheet.value = s.syncLogisticsSheet || '';
+          if (s.lastSyncAt || s.lastSyncResult) {
+            this.renderSyncResult(s.lastSyncAt, s.lastSyncResult, false);
+          } else {
+            document.querySelector('#syncResultArea').innerHTML =
+              '<p style="color:var(--muted);font-size:13px">Synchronizace zatím nebyla spuštěna.</p>';
+          }
+          this.markUpdated();
+        })
+        .catch((e) => Ui.toast(e.message, 'error'));
+    },
+
+    saveSyncSettings(button) {
+      const form = document.querySelector('#syncSettingsForm');
+      Ui.setButtonLoading(button, true);
+      Ui.call('apiSaveSyncSettings', {
+        syncFolderUrl: form.elements.syncFolderUrl.value,
+        syncStoresSheet: form.elements.syncStoresSheet.value,
+        syncTempClosedPrefix: form.elements.syncTempClosedPrefix.value,
+        syncLogisticsSheet: form.elements.syncLogisticsSheet.value,
+      }, { silent: true })
+        .then(() => { Ui.setButtonLoading(button, false); Ui.toast('Konfigurace uložena.'); })
+        .catch((e) => { Ui.setButtonLoading(button, false); Ui.toast(e.message, 'error'); });
+    },
+
+    runSync() {
+      const button = document.querySelector('#runSyncButton');
+      Ui.setButtonLoading(button, true);
+      document.querySelector('#syncResultArea').innerHTML =
+        '<p style="color:var(--muted);font-size:13px">⏳ Synchronizace probíhá, prosím čekejte — může trvat až minutu…</p>';
+      Ui.call('apiRunSync', null, { silent: true })
+        .then((result) => {
+          Ui.setButtonLoading(button, false);
+          this.renderSyncResult(new Date().toISOString(), result, true);
+          Ui.toast('Synchronizace dokončena.');
+        })
+        .catch((e) => {
+          Ui.setButtonLoading(button, false);
+          document.querySelector('#syncResultArea').innerHTML =
+            '<p style="color:var(--lidl-red);font-size:13px">✕ ' + Ui.escape(e.message) + '</p>';
+          Ui.toast(e.message, 'error');
+        });
+    },
+
+    renderSyncResult(syncAt, result, fresh) {
+      if (!result) return;
+      const fmt = (n) => n > 0 ? n : 0;
+      const statPills = (stats) => {
+        if (!stats) return '<span class="pill">Neprobíhala</span>';
+        const errs = (stats.errors || []).length;
+        return [
+          stats.added    > 0 ? `<span class="pill is-green">+${fmt(stats.added)} přidáno</span>` : '',
+          stats.updated  > 0 ? `<span class="pill is-blue">${fmt(stats.updated)} upraveno</span>` : '',
+          stats.deactivated > 0 ? `<span class="pill is-red">${fmt(stats.deactivated)} deaktivováno</span>` : '',
+          stats.reactivated > 0 ? `<span class="pill is-orange">${fmt(stats.reactivated)} reaktivováno</span>` : '',
+          `<span class="pill">${fmt(stats.unchanged)} beze změny</span>`,
+          errs > 0 ? `<span class="pill is-red">${errs} chyb</span>` : '',
+        ].filter(Boolean).join('');
+      };
+      const errList = (stats) => {
+        if (!stats || !(stats.errors || []).length) return '';
+        return '<div class="sync-errors">' + stats.errors.map((e) => Ui.escape(e)).join('<br>') + '</div>';
+      };
+      const ts = syncAt ? Ui.formatDateTime(syncAt) : '';
+      document.querySelector('#syncResultArea').innerHTML = `
+        <div class="sync-result">
+          <div class="sync-result-header">
+            <span class="sync-badge is-success">✓</span>
+            <strong>${fresh ? 'Synchronizace dokončena' : 'Poslední synchronizace'}</strong>
+            <span class="sync-result-timestamp">${Ui.escape(ts)}</span>
+          </div>
+          <div class="sync-result-body">
+            ${result.fileName ? `<p style="font-size:12px;color:var(--muted);margin:0">Soubor: <strong>${Ui.escape(result.fileName)}</strong></p>` : ''}
+            <div class="sync-result-row">
+              <span>Filiálky</span>
+              <div class="sync-pills">${statPills(result.stores)}</div>
+              ${errList(result.stores)}
+            </div>
+            <div class="sync-result-row">
+              <span>Logistická centra</span>
+              <div class="sync-pills">${statPills(result.logistics)}</div>
+              ${errList(result.logistics)}
+            </div>
+          </div>
+        </div>`;
     },
 
     syncSidebarToggle() {
