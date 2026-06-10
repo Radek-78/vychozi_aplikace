@@ -267,12 +267,27 @@ function parseSheetRows_(sheet, colMap) {
     .map((row) => {
       const record = {};
       Object.keys(colIndices).forEach((dbField) => {
-        const val = row[colIndices[dbField]];
-        record[dbField] = (val !== undefined && val !== null) ? String(val).trim() : '';
+        record[dbField] = formatCellValue_(row[colIndices[dbField]]);
       });
       return record;
     })
     .filter((r) => r.code);  // přeskočit řádky bez kódu
+}
+
+/**
+ * Převede hodnotu buňky na string.
+ * Časové buňky (h:mm) GAS vrací jako Date s datem 30.12.1899 — formátujeme jako "H:mm".
+ */
+function formatCellValue_(val) {
+  if (val instanceof Date) {
+    if (val.getFullYear() === 1899 && val.getMonth() === 11 && val.getDate() === 30) {
+      const h = val.getHours();
+      const m = val.getMinutes();
+      return h + ':' + (m < 10 ? '0' + m : m);
+    }
+    return '';
+  }
+  return (val !== undefined && val !== null) ? String(val).trim() : '';
 }
 
 /** Extrahuje ID složky z Google Drive URL. */

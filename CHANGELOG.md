@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.13 – 10.06.2026 17:17
+- Sync: oprava formátu časových buněk z xlsx (Date→H:mm string)
+
 ## v2.1.12 – 10.06.2026 17:13
 - LC modal: placeholdery BNL/Brandýs
 - placeholder barva světle šedá globálně
