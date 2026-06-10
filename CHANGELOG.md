@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.1 – 10.06.2026 13:55
+- Jméno a příjmení vedle sebe v modalu uživatele
+
 ## v2.1.0 – 10.06.2026 13:53
 - Spustit aplikaci naviguje přes appUrl ze serveru
 - jméno/příjmení jako samostatná pole v DB a UI

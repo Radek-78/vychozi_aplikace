@@ -205,14 +205,16 @@
           <span>E-mail</span>
           <input name="email" type="email" placeholder="jmeno@firma.cz" required>
         </label>
-        <label>
-          <span>Jméno</span>
-          <input name="firstName" type="text" placeholder="Jan">
-        </label>
-        <label>
-          <span>Příjmení</span>
-          <input name="lastName" type="text" placeholder="Novák">
-        </label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <label>
+            <span>Jméno</span>
+            <input name="firstName" type="text" placeholder="Jan">
+          </label>
+          <label>
+            <span>Příjmení</span>
+            <input name="lastName" type="text" placeholder="Novák">
+          </label>
+        </div>
         <label>
           <span>Role</span>
           <select name="role">
