@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.30 – 10.06.2026 23:09
+- Home: hero dvouřádková pravá strana, activity panel u spodního okraje, 6 nových designů modulů (boční pruh, kruh, závorky, diagonála, vstupenka, typo)
+
 ## v2.1.29 – 10.06.2026 22:55
 - Home: kompaktní hero s číslem týdne, 6 rozdílných designů modulů (čtverce), kompaktní activity panel, stat karta s počtem uživatelů
 

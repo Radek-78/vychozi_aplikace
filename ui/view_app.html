@@ -64,70 +64,73 @@
 
       <div class="module-grid" id="moduleGrid">
 
-        <!-- 1: Klasik — bílá s horním pruhem -->
-        <article class="module-card">
-          <span class="module-icon"><svg><use href="#i-store"></use></svg></span>
-          <div>
+        <!-- 1: Boční pruh -->
+        <article class="module-card mc--sidebar">
+          <div class="mc-side">
+            <svg><use href="#i-store"></use></svg>
+            <i></i>
+          </div>
+          <div class="mc-body">
             <h2>Filiálky</h2>
             <p>Správa a přehled sítě prodejen v systému.</p>
+            <footer>
+              <button class="button button-secondary button-small" type="button" data-go-section="stores">Otevřít</button>
+            </footer>
           </div>
+        </article>
+
+        <!-- 2: Kruhová záře -->
+        <article class="module-card mc--circle">
+          <span class="mc-circle-icon"><svg><use href="#i-sync"></use></svg></span>
+          <h2>Synchronizace</h2>
+          <p>Import dat z externího xlsx souboru.</p>
           <footer>
-            <span class="pill">Síť</span>
-            <button class="button button-secondary button-small" type="button" data-go-section="stores">Otevřít</button>
+            <button class="button button-primary button-small" type="button" data-go-section="sync">Spustit</button>
           </footer>
         </article>
 
-        <!-- 2: Gradient s vodoznakem -->
-        <article class="module-card mc--gradient">
-          <span class="mc-watermark"><svg viewBox="0 0 24 24"><use href="#i-sync"></use></svg></span>
-          <div>
-            <h2>Synchronizace</h2>
-            <p>Import dat z externího xlsx souboru.</p>
-          </div>
-          <footer>
-            <button class="mc-light-btn" type="button" data-go-section="sync">Spustit</button>
-          </footer>
+        <!-- 3: Rohové závorky -->
+        <article class="module-card mc--brackets">
+          <span class="mc-bare-icon"><svg width="30" height="30" viewBox="0 0 24 24"><use href="#i-users"></use></svg></span>
+          <h2>Uživatelé</h2>
+          <p><span id="statUsers">—</span> aktivních účtů s přístupem</p>
+          <button class="mc-link-btn" type="button" data-go-section="users">Spravovat →</button>
         </article>
 
-        <!-- 3: Stat — obří číslo -->
-        <article class="module-card mc--stat">
-          <span class="mc-stat-label">Uživatelé</span>
-          <span class="mc-stat-value" id="statUsers">—</span>
-          <p>aktivních účtů s přístupem</p>
-          <footer>
-            <button class="button button-secondary button-small" type="button" data-go-section="users">Spravovat</button>
-          </footer>
-        </article>
-
-        <!-- 4: Žlutá plná -->
-        <article class="module-card mc--yellow">
-          <span class="module-icon"><svg><use href="#i-truck"></use></svg></span>
-          <div>
+        <!-- 4: Diagonála -->
+        <article class="module-card mc--diagonal">
+          <div class="mc-diag-top"></div>
+          <span class="mc-diag-icon"><svg><use href="#i-truck"></use></svg></span>
+          <div class="mc-diag-body">
             <h2>Log. centra</h2>
             <p>Správa logistických center LC.</p>
+            <footer>
+              <button class="button button-secondary button-small" type="button" data-go-section="logistics">Správa</button>
+            </footer>
           </div>
-          <footer>
-            <button class="mc-navy-btn" type="button" data-go-section="logistics">Správa</button>
-          </footer>
         </article>
 
-        <!-- 5: Minimal outline — celá klikací -->
-        <article class="module-card mc--outline" data-go-section="settings" role="button" tabindex="0">
-          <span class="mc-icon-ring"><svg><use href="#i-settings"></use></svg></span>
-          <h2>Nastavení</h2>
-          <p>Konfigurace aplikace a brandingu.</p>
-          <span class="mc-outline-hint">Otevřít →</span>
+        <!-- 5: Vstupenka -->
+        <article class="module-card mc--ticket">
+          <div class="mc-ticket-top">
+            <span class="module-icon"><svg><use href="#i-settings"></use></svg></span>
+            <h2>Nastavení</h2>
+            <p>Konfigurace aplikace a brandingu.</p>
+          </div>
+          <div class="mc-ticket-stub">
+            <small>Administrace</small>
+            <button class="button button-secondary button-small" type="button" data-go-section="settings">Otevřít</button>
+          </div>
         </article>
 
-        <!-- 6: Tmavá s kruhy -->
-        <article class="module-card mc--dark">
-          <span class="module-icon"><svg><use href="#i-list"></use></svg></span>
-          <div>
-            <h2>Audit</h2>
-            <p>Přehled systémových událostí.</p>
-          </div>
+        <!-- 6: Typo pozadí -->
+        <article class="module-card mc--type">
+          <span class="mc-type-bg"><svg viewBox="0 0 24 24"><use href="#i-list"></use></svg></span>
+          <h2>Audit</h2>
+          <p>Přehled systémových událostí.</p>
           <footer>
-            <button class="mc-dark-btn" type="button" data-go-section="audit">Zobrazit</button>
+            <span class="pill">Log</span>
+            <button class="button button-secondary button-small" type="button" data-go-section="audit">Zobrazit</button>
           </footer>
         </article>
 
