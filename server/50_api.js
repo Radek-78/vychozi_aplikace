@@ -106,6 +106,76 @@ function apiListStores() {
   return guard_(ROLES.ADMIN, () => dbGetAll_(SHEETS.STORES));
 }
 
+function apiDebugStores() {
+  try {
+    const lines = [];
+    lines.push('=== DEBUG apiDebugStores ===');
+
+    // 1. Setup
+    const dbId = PropertiesService.getScriptProperties().getProperty(PROPS.DB_ID);
+    lines.push('DB_ID property: ' + (dbId ? dbId : 'CHYBÍ'));
+    if (!dbId) return ok_({ lines: lines });
+
+    // 2. Spreadsheet
+    let ss;
+    try {
+      ss = SpreadsheetApp.openById(dbId);
+      lines.push('Spreadsheet OK: ' + ss.getName());
+    } catch (e) {
+      lines.push('Spreadsheet CHYBA: ' + e.message);
+      return ok_({ lines: lines });
+    }
+
+    // 3. Sheet stores
+    const sheet = ss.getSheetByName(SHEETS.STORES);
+    if (!sheet) {
+      lines.push('List "' + SHEETS.STORES + '" NEEXISTUJE');
+      lines.push('Dostupné listy: ' + ss.getSheets().map((s) => s.getName()).join(', '));
+      return ok_({ lines: lines });
+    }
+    lines.push('List "' + SHEETS.STORES + '" nalezen');
+    lines.push('Počet řádků: ' + sheet.getLastRow() + ', sloupců: ' + sheet.getLastColumn());
+
+    // 4. Záhlaví
+    if (sheet.getLastRow() >= 1) {
+      const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+      lines.push('Záhlaví: ' + headers.slice(0, 10).join(' | ') + (headers.length > 10 ? ' ...' : ''));
+    }
+
+    // 5. První datový řádek — typy hodnot
+    if (sheet.getLastRow() >= 2) {
+      const row = sheet.getRange(2, 1, 1, sheet.getLastColumn()).getValues()[0];
+      const types = row.map((v) => {
+        if (v instanceof Date) return 'Date(' + v.getFullYear() + ')';
+        return typeof v + (v === '' ? '(empty)' : '');
+      });
+      lines.push('Typy 1. záznamu: ' + types.slice(0, 10).join(' | ') + (types.length > 10 ? ' ...' : ''));
+      lines.push('Hodnoty 1. záznamu: ' + row.slice(0, 6).map((v) => JSON.stringify(v instanceof Date ? v.toString() : v)).join(' | '));
+    }
+
+    // 6. Pokus o dbGetAll_
+    try {
+      const all = dbGetAll_(SHEETS.STORES);
+      lines.push('dbGetAll_ OK: ' + all.length + ' záznamů');
+      if (all.length > 0) {
+        const first = all[0];
+        const problematic = Object.entries(first).filter(([, v]) => v instanceof Date || (typeof v === 'object' && v !== null));
+        if (problematic.length > 0) {
+          lines.push('Problematické hodnoty (objekty): ' + problematic.map(([k, v]) => k + '=' + v).join(', '));
+        } else {
+          lines.push('Hodnoty jsou OK (žádné objekty)');
+        }
+      }
+    } catch (e) {
+      lines.push('dbGetAll_ CHYBA: ' + e.message);
+    }
+
+    return ok_({ lines: lines });
+  } catch (e) {
+    return ok_({ lines: ['NEČEKANÁ CHYBA: ' + e.message + '\n' + e.stack] });
+  }
+}
+
 function apiSaveStore(payload) {
   return guard_(ROLES.ADMIN, (actor) => {
     const code = String((payload && payload.code) || '').trim();

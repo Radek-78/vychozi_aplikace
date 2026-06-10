@@ -188,9 +188,11 @@
           <p class="lead">Seznam filiálek. Data primárně pochází ze synchronizace — ruční úpravy budou přepsány při dalším importu.</p>
         </div>
         <div class="header-actions">
+          <button class="button button-secondary" type="button" id="debugStoresButton"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-info"></use></svg>Debug</button>
           <button class="button button-secondary" type="button" id="addStoreButton"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-plus"></use></svg>Přidat filiálku</button>
         </div>
       </div>
+      <pre id="storeDebugOutput" style="display:none;background:#1a1f2e;color:#a8d8a8;font-size:12px;padding:16px;border-radius:6px;white-space:pre-wrap;word-break:break-all;margin-bottom:16px;"></pre>
       <section class="panel">
         <div class="table-wrap">
           <table>
@@ -526,6 +528,7 @@
         e.preventDefault(); this.saveSettings(e.submitter);
       });
 
+      document.querySelector('#debugStoresButton').addEventListener('click', () => this.debugStores());
       document.querySelector('#addStoreButton').addEventListener('click', () => this.openStoreModal(null));
       document.querySelectorAll('[data-action="close-store-modal"]').forEach((b) => {
         b.addEventListener('click', () => Ui.closeModal(document.querySelector('#storeModal')));
@@ -729,6 +732,15 @@
           this.markUpdated();
         })
         .catch((e) => Ui.toast(e.message, 'error'));
+    },
+
+    debugStores() {
+      const out = document.querySelector('#storeDebugOutput');
+      out.style.display = 'block';
+      out.textContent = 'Načítám diagnostiku...';
+      Ui.call('apiDebugStores', null, { silent: true })
+        .then((res) => { out.textContent = res.lines.join('\n'); })
+        .catch((e) => { out.textContent = 'Chyba volání: ' + e.message; });
     },
 
     openStoreModal(store) {

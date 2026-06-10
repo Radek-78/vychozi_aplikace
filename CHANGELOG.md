@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.15 – 10.06.2026 17:22
+- Debug: tlačítko a funkce apiDebugStores pro diagnostiku načítání filiálek
+
 ## v2.1.14 – 10.06.2026 17:19
 - DB schema logistics: odstraněn sloupec synced_at (LC se nesynchronizují)
 
