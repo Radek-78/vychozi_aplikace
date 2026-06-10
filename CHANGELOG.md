@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.2 – 10.06.2026 13:57
+- Jméno a příjmení vedle sebe v modalu — CSS třída form-row-2
+
 ## v2.1.1 – 10.06.2026 13:55
 - Jméno a příjmení vedle sebe v modalu uživatele
 

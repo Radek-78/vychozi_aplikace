@@ -8,7 +8,7 @@
 const CONFIG = {
   defaultAppName: 'Výchozí aplikace',
   defaultAppSubtitle: 'Webová aplikace',
-  version: 'v2.1.1',
+  version: 'v2.1.2',
   logoUrl: 'https://drive.google.com/thumbnail?id=18mu_Lq1F_FqqSZcolMjLwG0aaQDPMdyD&sz=w320',
   theme: {
     blue: '#0050aa',
