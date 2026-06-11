@@ -1303,15 +1303,20 @@
 
   .busy-box {
     align-items: center;
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: 0 24px 64px rgba(0, 36, 102, 0.2), 0 4px 16px rgba(0, 36, 102, 0.08);
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 18px;
+    padding: 36px 44px 28px;
   }
 
   .busy-label {
     color: var(--lidl-dark-blue);
     font-size: 13px;
     font-weight: 700;
+    letter-spacing: 0.02em;
   }
 
   tr.is-muted td {
@@ -1915,7 +1920,7 @@
   }
 
   .sp-logo {
-    height: 26px;
+    height: 48px;
     object-fit: contain;
     width: 26px;
   }
@@ -1931,35 +1936,35 @@
   .sp-ring {
     align-items: center;
     display: flex;
-    height: 56px;
+    height: 100px;
     justify-content: center;
     position: relative;
-    width: 56px;
+    width: 100px;
   }
 
   .sp-ring-svg {
-    animation: sp-ring-rotate 1.4s linear infinite;
-    height: 56px;
+    animation: sp-ring-rotate 1.6s linear infinite;
+    height: 100px;
     left: 0;
     position: absolute;
     top: 0;
-    width: 56px;
+    width: 100px;
   }
 
   .sp-ring-track {
     fill: none;
-    stroke: rgba(0, 80, 170, 0.12);
-    stroke-width: 3;
+    stroke: rgba(0, 83, 179, 0.1);
+    stroke-width: 4;
   }
 
   .sp-ring-arc {
-    animation: sp-ring-dash 1.4s ease-in-out infinite;
+    animation: sp-ring-dash 1.6s ease-in-out infinite;
     fill: none;
     stroke: var(--lidl-blue);
-    stroke-dasharray: 119.4;
-    stroke-dashoffset: 100;
+    stroke-dasharray: 263.9;
+    stroke-dashoffset: 230;
     stroke-linecap: round;
-    stroke-width: 3;
+    stroke-width: 4;
   }
 
   .sp-ring-logo {
@@ -2073,8 +2078,8 @@
   }
 
   @keyframes sp-ring-dash {
-    0%   { stroke-dashoffset: 107; }
-    50%  { stroke-dashoffset: 18; }
+    0%   { stroke-dashoffset: 230; }
+    50%  { stroke-dashoffset: 40; }
     100% { stroke-dashoffset: 107; }
   }
 

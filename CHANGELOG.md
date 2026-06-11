@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.42 – 11.06.2026 11:53
+- Spinner: kroužek 100px (byl 56px), logo 48px, busy-box bílá karta se stínem, plynulejší animace arc
+
 ## v2.1.41 – 11.06.2026 11:47
 - Počasí: zobrazení pro každé aktivní LC (Open-Meteo geocoding + weather)
 - poslední návštěva zarovnána vpravo
