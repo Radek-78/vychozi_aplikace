@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.1.41 – 11.06.2026 11:47
+- Počasí: zobrazení pro každé aktivní LC (Open-Meteo geocoding + weather)
+- poslední návštěva zarovnána vpravo
+
 ## v2.1.40 – 11.06.2026 11:41
 - Počasí: nahrazena GPS geolokace IP geolokací (ipapi.co) — funguje bez oprávnění prohlížeče
 

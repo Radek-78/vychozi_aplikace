@@ -65,11 +65,8 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
             <span>Svátek: <strong id="nameDayText">—</strong></span>
           </div>
-          <div class="hero-info-chip" id="weatherChip" style="display:none">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-            <span><strong id="weatherText"></strong><span id="weatherLabel" style="opacity:0.7;margin-left:4px"></span></span>
-          </div>
-          <div class="hero-info-chip">
+          <div id="lcWeatherChips"></div>
+          <div class="hero-info-chip hero-info-chip--right">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             <span>Naposledy: <strong id="lastVisitText">—</strong></span>
           </div>
@@ -817,46 +814,35 @@
     },
 
     loadWeather() {
-      const chip = document.querySelector('#weatherChip');
-      const showChip = (text, label) => {
-        Ui.setText('#weatherText', text);
-        Ui.setText('#weatherLabel', label);
-        if (chip) chip.style.display = '';
-      };
-      const fetchWeather = (lat, lng, locationLabel) => {
-        const weatherUrl = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat +
-          '&longitude=' + lng + '&current=temperature_2m,weather_code&timezone=auto';
-        fetch(weatherUrl)
-          .then((r) => r.json())
-          .then((json) => {
-            const c = json.current;
-            const desc = this._wmoDesc(c.weather_code);
-            showChip(desc.icon + ' ' + Math.round(c.temperature_2m) + ' °C',
-              locationLabel ? desc.label + ' · ' + locationLabel : desc.label);
-          })
-          .catch((e) => showChip('⚠', 'Open-Meteo: ' + e.message));
-      };
-      const resolveCity = (lat, lng) => {
-        fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lng + '&format=json', {
-          headers: { 'Accept-Language': 'cs' },
+      const container = document.querySelector('#lcWeatherChips');
+      if (!container) return;
+      Ui.call('apiListLogistics', null, { silent: true })
+        .then((lcs) => {
+          const active = (lcs || []).filter((lc) => lc.active === true);
+          if (!active.length) return;
+          active.forEach((lc) => {
+            const chip = document.createElement('div');
+            chip.className = 'hero-info-chip hero-info-chip--center';
+            chip.innerHTML = '<span><strong>…</strong><span class="wlabel"> ' + lc.abbreviation + '</span></span>';
+            container.appendChild(chip);
+            fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(lc.name) + '&count=1&language=cs&format=json')
+              .then((r) => r.json())
+              .then((geo) => {
+                const res = geo.results && geo.results[0];
+                if (!res) return;
+                return fetch('https://api.open-meteo.com/v1/forecast?latitude=' + res.latitude +
+                  '&longitude=' + res.longitude + '&current=temperature_2m,weather_code&timezone=auto')
+                  .then((r) => r.json())
+                  .then((json) => {
+                    const c = json.current;
+                    const desc = this._wmoDesc(c.weather_code);
+                    chip.querySelector('strong').textContent = desc.icon + ' ' + Math.round(c.temperature_2m) + ' °C';
+                  });
+              })
+              .catch(() => { chip.querySelector('strong').textContent = '—'; });
+          });
         })
-          .then((r) => r.json())
-          .then((geo) => {
-            const a = geo.address || {};
-            const city = a.city || a.town || a.village || a.municipality || '';
-            fetchWeather(lat, lng, city || (lat.toFixed(3) + ', ' + lng.toFixed(3)));
-          })
-          .catch(() => fetchWeather(lat, lng, lat.toFixed(3) + ', ' + lng.toFixed(3)));
-      };
-      showChip('📍', 'Zjišťuji polohu…');
-      fetch('https://ipapi.co/json/')
-        .then((r) => r.json())
-        .then((geo) => {
-          if (geo.error) { showChip('⚠', 'IP geo: ' + geo.reason); return; }
-          const city = geo.city || geo.region || '';
-          fetchWeather(geo.latitude, geo.longitude, city);
-        })
-        .catch((e) => showChip('⚠', 'IP geo: ' + e.message));
+        .catch(() => {});
     },
 
     _wmoDesc(code) {
