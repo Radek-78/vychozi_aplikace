@@ -816,6 +816,7 @@
     loadWeather() {
       const container = document.querySelector('#lcWeatherChips');
       if (!container) return;
+      container.innerHTML = '';
       Ui.call('apiListLogistics', null, { silent: true })
         .then((lcs) => {
           const active = (lcs || []).filter((lc) => lc.active === true);
@@ -919,7 +920,7 @@
 
     renderActivity(rows) {
       const VISIBLE = 5;
-      const ROW_H = 36;
+      const ROW_H = 30;
       this._activityOffset = 0;
       this._activityRows = rows;
       const actionLabels = {
@@ -929,14 +930,23 @@
         store_update: 'Filiálka', store_delete: 'Filiálka smazána',
         logistic_create: 'Nové LC', logistic_update: 'LC',
         logistic_delete: 'LC smazáno', sync_settings_update: 'Nastavení sync',
+        store_toggle: 'Filiálka přepnuta',
       };
       const actionIcons = {
         setup: 'settings', sync_run: 'sync',
         user_create: 'users', user_update: 'users',
         settings_update: 'settings', store_create: 'store',
-        store_update: 'store', store_delete: 'store',
+        store_update: 'store', store_delete: 'store', store_toggle: 'power',
         logistic_create: 'truck', logistic_update: 'truck',
         logistic_delete: 'truck', sync_settings_update: 'settings',
+      };
+      const actionColors = {
+        sync_run: 'act-c-blue', sync_settings_update: 'act-c-blue',
+        user_create: 'act-c-green', user_update: 'act-c-green',
+        store_create: 'act-c-purple', store_update: 'act-c-purple',
+        store_delete: 'act-c-red', store_toggle: 'act-c-red',
+        logistic_create: 'act-c-yellow', logistic_update: 'act-c-yellow', logistic_delete: 'act-c-red',
+        settings_update: 'act-c-grey', setup: 'act-c-grey',
       };
       const track = document.querySelector('#activityTrack');
       const viewport = document.querySelector('#activityViewport');
@@ -949,13 +959,16 @@
       }
       track.innerHTML = rows.map((row) => `
         <div class="activity-row">
-          <span class="activity-icon"><svg width="13" height="13" viewBox="0 0 24 24"><use href="#i-${Ui.escape(actionIcons[row.action] || 'info')}"></use></svg></span>
+          <span class="activity-icon ${Ui.escape(actionColors[row.action] || 'act-c-grey')}">
+            <svg width="11" height="11" viewBox="0 0 24 24"><use href="#i-${Ui.escape(actionIcons[row.action] || 'info')}"></use></svg>
+          </span>
           <div class="activity-main">
             <span class="activity-label">${Ui.escape(actionLabels[row.action] || row.action)}</span>
             <span class="activity-detail">${Ui.escape(row.detail || '')}</span>
           </div>
           <div class="activity-meta">
-            <span>${Ui.escape(row.user || '')} · ${Ui.escape(Ui.formatDateTime(row.timestamp))}</span>
+            <span class="act-time">${Ui.escape(Ui.formatDateTime(row.timestamp))}</span>
+            <span class="act-user">${Ui.escape((row.user || '').replace(/@.*/, ''))}</span>
           </div>
         </div>`).join('');
       viewport.style.height = Math.min(rows.length, VISIBLE) * ROW_H + 'px';
@@ -964,7 +977,7 @@
 
     _updateActivityNav() {
       const VISIBLE = 5;
-      const ROW_H = 36;
+      const ROW_H = 30;
       const total = this._activityRows.length;
       const offset = this._activityOffset;
       const track = document.querySelector('#activityTrack');

@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.43 – 11.06.2026 11:57
+- Home: oprava duplikace LC chipů, LC zarovnány na střed, moduly min-height 130px, activity řádky 30px + barevné ikony
+
 ## v2.1.42 – 11.06.2026 11:53
 - Spinner: kroužek 100px (byl 56px), logo 48px, busy-box bílá karta se stínem, plynulejší animace arc
 
