@@ -304,6 +304,17 @@ function apiDeleteLogistic(id) {
   });
 }
 
+function apiUpdateLastVisit() {
+  return guard_(ROLES.USER, (actor) => {
+    const users = dbGetAll_(SHEETS.USERS);
+    const user = users.find((u) => String(u.email).toLowerCase() === actor.email.toLowerCase());
+    if (!user) return { previous: null };
+    const previous = user.last_visit_at || null;
+    dbUpdate_(SHEETS.USERS, user.id, { last_visit_at: nowIso_() });
+    return { previous: previous };
+  });
+}
+
 /* ── Sync settings ──────────────────────────────────────────────── */
 
 function apiGetSyncSettings() {

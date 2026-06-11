@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.33 – 11.06.2026 09:48
+- Home: 3 nové moduly — Svátek dne (statický JS kalendář), Počasí (Open-Meteo + geolokace), Poslední návštěva (DB last_visit_at)
+
 ## v2.1.32 – 11.06.2026 00:09
 - UI: section-bar layout pro všechny záložky, sort/filter na sloupcích tabulek, Lidl ikony (SVG sprite), filiálky: deaktivace tlačítkem, manually_inactive přes sync
 
