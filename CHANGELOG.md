@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.38 – 11.06.2026 11:30
+- Moduly: stavové ikony — hodiny (v přípravě) a zámek (nedostupné) v pravém horním rohu karty
+
 ## v2.1.37 – 11.06.2026 11:28
 - Home: moduly vyšší (padding 16/14px), hero kompaktnější (12px), hover border na modulech (modrý outline + shadow)
 

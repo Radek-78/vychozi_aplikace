@@ -1237,6 +1237,22 @@
   .mc--inactive .mc-badge { background: var(--surface); color: var(--muted); }
   .mc--inactive button    { pointer-events: none; }
 
+  /* Stavová ikona v pravém horním rohu */
+  .mc-status-icon {
+    align-items: center;
+    border-radius: 50%;
+    display: flex;
+    height: 22px;
+    justify-content: center;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    width: 22px;
+  }
+  .mc-status-icon svg { height: 12px; width: 12px; }
+  .mc--coming .mc-status-icon  { background: #fef9c3; color: #92400e; }
+  .mc--inactive .mc-status-icon { background: var(--surface); color: var(--muted); }
+
   /* ── Hero infobar (spodní pruh v hero) ──────────── */
   .home-hero {
     flex-wrap: wrap;
