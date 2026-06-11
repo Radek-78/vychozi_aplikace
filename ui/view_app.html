@@ -62,15 +62,34 @@
         </div>
       </div>
 
+      <div class="home-info">
+        <div class="home-info-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span class="info-label">Svátek:</span>
+          <strong id="nameDayText">—</strong>
+        </div>
+        <div class="home-info-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <strong id="weatherText">—</strong>
+          <span id="weatherLabel" class="info-label"></span>
+        </div>
+        <div class="home-info-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span class="info-label">Naposledy:</span>
+          <strong id="lastVisitText">—</strong>
+        </div>
+      </div>
+
       <div class="module-grid" id="moduleGrid">
 
-        <article class="module-card mc--sidebar">
+        <article class="module-card mc--sidebar mc--available">
           <div class="mc-side">
             <svg><use href="#i-store"></use></svg>
             <i></i>
           </div>
           <div class="mc-body">
             <h2>Filiálky</h2>
+            <span class="mc-badge">Dostupné</span>
             <p>Správa a přehled sítě prodejen v systému.</p>
             <footer>
               <button class="button button-secondary button-small" type="button" data-go-section="stores">Otevřít</button>
@@ -78,13 +97,14 @@
           </div>
         </article>
 
-        <article class="module-card mc--sidebar">
+        <article class="module-card mc--sidebar mc--available">
           <div class="mc-side mc-side--light">
             <svg><use href="#i-sync"></use></svg>
             <i></i>
           </div>
           <div class="mc-body">
             <h2>Synchronizace</h2>
+            <span class="mc-badge">Dostupné</span>
             <p>Import dat z externího xlsx souboru.</p>
             <footer>
               <button class="button button-secondary button-small" type="button" data-go-section="sync">Spustit</button>
@@ -92,13 +112,14 @@
           </div>
         </article>
 
-        <article class="module-card mc--sidebar">
+        <article class="module-card mc--sidebar mc--coming">
           <div class="mc-side mc-side--dark">
             <svg><use href="#i-users"></use></svg>
             <i></i>
           </div>
           <div class="mc-body">
             <h2>Uživatelé</h2>
+            <span class="mc-badge">V přípravě</span>
             <p><span id="statUsers">—</span> aktivních účtů s přístupem.</p>
             <footer>
               <button class="button button-secondary button-small" type="button" data-go-section="users">Spravovat</button>
@@ -106,13 +127,14 @@
           </div>
         </article>
 
-        <article class="module-card mc--sidebar">
+        <article class="module-card mc--sidebar mc--coming">
           <div class="mc-side mc-side--yellow">
             <svg><use href="#i-truck"></use></svg>
             <i></i>
           </div>
           <div class="mc-body">
             <h2>Log. centra</h2>
+            <span class="mc-badge">V přípravě</span>
             <p>Správa logistických center LC.</p>
             <footer>
               <button class="button button-secondary button-small" type="button" data-go-section="logistics">Správa</button>
@@ -120,13 +142,14 @@
           </div>
         </article>
 
-        <article class="module-card mc--sidebar">
+        <article class="module-card mc--sidebar mc--inactive">
           <div class="mc-side mc-side--green">
             <svg><use href="#i-settings"></use></svg>
             <i></i>
           </div>
           <div class="mc-body">
             <h2>Nastavení</h2>
+            <span class="mc-badge">Nedostupné</span>
             <p>Konfigurace aplikace a brandingu.</p>
             <footer>
               <button class="button button-secondary button-small" type="button" data-go-section="settings">Otevřít</button>
@@ -134,13 +157,14 @@
           </div>
         </article>
 
-        <article class="module-card mc--sidebar">
+        <article class="module-card mc--sidebar mc--inactive">
           <div class="mc-side mc-side--red">
             <svg><use href="#i-list"></use></svg>
             <i></i>
           </div>
           <div class="mc-body">
             <h2>Audit</h2>
+            <span class="mc-badge">Nedostupné</span>
             <p>Přehled systémových událostí.</p>
             <footer>
               <button class="button button-secondary button-small" type="button" data-go-section="audit">Zobrazit</button>
@@ -148,47 +172,6 @@
           </div>
         </article>
 
-        <article class="module-card mc--sidebar">
-          <div class="mc-side mc-side--yellow">
-            <svg><use href="#i-info"></use></svg>
-            <i></i>
-          </div>
-          <div class="mc-body">
-            <h2>Svátek</h2>
-            <p id="nameDayText">—</p>
-            <footer>
-              <span style="font-size:11px;color:var(--muted)">Dnes má svátek</span>
-            </footer>
-          </div>
-        </article>
-
-        <article class="module-card mc--sidebar">
-          <div class="mc-side mc-side--light">
-            <svg><use href="#i-warning"></use></svg>
-            <i></i>
-          </div>
-          <div class="mc-body">
-            <h2>Počasí</h2>
-            <p id="weatherText" style="font-size:18px;font-weight:700;line-height:1.2">—</p>
-            <footer>
-              <span id="weatherLabel" style="font-size:11px;color:var(--muted)"></span>
-            </footer>
-          </div>
-        </article>
-
-        <article class="module-card mc--sidebar">
-          <div class="mc-side">
-            <svg><use href="#i-home"></use></svg>
-            <i></i>
-          </div>
-          <div class="mc-body">
-            <h2>Poslední návštěva</h2>
-            <p id="lastVisitText" style="font-size:13px">—</p>
-            <footer>
-              <span style="font-size:11px;color:var(--muted)">Předchozí přihlášení</span>
-            </footer>
-          </div>
-        </article>
 
       </div>
 
@@ -834,30 +817,25 @@
     },
 
     loadWeather() {
-      const show = (lat, lng, label) => {
-        const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat +
-          '&longitude=' + lng + '&current=temperature_2m,weather_code&timezone=Europe/Prague';
-        fetch(url)
-          .then((r) => r.json())
-          .then((json) => {
-            const c = json.current;
-            const desc = this._wmoDesc(c.weather_code);
-            Ui.setText('#weatherText', desc.icon + ' ' + Math.round(c.temperature_2m) + ' °C');
-            Ui.setText('#weatherLabel', desc.label + (label ? ' · ' + label : ''));
-          })
-          .catch(() => {
-            Ui.setText('#weatherText', '—');
-          });
-      };
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (pos) => show(pos.coords.latitude, pos.coords.longitude, ''),
-          () => show(50.0755, 14.4378, 'Praha'),
-          { timeout: 5000 }
-        );
-      } else {
-        show(50.0755, 14.4378, 'Praha');
-      }
+      if (!navigator.geolocation) return;
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude: lat, longitude: lng } = pos.coords;
+          const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat +
+            '&longitude=' + lng + '&current=temperature_2m,weather_code&timezone=auto';
+          fetch(url)
+            .then((r) => r.json())
+            .then((json) => {
+              const c = json.current;
+              const desc = this._wmoDesc(c.weather_code);
+              Ui.setText('#weatherText', desc.icon + ' ' + Math.round(c.temperature_2m) + ' °C');
+              Ui.setText('#weatherLabel', desc.label);
+            })
+            .catch(() => {});
+        },
+        () => {},
+        { timeout: 6000, maximumAge: 300000 }
+      );
     },
 
     _wmoDesc(code) {

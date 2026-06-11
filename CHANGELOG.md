@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.1.34 – 11.06.2026 09:56
+- Home: svátek/počasí/návštěva v infobaru hero
+- moduly menší + stavové třídy (available/coming/inactive) + hover animace
+- geolokace bez fallbacku
+
 ## v2.1.33 – 11.06.2026 09:48
 - Home: 3 nové moduly — Svátek dne (statický JS kalendář), Počasí (Open-Meteo + geolokace), Poslední návštěva (DB last_visit_at)
 

@@ -905,16 +905,15 @@
   }
 
   .module-card {
-    aspect-ratio: 1 / 1;
     background: var(--white);
     border: 1px solid var(--line-soft);
     border-radius: var(--radius);
     border-top: 3px solid var(--lidl-blue);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     overflow: hidden;
-    padding: 16px;
+    padding: 12px;
     position: relative;
   }
 
@@ -1152,6 +1151,7 @@
 
   /* 1: Boční pruh — barevný sloupec s ikonou vlevo */
   .mc--sidebar {
+    aspect-ratio: auto;
     border: 1px solid var(--line);
     flex-direction: row;
     gap: 0;
@@ -1165,28 +1165,33 @@
     flex-direction: column;
     flex-shrink: 0;
     justify-content: space-between;
-    padding: 14px 0 12px;
-    width: 44px;
+    padding: 10px 0;
+    width: 40px;
   }
-  .mc-side svg { height: 19px; width: 19px; }
+  .mc-side svg {
+    height: 18px;
+    transition: transform 0.25s ease;
+    width: 18px;
+  }
   .mc-side i {
     background: var(--lidl-yellow);
     border-radius: 50%;
     display: block;
-    height: 7px;
-    width: 7px;
+    height: 6px;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+    width: 6px;
   }
   .mc-body {
     display: flex;
     flex: 1;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
     min-width: 0;
-    padding: 14px;
+    padding: 10px 12px;
   }
-  .mc--sidebar h2 { font-size: 14px; }
-  .mc--sidebar p { color: var(--muted); font-size: 11px; line-height: 1.5; }
-  .mc--sidebar footer { border-top: 1px solid var(--line-soft); justify-content: flex-end; margin-top: auto; padding-top: 10px; }
+  .mc--sidebar h2 { font-size: 13px; }
+  .mc--sidebar p { color: var(--muted); font-size: 11px; line-height: 1.4; }
+  .mc--sidebar footer { border-top: 1px solid var(--line-soft); justify-content: flex-end; margin-top: auto; padding-top: 8px; }
 
   /* Barevné varianty bočního pruhu */
   .mc-side--dark   { background: var(--lidl-dark-blue); }
@@ -1195,6 +1200,59 @@
   .mc-side--yellow i { background: var(--lidl-dark-blue); }
   .mc-side--red    { background: var(--lidl-red); }
   .mc-side--green  { background: #007a45; }
+
+  /* Hover animace — ikona + dot (bez lift) */
+  .mc--sidebar:hover .mc-side svg { transform: scale(1.22); }
+  .mc--sidebar:hover .mc-side i  { animation: mc-dot-pulse 0.8s ease infinite; }
+  @keyframes mc-dot-pulse {
+    0%, 100% { transform: scale(1);   opacity: 1; }
+    50%       { transform: scale(2.4); opacity: 0.45; }
+  }
+
+  /* Stavový badge */
+  .mc-badge {
+    align-self: flex-start;
+    border-radius: 3px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 2px 5px;
+    text-transform: uppercase;
+  }
+  .mc--available .mc-side i { background: #22c55e; }
+  .mc--available .mc-badge  { background: #dcfce7; color: #166534; }
+
+  .mc--coming .mc-side  { opacity: 0.5; }
+  .mc--coming .mc-body  { opacity: 0.65; }
+  .mc--coming .mc-badge { background: #fef9c3; color: #713f12; }
+  .mc--coming button    { pointer-events: none; opacity: 0.5; }
+
+  .mc--inactive .mc-side { filter: grayscale(1); opacity: 0.35; }
+  .mc--inactive .mc-body { opacity: 0.3; }
+  .mc--inactive .mc-badge { background: var(--surface); color: var(--muted); }
+  .mc--inactive button    { pointer-events: none; }
+
+  /* ── Home infobar ────────────────────────────────── */
+  .home-info {
+    background: var(--white);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius);
+    display: flex;
+    font-size: 12px;
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .home-info-chip {
+    align-items: center;
+    display: flex;
+    flex: 1;
+    gap: 7px;
+    padding: 9px 14px;
+  }
+  .home-info-chip + .home-info-chip { border-left: 1px solid var(--line-soft); }
+  .home-info-chip svg { color: var(--muted); flex-shrink: 0; height: 13px; width: 13px; }
+  .home-info-chip .info-label { color: var(--muted); }
+  .home-info-chip strong { font-weight: 600; }
 
   /* ── Busy overlay ────────────────────────────────── */
 
