@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.37 – 11.06.2026 11:28
+- Home: moduly vyšší (padding 16/14px), hero kompaktnější (12px), hover border na modulech (modrý outline + shadow)
+
 ## v2.1.36 – 11.06.2026 11:25
 - Počasí: reverse geocoding přes Nominatim — zobrazí název města z detekované polohy
 - fallback Praha s popiskem
