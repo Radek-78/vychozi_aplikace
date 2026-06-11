@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.40 – 11.06.2026 11:41
+- Počasí: nahrazena GPS geolokace IP geolokací (ipapi.co) — funguje bez oprávnění prohlížeče
+
 ## v2.1.39 – 11.06.2026 11:36
 - Počasí: diagnostický režim — chip vždy viditelný se stavem (zjišťuji polohu / přístup odepřen / timeout / souřadnice)
 

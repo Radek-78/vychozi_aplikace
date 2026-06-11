@@ -848,19 +848,15 @@
           })
           .catch(() => fetchWeather(lat, lng, lat.toFixed(3) + ', ' + lng.toFixed(3)));
       };
-      if (!navigator.geolocation) {
-        showChip('⚠', 'Geolokace: API nedostupné');
-        return;
-      }
       showChip('📍', 'Zjišťuji polohu…');
-      navigator.geolocation.getCurrentPosition(
-        (pos) => resolveCity(pos.coords.latitude, pos.coords.longitude),
-        (err) => {
-          const msgs = { 1: 'přístup odepřen', 2: 'poloha nedostupná', 3: 'timeout' };
-          showChip('⚠', 'Geolokace: ' + (msgs[err.code] || err.message));
-        },
-        { timeout: 8000, maximumAge: 300000 }
-      );
+      fetch('https://ipapi.co/json/')
+        .then((r) => r.json())
+        .then((geo) => {
+          if (geo.error) { showChip('⚠', 'IP geo: ' + geo.reason); return; }
+          const city = geo.city || geo.region || '';
+          fetchWeather(geo.latitude, geo.longitude, city);
+        })
+        .catch((e) => showChip('⚠', 'IP geo: ' + e.message));
     },
 
     _wmoDesc(code) {
