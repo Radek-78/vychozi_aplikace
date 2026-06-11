@@ -1232,27 +1232,32 @@
   .mc--inactive .mc-badge { background: var(--surface); color: var(--muted); }
   .mc--inactive button    { pointer-events: none; }
 
-  /* ── Home infobar ────────────────────────────────── */
-  .home-info {
-    background: var(--white);
-    border: 1px solid var(--line-soft);
-    border-radius: var(--radius);
-    display: flex;
-    font-size: 12px;
-    margin-bottom: 14px;
-    overflow: hidden;
+  /* ── Hero infobar (spodní pruh v hero) ──────────── */
+  .home-hero {
+    flex-wrap: wrap;
   }
-  .home-info-chip {
+  .hero-info-row {
     align-items: center;
+    border-top: 1px solid rgba(255,255,255,0.12);
     display: flex;
-    flex: 1;
-    gap: 7px;
-    padding: 9px 14px;
+    flex-basis: 100%;
+    gap: 6px;
+    padding-top: 10px;
   }
-  .home-info-chip + .home-info-chip { border-left: 1px solid var(--line-soft); }
-  .home-info-chip svg { color: var(--muted); flex-shrink: 0; height: 13px; width: 13px; }
-  .home-info-chip .info-label { color: var(--muted); }
-  .home-info-chip strong { font-weight: 600; }
+  .hero-info-chip {
+    align-items: center;
+    background: rgba(255,255,255,0.09);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    color: rgba(255,255,255,0.85);
+    display: flex;
+    font-size: 11px;
+    gap: 5px;
+    padding: 3px 10px 3px 7px;
+    white-space: nowrap;
+  }
+  .hero-info-chip svg { flex-shrink: 0; height: 11px; opacity: 0.6; width: 11px; }
+  .hero-info-chip strong { color: #fff; font-weight: 600; }
 
   /* ── Busy overlay ────────────────────────────────── */
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.1.35 – 11.06.2026 11:21
+- Home: infobar přesunut do hero jako spodní pruh (pill chipy)
+- počasí Praha fallback když geolokace selže
+
 ## v2.1.34 – 11.06.2026 09:56
 - Home: svátek/počasí/návštěva v infobaru hero
 - moduly menší + stavové třídy (available/coming/inactive) + hover animace
