@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.1.36 – 11.06.2026 11:25
+- Počasí: reverse geocoding přes Nominatim — zobrazí název města z detekované polohy
+- fallback Praha s popiskem
+
 ## v2.1.35 – 11.06.2026 11:21
 - Home: infobar přesunut do hero jako spodní pruh (pill chipy)
 - počasí Praha fallback když geolokace selže

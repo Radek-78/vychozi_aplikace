@@ -814,9 +814,9 @@
 
     loadWeather() {
       const fetchWeather = (lat, lng, locationLabel) => {
-        const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat +
+        const weatherUrl = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat +
           '&longitude=' + lng + '&current=temperature_2m,weather_code&timezone=auto';
-        fetch(url)
+        fetch(weatherUrl)
           .then((r) => r.json())
           .then((json) => {
             const c = json.current;
@@ -828,14 +828,26 @@
           })
           .catch(() => {});
       };
+      const resolveCity = (lat, lng) => {
+        fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lng + '&format=json', {
+          headers: { 'Accept-Language': 'cs' },
+        })
+          .then((r) => r.json())
+          .then((geo) => {
+            const a = geo.address || {};
+            const city = a.city || a.town || a.village || a.municipality || '';
+            fetchWeather(lat, lng, city);
+          })
+          .catch(() => fetchWeather(lat, lng, ''));
+      };
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
-          (pos) => fetchWeather(pos.coords.latitude, pos.coords.longitude, ''),
-          () => fetchWeather(50.0755, 14.4378, 'Praha'),
+          (pos) => resolveCity(pos.coords.latitude, pos.coords.longitude),
+          () => fetchWeather(50.0755, 14.4378, 'Praha (fallback)'),
           { timeout: 6000, maximumAge: 300000 }
         );
       } else {
-        fetchWeather(50.0755, 14.4378, 'Praha');
+        fetchWeather(50.0755, 14.4378, 'Praha (fallback)');
       }
     },
 
