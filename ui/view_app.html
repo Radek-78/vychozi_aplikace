@@ -817,6 +817,12 @@
     },
 
     loadWeather() {
+      const chip = document.querySelector('#weatherChip');
+      const showChip = (text, label) => {
+        Ui.setText('#weatherText', text);
+        Ui.setText('#weatherLabel', label);
+        if (chip) chip.style.display = '';
+      };
       const fetchWeather = (lat, lng, locationLabel) => {
         const weatherUrl = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat +
           '&longitude=' + lng + '&current=temperature_2m,weather_code&timezone=auto';
@@ -825,12 +831,10 @@
           .then((json) => {
             const c = json.current;
             const desc = this._wmoDesc(c.weather_code);
-            Ui.setText('#weatherText', desc.icon + ' ' + Math.round(c.temperature_2m) + ' °C');
-            Ui.setText('#weatherLabel', locationLabel ? desc.label + ' · ' + locationLabel : desc.label);
-            const chip = document.querySelector('#weatherChip');
-            if (chip) chip.style.display = '';
+            showChip(desc.icon + ' ' + Math.round(c.temperature_2m) + ' °C',
+              locationLabel ? desc.label + ' · ' + locationLabel : desc.label);
           })
-          .catch(() => {});
+          .catch((e) => showChip('⚠', 'Open-Meteo: ' + e.message));
       };
       const resolveCity = (lat, lng) => {
         fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lng + '&format=json', {
@@ -840,19 +844,23 @@
           .then((geo) => {
             const a = geo.address || {};
             const city = a.city || a.town || a.village || a.municipality || '';
-            fetchWeather(lat, lng, city);
+            fetchWeather(lat, lng, city || (lat.toFixed(3) + ', ' + lng.toFixed(3)));
           })
-          .catch(() => fetchWeather(lat, lng, ''));
+          .catch(() => fetchWeather(lat, lng, lat.toFixed(3) + ', ' + lng.toFixed(3)));
       };
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (pos) => resolveCity(pos.coords.latitude, pos.coords.longitude),
-          () => fetchWeather(50.0755, 14.4378, 'Praha (fallback)'),
-          { timeout: 6000, maximumAge: 300000 }
-        );
-      } else {
-        fetchWeather(50.0755, 14.4378, 'Praha (fallback)');
+      if (!navigator.geolocation) {
+        showChip('⚠', 'Geolokace: API nedostupné');
+        return;
       }
+      showChip('📍', 'Zjišťuji polohu…');
+      navigator.geolocation.getCurrentPosition(
+        (pos) => resolveCity(pos.coords.latitude, pos.coords.longitude),
+        (err) => {
+          const msgs = { 1: 'přístup odepřen', 2: 'poloha nedostupná', 3: 'timeout' };
+          showChip('⚠', 'Geolokace: ' + (msgs[err.code] || err.message));
+        },
+        { timeout: 8000, maximumAge: 300000 }
+      );
     },
 
     _wmoDesc(code) {

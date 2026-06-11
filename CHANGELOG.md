@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.1.39 – 11.06.2026 11:36
+- Počasí: diagnostický režim — chip vždy viditelný se stavem (zjišťuji polohu / přístup odepřen / timeout / souřadnice)
+
 ## v2.1.38 – 11.06.2026 11:30
 - Moduly: stavové ikony — hodiny (v přípravě) a zámek (nedostupné) v pravém horním rohu karty
 
