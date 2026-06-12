@@ -421,6 +421,16 @@
             </select>
           </label>
         </div>
+        <div class="user-apps-section" style="margin-top: 16px; border-top: 1px solid var(--border); padding-top: 16px;">
+          <span style="display:block;font-size:12px;font-weight:600;margin-bottom:8px;color:var(--text);">Přístup k subaplikacím</span>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:12px;cursor:pointer;">
+            <input type="checkbox" name="useRoleAppsDefault" id="useRoleAppsDefault" checked style="accent-color:var(--lidl-blue);margin:0;width:16px;height:16px;">
+            <span style="font-weight:500;">Použít výchozí oprávnění podle role</span>
+          </label>
+          <div id="userAppsChecklistContainer" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));gap:8px;padding-left:4px;opacity:0.5;pointer-events:none;">
+            <!-- Checkboxy pro jednotlivé subaplikace vykreslené dynamicky -->
+          </div>
+        </div>
       </div>
     </div>
     <footer class="modal-actions">
@@ -764,6 +774,24 @@ _sfState: {},
       });
       document.querySelector('#userForm').addEventListener('submit', (e) => {
         e.preventDefault(); this.saveUser(e.submitter);
+      });
+      document.querySelector('#useRoleAppsDefault').addEventListener('change', () => {
+        const defaultCheckbox = document.querySelector('#useRoleAppsDefault');
+        const container = document.querySelector('#userAppsChecklistContainer');
+        if (defaultCheckbox && container) {
+          const isDefault = defaultCheckbox.checked;
+          container.style.opacity = isDefault ? '0.5' : '1';
+          container.style.pointerEvents = isDefault ? 'none' : 'auto';
+          if (isDefault) {
+            this.syncUserAppsChecklistWithRole();
+          }
+        }
+      });
+      document.querySelector('select[name="role"]').addEventListener('change', () => {
+        const defaultCheckbox = document.querySelector('#useRoleAppsDefault');
+        if (defaultCheckbox && defaultCheckbox.checked) {
+          this.syncUserAppsChecklistWithRole();
+        }
       });
       document.querySelector('#settingsForm').addEventListener('submit', (e) => {
         e.preventDefault(); this.saveSettings(e.submitter);
@@ -1211,13 +1239,89 @@ _sfState: {},
       form.elements.permission.value = user ? (user.permission || 'READER') : 'READER';
       form.elements.location.value = user ? (user.location || 'HQ') : 'HQ';
 
+      this.renderUserAppsChecklist(user);
+
       Ui.setText('#userModalTitle', user ? 'Upravit uživatele' : 'Přidat uživatele');
       Ui.openModal(document.querySelector('#userModal'));
+    },
+
+    renderUserAppsChecklist(user) {
+      const container = document.querySelector('#userAppsChecklistContainer');
+      if (!container) return;
+      
+      if (!this.apps.length) {
+        container.innerHTML = '<p style="color:var(--muted);font-size:12px;grid-column:1/-1;">Žádné subaplikace k dispozici.</p>';
+        return;
+      }
+      
+      const allowedAppsVal = user ? String(user.allowed_apps || '').trim() : 'default';
+      const isDefault = !allowedAppsVal || allowedAppsVal.toLowerCase() === 'default';
+      
+      const defaultCheckbox = document.querySelector('#useRoleAppsDefault');
+      if (defaultCheckbox) {
+        defaultCheckbox.checked = isDefault;
+      }
+      
+      container.style.opacity = isDefault ? '0.5' : '1';
+      container.style.pointerEvents = isDefault ? 'none' : 'auto';
+      
+      let allowedList = [];
+      if (!isDefault) {
+        allowedList = allowedAppsVal.split(',').map(s => s.trim().toLowerCase());
+      }
+      
+      container.innerHTML = this.apps.map((app) => {
+        let checkedAttr = '';
+        if (!isDefault) {
+          checkedAttr = (allowedAppsVal === '*' || allowedList.includes(String(app.slug || app.id).trim().toLowerCase())) ? 'checked' : '';
+        }
+        
+        return `
+          <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;margin:2px 0;">
+            <input type="checkbox" class="user-app-checkbox" data-app-slug="${Ui.escape(app.slug || app.id)}" ${checkedAttr} style="accent-color:var(--lidl-blue);margin:0;width:14px;height:14px;">
+            <span>${Ui.escape(app.name)}</span>
+          </label>
+        `;
+      }).join('');
+      
+      if (isDefault) {
+        this.syncUserAppsChecklistWithRole();
+      }
+    },
+
+    syncUserAppsChecklistWithRole() {
+      const roleSelect = document.querySelector('select[name="role"]');
+      if (!roleSelect) return;
+      const selectedRole = roleSelect.value;
+      
+      const rolePerm = (this.rolePermissions || []).find(r => r.role === selectedRole);
+      const allowedStr = rolePerm ? String(rolePerm.allowed_apps || '').trim() : '*';
+      const allowedList = allowedStr.split(',').map(s => s.trim().toLowerCase());
+      
+      const checkboxes = document.querySelectorAll('.user-app-checkbox');
+      checkboxes.forEach((cb) => {
+        const slug = cb.dataset.appSlug.toLowerCase();
+        cb.checked = (allowedStr === '*' || allowedList.includes(slug));
+      });
     },
 
     saveUser(button) {
       const form = document.querySelector('#userForm');
       Ui.setButtonLoading(button, true);
+
+      let allowedAppsStr = 'default';
+      const defaultCheckbox = document.querySelector('#useRoleAppsDefault');
+      if (defaultCheckbox && !defaultCheckbox.checked) {
+        const checkedApps = Array.from(document.querySelectorAll('.user-app-checkbox:checked'))
+          .map(cb => cb.dataset.appSlug);
+        const totalApps = Array.from(document.querySelectorAll('.user-app-checkbox'));
+        if (checkedApps.length === totalApps.length && totalApps.length > 0) {
+          allowedAppsStr = '*';
+        } else {
+          allowedAppsStr = checkedApps.join(',');
+        }
+      }
+
       Ui.call('apiSaveUser', {
         id: form.elements.id.value || null,
         email: form.elements.email.value,
@@ -1227,6 +1331,7 @@ _sfState: {},
         active: form.elements.active.value === 'true',
         permission: form.elements.permission.value,
         location: form.elements.location.value,
+        allowed_apps: allowedAppsStr,
       }, { silent: true, busy: 'Ukládám uživatele…' })
         .then(() => {
           Ui.setButtonLoading(button, false);

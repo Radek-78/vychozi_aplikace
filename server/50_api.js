@@ -5,9 +5,13 @@
 
 function apiGetCurrentUser() {
   return guard_(ROLES.USER, (user) => {
-    const permSet = getRolePermissions_(user.role);
+    let allowed = String(user.allowed_apps || '').trim();
+    if (!allowed || allowed.toLowerCase() === 'default') {
+      const permSet = getRolePermissions_(user.role);
+      allowed = permSet.allowed_apps || '';
+    }
     return Object.assign({}, user, {
-      allowed_apps: permSet.allowed_apps || ''
+      allowed_apps: allowed
     });
   });
 }
@@ -155,6 +159,8 @@ function apiSaveUser(payload) {
       }
     }
 
+    const allowed_apps = String((payload && payload.allowed_apps) || 'default').trim();
+
     const data = {
       email: email,
       firstName: firstName,
@@ -163,6 +169,7 @@ function apiSaveUser(payload) {
       active: active,
       permission: permission,
       location: location,
+      allowed_apps: allowed_apps,
     };
 
     const saved = existing

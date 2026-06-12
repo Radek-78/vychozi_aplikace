@@ -9,7 +9,7 @@
  * migrace při rozšíření šablony).
  */
 const DB_SCHEMA = {
-  '_users': ['id', 'email', 'firstName', 'lastName', 'role', 'active', 'created_at', 'created_by', 'updated_at', 'last_visit_at', 'permission', 'location'],
+  '_users': ['id', 'email', 'firstName', 'lastName', 'role', 'active', 'created_at', 'created_by', 'updated_at', 'last_visit_at', 'permission', 'location', 'allowed_apps'],
   '_settings': ['key', 'value', 'updated_at', 'updated_by'],
   '_audit_log': ['timestamp', 'user', 'action', 'detail'],
   'stores': [

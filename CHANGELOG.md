@@ -1,5 +1,9 @@
 ﻿# Changelog
 
+## v2.4.0 - 12.06.2026 15:20
+- Uzivatelska opravneni k subaplikacim (allowed_apps override)
+- Checklist subaplikaci v detailu uzivatele
+
 ## v2.3.1 - 12.06.2026 13:33
 - Oprava chyby pri prvotnim nacteni role_permissions a robustnejsi klientsky init
 

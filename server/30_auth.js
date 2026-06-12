@@ -198,13 +198,24 @@ function isAppAllowedForUser_(user, app) {
   if (!user || user.active !== true) return false;
   if (user.role === 'SUPERADMIN') return true;
   
-  const permSet = getRolePermissions_(user.role);
-  const allowed = String(permSet.allowed_apps || '').trim();
-  if (allowed === '*') return true;
-  if (!allowed) return false;
+  // 1. Zkontrolujeme specifické nastavení uživatele (pokud je sloupec vyplněný a není 'default')
+  let allowed = String(user.allowed_apps || '').trim();
+  if (allowed && allowed.toLowerCase() !== 'default') {
+    if (allowed === '*') return true;
+    const allowedList = allowed.split(',').map(s => s.trim().toLowerCase());
+    const slug = String(app.slug || '').trim().toLowerCase();
+    const id = String(app.id || '').trim().toLowerCase();
+    return allowedList.includes(slug) || allowedList.includes(id);
+  }
   
-  const allowedList = allowed.split(',').map(s => s.trim().toLowerCase());
+  // 2. Fallback na nastavení role
+  const permSet = getRolePermissions_(user.role);
+  const roleAllowed = String(permSet.allowed_apps || '').trim();
+  if (roleAllowed === '*') return true;
+  if (!roleAllowed) return false;
+  
+  const roleAllowedList = roleAllowed.split(',').map(s => s.trim().toLowerCase());
   const slug = String(app.slug || '').trim().toLowerCase();
   const id = String(app.id || '').trim().toLowerCase();
-  return allowedList.includes(slug) || allowedList.includes(id);
+  return roleAllowedList.includes(slug) || roleAllowedList.includes(id);
 }
