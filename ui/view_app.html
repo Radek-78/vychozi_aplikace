@@ -625,7 +625,13 @@ _sfState: {},
 
     init() {
       google.script.run
-        .withSuccessHandler((res) => this.onUserLoaded(res.data))
+        .withSuccessHandler((res) => {
+          if (res && res.ok) {
+            this.onUserLoaded(res.data);
+          } else {
+            this.onUserDenied((res && res.error) || 'Nemáte přístup do aplikace. Kontaktujte správce.');
+          }
+        })
         .withFailureHandler((err) => this.onUserDenied(err.message))
         .apiGetCurrentUser();
     },

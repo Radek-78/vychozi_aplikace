@@ -1,5 +1,8 @@
 ﻿# Changelog
 
+## v2.3.1 - 12.06.2026 13:33
+- Oprava chyby pri prvotnim nacteni role_permissions a robustnejsi klientsky init
+
 ## v2.3.0 - 12.06.2026 13:20
 - Vizualni matice roli a opravneni v administraci
 - Subaplikace routovani a opravneni

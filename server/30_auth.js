@@ -26,6 +26,7 @@ function getCurrentUser_() {
 
 /** Inicializuje výchozí hodnoty rolí v tabulce _role_permissions, pokud je prázdná. */
 function dbEnsureRolePermissions_() {
+  dbEnsureApps_();
   const list = dbGetAll_(SHEETS.ROLE_PERMISSIONS);
   if (list.length > 0) return;
 
