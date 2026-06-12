@@ -1,188 +1,193 @@
-# Changelog
+﻿# Changelog
 
-## v2.1.43 – 11.06.2026 11:57
-- Home: oprava duplikace LC chipů, LC zarovnány na střed, moduly min-height 130px, activity řádky 30px + barevné ikony
+## v2.2.0 - 12.06.2026 13:08
+- Implementace RBAC
+- opravneni Ctenar/Editor
+- lokalni datove zabezpeceni LC/HQ
 
-## v2.1.42 – 11.06.2026 11:53
-- Spinner: kroužek 100px (byl 56px), logo 48px, busy-box bílá karta se stínem, plynulejší animace arc
+## v2.1.43 â€“ 11.06.2026 11:57
+- Home: oprava duplikace LC chipĹŻ, LC zarovnĂˇny na stĹ™ed, moduly min-height 130px, activity Ĺ™Ăˇdky 30px + barevnĂ© ikony
 
-## v2.1.41 – 11.06.2026 11:47
-- Počasí: zobrazení pro každé aktivní LC (Open-Meteo geocoding + weather)
-- poslední návštěva zarovnána vpravo
+## v2.1.42 â€“ 11.06.2026 11:53
+- Spinner: krouĹľek 100px (byl 56px), logo 48px, busy-box bĂ­lĂˇ karta se stĂ­nem, plynulejĹˇĂ­ animace arc
 
-## v2.1.40 – 11.06.2026 11:41
-- Počasí: nahrazena GPS geolokace IP geolokací (ipapi.co) — funguje bez oprávnění prohlížeče
+## v2.1.41 â€“ 11.06.2026 11:47
+- PoÄŤasĂ­: zobrazenĂ­ pro kaĹľdĂ© aktivnĂ­ LC (Open-Meteo geocoding + weather)
+- poslednĂ­ nĂˇvĹˇtÄ›va zarovnĂˇna vpravo
 
-## v2.1.39 – 11.06.2026 11:36
-- Počasí: diagnostický režim — chip vždy viditelný se stavem (zjišťuji polohu / přístup odepřen / timeout / souřadnice)
+## v2.1.40 â€“ 11.06.2026 11:41
+- PoÄŤasĂ­: nahrazena GPS geolokace IP geolokacĂ­ (ipapi.co) â€” funguje bez oprĂˇvnÄ›nĂ­ prohlĂ­ĹľeÄŤe
 
-## v2.1.38 – 11.06.2026 11:30
-- Moduly: stavové ikony — hodiny (v přípravě) a zámek (nedostupné) v pravém horním rohu karty
+## v2.1.39 â€“ 11.06.2026 11:36
+- PoÄŤasĂ­: diagnostickĂ˝ reĹľim â€” chip vĹľdy viditelnĂ˝ se stavem (zjiĹˇĹĄuji polohu / pĹ™Ă­stup odepĹ™en / timeout / souĹ™adnice)
 
-## v2.1.37 – 11.06.2026 11:28
-- Home: moduly vyšší (padding 16/14px), hero kompaktnější (12px), hover border na modulech (modrý outline + shadow)
+## v2.1.38 â€“ 11.06.2026 11:30
+- Moduly: stavovĂ© ikony â€” hodiny (v pĹ™Ă­pravÄ›) a zĂˇmek (nedostupnĂ©) v pravĂ©m hornĂ­m rohu karty
 
-## v2.1.36 – 11.06.2026 11:25
-- Počasí: reverse geocoding přes Nominatim — zobrazí název města z detekované polohy
+## v2.1.37 â€“ 11.06.2026 11:28
+- Home: moduly vyĹˇĹˇĂ­ (padding 16/14px), hero kompaktnÄ›jĹˇĂ­ (12px), hover border na modulech (modrĂ˝ outline + shadow)
+
+## v2.1.36 â€“ 11.06.2026 11:25
+- PoÄŤasĂ­: reverse geocoding pĹ™es Nominatim â€” zobrazĂ­ nĂˇzev mÄ›sta z detekovanĂ© polohy
 - fallback Praha s popiskem
 
-## v2.1.35 – 11.06.2026 11:21
-- Home: infobar přesunut do hero jako spodní pruh (pill chipy)
-- počasí Praha fallback když geolokace selže
+## v2.1.35 â€“ 11.06.2026 11:21
+- Home: infobar pĹ™esunut do hero jako spodnĂ­ pruh (pill chipy)
+- poÄŤasĂ­ Praha fallback kdyĹľ geolokace selĹľe
 
-## v2.1.34 – 11.06.2026 09:56
-- Home: svátek/počasí/návštěva v infobaru hero
-- moduly menší + stavové třídy (available/coming/inactive) + hover animace
+## v2.1.34 â€“ 11.06.2026 09:56
+- Home: svĂˇtek/poÄŤasĂ­/nĂˇvĹˇtÄ›va v infobaru hero
+- moduly menĹˇĂ­ + stavovĂ© tĹ™Ă­dy (available/coming/inactive) + hover animace
 - geolokace bez fallbacku
 
-## v2.1.33 – 11.06.2026 09:48
-- Home: 3 nové moduly — Svátek dne (statický JS kalendář), Počasí (Open-Meteo + geolokace), Poslední návštěva (DB last_visit_at)
+## v2.1.33 â€“ 11.06.2026 09:48
+- Home: 3 novĂ© moduly â€” SvĂˇtek dne (statickĂ˝ JS kalendĂˇĹ™), PoÄŤasĂ­ (Open-Meteo + geolokace), PoslednĂ­ nĂˇvĹˇtÄ›va (DB last_visit_at)
 
-## v2.1.32 – 11.06.2026 00:09
-- UI: section-bar layout pro všechny záložky, sort/filter na sloupcích tabulek, Lidl ikony (SVG sprite), filiálky: deaktivace tlačítkem, manually_inactive přes sync
+## v2.1.32 â€“ 11.06.2026 00:09
+- UI: section-bar layout pro vĹˇechny zĂˇloĹľky, sort/filter na sloupcĂ­ch tabulek, Lidl ikony (SVG sprite), filiĂˇlky: deaktivace tlaÄŤĂ­tkem, manually_inactive pĹ™es sync
 
-## v2.1.31 – 10.06.2026 23:21
-- Home: všechny moduly v designu bočního pruhu s barevnými variantami
-- globální busy overlay s rozmazáním a popisem akce u všech načítání
+## v2.1.31 â€“ 10.06.2026 23:21
+- Home: vĹˇechny moduly v designu boÄŤnĂ­ho pruhu s barevnĂ˝mi variantami
+- globĂˇlnĂ­ busy overlay s rozmazĂˇnĂ­m a popisem akce u vĹˇech naÄŤĂ­tĂˇnĂ­
 
-## v2.1.30 – 10.06.2026 23:09
-- Home: hero dvouřádková pravá strana, activity panel u spodního okraje, 6 nových designů modulů (boční pruh, kruh, závorky, diagonála, vstupenka, typo)
+## v2.1.30 â€“ 10.06.2026 23:09
+- Home: hero dvouĹ™ĂˇdkovĂˇ pravĂˇ strana, activity panel u spodnĂ­ho okraje, 6 novĂ˝ch designĹŻ modulĹŻ (boÄŤnĂ­ pruh, kruh, zĂˇvorky, diagonĂˇla, vstupenka, typo)
 
-## v2.1.29 – 10.06.2026 22:55
-- Home: kompaktní hero s číslem týdne, 6 rozdílných designů modulů (čtverce), kompaktní activity panel, stat karta s počtem uživatelů
+## v2.1.29 â€“ 10.06.2026 22:55
+- Home: kompaktnĂ­ hero s ÄŤĂ­slem tĂ˝dne, 6 rozdĂ­lnĂ˝ch designĹŻ modulĹŻ (ÄŤtverce), kompaktnĂ­ activity panel, stat karta s poÄŤtem uĹľivatelĹŻ
 
-## v2.1.28 – 10.06.2026 22:39
-- Home: footer fix, hero top-left + status, vokativ, 6 module designů, activity scroll nav, tooltip overflow fix, hover lift odstraněn
+## v2.1.28 â€“ 10.06.2026 22:39
+- Home: footer fix, hero top-left + status, vokativ, 6 module designĹŻ, activity scroll nav, tooltip overflow fix, hover lift odstranÄ›n
 
-## v2.1.27 – 10.06.2026 22:11
-- Home: redesign — odstraněn topbar, hero s varováním (bell/badge/tooltip), modul grid 6 sloupců, activity list, changelog modal
-- Sidebar: email uživatele
+## v2.1.27 â€“ 10.06.2026 22:11
+- Home: redesign â€” odstranÄ›n topbar, hero s varovĂˇnĂ­m (bell/badge/tooltip), modul grid 6 sloupcĹŻ, activity list, changelog modal
+- Sidebar: email uĹľivatele
 
-## v2.1.26 – 10.06.2026 21:44
-- Wizard: sync krok skrytý při prázdné URL
-- odstraněn výchozí podtitul 'Webová aplikace'
+## v2.1.26 â€“ 10.06.2026 21:44
+- Wizard: sync krok skrytĂ˝ pĹ™i prĂˇzdnĂ© URL
+- odstranÄ›n vĂ˝chozĂ­ podtitul 'WebovĂˇ aplikace'
 
-## v2.1.25 – 10.06.2026 21:37
-- Wizard: Dokončuji vždy poslední krok, sync krok jen při potvrzeném přístupu ke složce
+## v2.1.25 â€“ 10.06.2026 21:37
+- Wizard: DokonÄŤuji vĹľdy poslednĂ­ krok, sync krok jen pĹ™i potvrzenĂ©m pĹ™Ă­stupu ke sloĹľce
 
-## v2.1.24 – 10.06.2026 21:32
-- Wizard: krok načítání filiálek v progress panelu (zobrazí se jen při potvrzeném přístupu ke složce)
+## v2.1.24 â€“ 10.06.2026 21:32
+- Wizard: krok naÄŤĂ­tĂˇnĂ­ filiĂˇlek v progress panelu (zobrazĂ­ se jen pĹ™i potvrzenĂ©m pĹ™Ă­stupu ke sloĹľce)
 
-## v2.1.23 – 10.06.2026 21:27
-- Wizard: oprava pořadí volání - disabled se nastavuje až po setButtonLoading
+## v2.1.23 â€“ 10.06.2026 21:27
+- Wizard: oprava poĹ™adĂ­ volĂˇnĂ­ - disabled se nastavuje aĹľ po setButtonLoading
 
-## v2.1.22 – 10.06.2026 21:22
-- Wizard: tlačítko Pokračovat v kroku 1 aktivní až po načtení emailu superadmina
+## v2.1.22 â€“ 10.06.2026 21:22
+- Wizard: tlaÄŤĂ­tko PokraÄŤovat v kroku 1 aktivnĂ­ aĹľ po naÄŤtenĂ­ emailu superadmina
 
-## v2.1.21 – 10.06.2026 21:15
-- Wizard: status přístupu ve štítku pole, první sync po init
-- Home: varování o chybějící konfiguraci
+## v2.1.21 â€“ 10.06.2026 21:15
+- Wizard: status pĹ™Ă­stupu ve ĹˇtĂ­tku pole, prvnĂ­ sync po init
+- Home: varovĂˇnĂ­ o chybÄ›jĂ­cĂ­ konfiguraci
 
-## v2.1.20 – 10.06.2026 21:04
-- Wizard: předvyplněná URL sync složky, automatická kontrola přístupu ke složce
+## v2.1.20 â€“ 10.06.2026 21:04
+- Wizard: pĹ™edvyplnÄ›nĂˇ URL sync sloĹľky, automatickĂˇ kontrola pĹ™Ă­stupu ke sloĹľce
 
-## v2.1.19 – 10.06.2026 21:00
-- Wizard: chyba validace jako placeholder v poli (zmizí po 3s), žádná změna velikosti okna
+## v2.1.19 â€“ 10.06.2026 21:00
+- Wizard: chyba validace jako placeholder v poli (zmizĂ­ po 3s), ĹľĂˇdnĂˇ zmÄ›na velikosti okna
 
-## v2.1.18 – 10.06.2026 20:56
-- Wizard: validace povinných polí bez zvětšení okna, červené ohraničení při chybě
+## v2.1.18 â€“ 10.06.2026 20:56
+- Wizard: validace povinnĂ˝ch polĂ­ bez zvÄ›tĹˇenĂ­ okna, ÄŤervenĂ© ohraniÄŤenĂ­ pĹ™i chybÄ›
 
-## v2.1.17 – 10.06.2026 20:52
-- Wizard krok 2: ikony u polí, oprava podtitulu (placeholder), lepší validace povinných polí, hint sync složky
+## v2.1.17 â€“ 10.06.2026 20:52
+- Wizard krok 2: ikony u polĂ­, oprava podtitulu (placeholder), lepĹˇĂ­ validace povinnĂ˝ch polĂ­, hint sync sloĹľky
 
-## v2.1.16 – 10.06.2026 17:29
-- DB: dbDeserialize_ převádí Date objekty na string při čtení (oprava časových hodnot)
+## v2.1.16 â€“ 10.06.2026 17:29
+- DB: dbDeserialize_ pĹ™evĂˇdĂ­ Date objekty na string pĹ™i ÄŤtenĂ­ (oprava ÄŤasovĂ˝ch hodnot)
 
-## v2.1.15 – 10.06.2026 17:22
-- Debug: tlačítko a funkce apiDebugStores pro diagnostiku načítání filiálek
+## v2.1.15 â€“ 10.06.2026 17:22
+- Debug: tlaÄŤĂ­tko a funkce apiDebugStores pro diagnostiku naÄŤĂ­tĂˇnĂ­ filiĂˇlek
 
-## v2.1.14 – 10.06.2026 17:19
-- DB schema logistics: odstraněn sloupec synced_at (LC se nesynchronizují)
+## v2.1.14 â€“ 10.06.2026 17:19
+- DB schema logistics: odstranÄ›n sloupec synced_at (LC se nesynchronizujĂ­)
 
-## v2.1.13 – 10.06.2026 17:17
-- Sync: oprava formátu časových buněk z xlsx (Date→H:mm string)
+## v2.1.13 â€“ 10.06.2026 17:17
+- Sync: oprava formĂˇtu ÄŤasovĂ˝ch bunÄ›k z xlsx (Dateâ†’H:mm string)
 
-## v2.1.12 – 10.06.2026 17:13
-- LC modal: placeholdery BNL/Brandýs
-- placeholder barva světle šedá globálně
+## v2.1.12 â€“ 10.06.2026 17:13
+- LC modal: placeholdery BNL/BrandĂ˝s
+- placeholder barva svÄ›tle ĹˇedĂˇ globĂˇlnÄ›
 
-## v2.1.11 – 10.06.2026 17:05
-- Sync: odstraněna synchronizace LC z xlsx (LC se zakládají ručně)
+## v2.1.11 â€“ 10.06.2026 17:05
+- Sync: odstranÄ›na synchronizace LC z xlsx (LC se zaklĂˇdajĂ­ ruÄŤnÄ›)
 
-## v2.1.10 – 10.06.2026 17:01
-- Sync: dočasný Sheet se vytvoří ve složce skriptu, ne v kořeni Disku
+## v2.1.10 â€“ 10.06.2026 17:01
+- Sync: doÄŤasnĂ˝ Sheet se vytvoĹ™Ă­ ve sloĹľce skriptu, ne v koĹ™eni Disku
 
-## v2.1.9 – 10.06.2026 16:57
-- Sync: konverze .xlsx na dočasný Google Sheet před čtením (Drive Advanced Service)
+## v2.1.9 â€“ 10.06.2026 16:57
+- Sync: konverze .xlsx na doÄŤasnĂ˝ Google Sheet pĹ™ed ÄŤtenĂ­m (Drive Advanced Service)
 
-## v2.1.8 – 10.06.2026 16:37
-- Wizard: Název a Podtitul vedle sebe v kroku 2 (form-row-2)
+## v2.1.8 â€“ 10.06.2026 16:37
+- Wizard: NĂˇzev a Podtitul vedle sebe v kroku 2 (form-row-2)
 
-## v2.1.7 – 10.06.2026 16:24
-- Síť filiálek a log. center: CRUD, sync z xlsx
-- wizard: pole sync složky
+## v2.1.7 â€“ 10.06.2026 16:24
+- SĂ­ĹĄ filiĂˇlek a log. center: CRUD, sync z xlsx
+- wizard: pole sync sloĹľky
 - CSS: modal-wide, form-hint, is-muted
 
-## v2.1.6 – 10.06.2026 14:45
-- Redesign úvodní stránky: hero uvítací banner s pozdravem a datem, oddělené status karty se stínem, zaoblené ikony, hover efekt na module kartách
+## v2.1.6 â€“ 10.06.2026 14:45
+- Redesign ĂşvodnĂ­ strĂˇnky: hero uvĂ­tacĂ­ banner s pozdravem a datem, oddÄ›lenĂ© status karty se stĂ­nem, zaoblenĂ© ikony, hover efekt na module kartĂˇch
 
-## v2.1.5 – 10.06.2026 14:32
-- Wizard UX: symetrické kroky se spojovací čarou, přechody mezi kroky, konstantní výška, progress panel při inicializaci, loading na Spustit aplikaci
+## v2.1.5 â€“ 10.06.2026 14:32
+- Wizard UX: symetrickĂ© kroky se spojovacĂ­ ÄŤarou, pĹ™echody mezi kroky, konstantnĂ­ vĂ˝Ĺˇka, progress panel pĹ™i inicializaci, loading na Spustit aplikaci
 
-## v2.1.4 – 10.06.2026 14:17
-- Oprava načítání brandu (APP_BOOTSTRAP před view includes)
+## v2.1.4 â€“ 10.06.2026 14:17
+- Oprava naÄŤĂ­tĂˇnĂ­ brandu (APP_BOOTSTRAP pĹ™ed view includes)
 - rastr na loader obrazovce
-- skrytí loaderu při navigaci menu
-- SVG ikony v status kartách
+- skrytĂ­ loaderu pĹ™i navigaci menu
+- SVG ikony v status kartĂˇch
 
-## v2.1.3 – 10.06.2026 14:00
-- Jméno a příjmení vedle sebe i ve wizardu (form-row-2)
+## v2.1.3 â€“ 10.06.2026 14:00
+- JmĂ©no a pĹ™Ă­jmenĂ­ vedle sebe i ve wizardu (form-row-2)
 
-## v2.1.2 – 10.06.2026 13:57
-- Jméno a příjmení vedle sebe v modalu — CSS třída form-row-2
+## v2.1.2 â€“ 10.06.2026 13:57
+- JmĂ©no a pĹ™Ă­jmenĂ­ vedle sebe v modalu â€” CSS tĹ™Ă­da form-row-2
 
-## v2.1.1 – 10.06.2026 13:55
-- Jméno a příjmení vedle sebe v modalu uživatele
+## v2.1.1 â€“ 10.06.2026 13:55
+- JmĂ©no a pĹ™Ă­jmenĂ­ vedle sebe v modalu uĹľivatele
 
-## v2.1.0 – 10.06.2026 13:53
-- Spustit aplikaci naviguje přes appUrl ze serveru
-- jméno/příjmení jako samostatná pole v DB a UI
-- rastr vždy viditelný (padding 48px)
+## v2.1.0 â€“ 10.06.2026 13:53
+- Spustit aplikaci naviguje pĹ™es appUrl ze serveru
+- jmĂ©no/pĹ™Ă­jmenĂ­ jako samostatnĂˇ pole v DB a UI
+- rastr vĹľdy viditelnĂ˝ (padding 48px)
 - userDisplayName_ helper
 
-## v2.0.9 – 10.06.2026 13:44
-- Auth uživatele přesunuta do klienta přes apiGetCurrentUser
-- doGet už neřeší identitu (getActiveUser nefunguje v doGet kontextu)
+## v2.0.9 â€“ 10.06.2026 13:44
+- Auth uĹľivatele pĹ™esunuta do klienta pĹ™es apiGetCurrentUser
+- doGet uĹľ neĹ™eĹˇĂ­ identitu (getActiveUser nefunguje v doGet kontextu)
 
-## v2.0.8 – 10.06.2026 13:38
-- isSetupDone_ ověřuje existenci spreadsheetu
-- při smazání DB se property automaticky vyčistí a spustí se wizard
+## v2.0.8 â€“ 10.06.2026 13:38
+- isSetupDone_ ovÄ›Ĺ™uje existenci spreadsheetu
+- pĹ™i smazĂˇnĂ­ DB se property automaticky vyÄŤistĂ­ a spustĂ­ se wizard
 
-## v2.0.7 – 10.06.2026 13:35
-- Oprava auth: access DOMAIN (fix doGet, reload po wizardu, načtení uživatele)
-- jemnější rastr pozadí
+## v2.0.7 â€“ 10.06.2026 13:35
+- Oprava auth: access DOMAIN (fix doGet, reload po wizardu, naÄŤtenĂ­ uĹľivatele)
+- jemnÄ›jĹˇĂ­ rastr pozadĂ­
 
-## v2.0.6 – 10.06.2026 13:33
-- Oprava auth: access ANYONE_WITH_GOOGLE_LINK (fix doGet, reload po wizardu, načtení uživatele)
-- jemnější rastr pozadí
+## v2.0.6 â€“ 10.06.2026 13:33
+- Oprava auth: access ANYONE_WITH_GOOGLE_LINK (fix doGet, reload po wizardu, naÄŤtenĂ­ uĹľivatele)
+- jemnÄ›jĹˇĂ­ rastr pozadĂ­
 
-## v2.0.5 – 10.06.2026 13:23
-- Složka skriptu načítána přes google.script.run (stejný fix jako email)
+## v2.0.5 â€“ 10.06.2026 13:23
+- SloĹľka skriptu naÄŤĂ­tĂˇna pĹ™es google.script.run (stejnĂ˝ fix jako email)
 
-## v2.0.4 – 10.06.2026 13:19
-- Email ve wizardu načítán přes google.script.run místo doGet bootstrapu
+## v2.0.4 â€“ 10.06.2026 13:19
+- Email ve wizardu naÄŤĂ­tĂˇn pĹ™es google.script.run mĂ­sto doGet bootstrapu
 
-## v2.0.3 – 10.06.2026 13:17
+## v2.0.3 â€“ 10.06.2026 13:17
 - Debug panel pro diagnostiku emailu ve wizardu
 
-## v2.0.2 – 10.06.2026 13:12
-- Oprava centrování ikon ve wizardu (CSS specifičnost info-row span)
-- email přes getEffectiveUser() jako primární zdroj
+## v2.0.2 â€“ 10.06.2026 13:12
+- Oprava centrovĂˇnĂ­ ikon ve wizardu (CSS specifiÄŤnost info-row span)
+- email pĹ™es getEffectiveUser() jako primĂˇrnĂ­ zdroj
 
-## v2.0.1 – 10.06.2026 13:08
-- Oprava zjišťování emailu ve wizardu (fallback na getEffectiveUser)
-- vycentrování ikon
-- bodový rastr na pozadí
+## v2.0.1 â€“ 10.06.2026 13:08
+- Oprava zjiĹˇĹĄovĂˇnĂ­ emailu ve wizardu (fallback na getEffectiveUser)
+- vycentrovĂˇnĂ­ ikon
+- bodovĂ˝ rastr na pozadĂ­
 
-## v2.0.0 – 10.06.2026 12:55
-- Kompletní přepracování šablony: úvodní průvodce (superadmin + databáze ve složce skriptu), role a oprávnění přes list _users, DB vrstva nad Sheets, administrace (uživatelé, nastavení, audit), jednotná odpovědní obálka API.
+## v2.0.0 â€“ 10.06.2026 12:55
+- KompletnĂ­ pĹ™epracovĂˇnĂ­ Ĺˇablony: ĂşvodnĂ­ prĹŻvodce (superadmin + databĂˇze ve sloĹľce skriptu), role a oprĂˇvnÄ›nĂ­ pĹ™es list _users, DB vrstva nad Sheets, administrace (uĹľivatelĂ©, nastavenĂ­, audit), jednotnĂˇ odpovÄ›dnĂ­ obĂˇlka API.

@@ -9,7 +9,7 @@
  * migrace při rozšíření šablony).
  */
 const DB_SCHEMA = {
-  '_users': ['id', 'email', 'firstName', 'lastName', 'role', 'active', 'created_at', 'created_by', 'updated_at', 'last_visit_at'],
+  '_users': ['id', 'email', 'firstName', 'lastName', 'role', 'active', 'created_at', 'created_by', 'updated_at', 'last_visit_at', 'permission', 'location'],
   '_settings': ['key', 'value', 'updated_at', 'updated_by'],
   '_audit_log': ['timestamp', 'user', 'action', 'detail'],
   'stores': [
@@ -23,10 +23,30 @@ const DB_SCHEMA = {
     'id', 'code', 'name', 'abbreviation',
     'active', 'created_at', 'created_by', 'updated_at',
   ],
+  'apps': [
+    'id', 'name', 'description', 'icon', 'color', 'status', 'order',
+    'active', 'created_at', 'created_by', 'updated_at', 'slug',
+  ],
 };
 
 let dbHandle_ = null;     // spreadsheet pro aktuální běh skriptu
 let dbLockHeld_ = false;  // reentrantní zámek v rámci jednoho běhu
+
+/* ── Cache vrstva ─────────────────────────────────────────────────
+ * Výsledky dbGetAll_ se drží v CacheService (sdílené mezi běhy skriptu),
+ * takže opakovaná čtení nemusí otevírat spreadsheet. Každý zápis do
+ * tabulky svůj záznam v cache zneplatní. */
+const DB_CACHE_TTL_ = 300; // sekund
+
+function dbCacheKey_(table) {
+  return 'tbl:' + table;
+}
+
+function dbCacheInvalidate_(table) {
+  try {
+    CacheService.getScriptCache().remove(dbCacheKey_(table));
+  } catch (e) { /* cache je jen optimalizace */ }
+}
 
 function dbSpreadsheet_() {
   if (dbHandle_) return dbHandle_;
@@ -70,8 +90,23 @@ function withLock_(fn) {
   }
 }
 
-/** Vrátí všechny záznamy tabulky jako pole objektů podle hlaviček. */
+/** Vrátí všechny záznamy tabulky jako pole objektů podle hlaviček (s cache). */
 function dbGetAll_(table) {
+  let cache = null;
+  try {
+    cache = CacheService.getScriptCache();
+    const hit = cache.get(dbCacheKey_(table));
+    if (hit) return JSON.parse(hit);
+  } catch (e) { /* cache je jen optimalizace */ }
+  const rows = dbReadAll_(table);
+  try {
+    if (cache) cache.put(dbCacheKey_(table), JSON.stringify(rows), DB_CACHE_TTL_);
+  } catch (e) { /* příliš velká data se prostě necachují */ }
+  return rows;
+}
+
+/** Skutečné čtení tabulky ze spreadsheetu (bez cache). */
+function dbReadAll_(table) {
   const sheet = dbSheet_(table);
   const headers = DB_SCHEMA[table];
   const lastRow = sheet.getLastRow();
@@ -106,6 +141,7 @@ function dbAppendRow_(table, record) {
   withLock_(() => {
     dbSheet_(table).appendRow(headers.map((header) => (record[header] !== undefined ? record[header] : '')));
   });
+  dbCacheInvalidate_(table);
 }
 
 /** Vloží záznam a doplní id, created_at, created_by, updated_at. */
@@ -122,7 +158,7 @@ function dbInsert_(table, data) {
 
 /** Aktualizuje záznam podle id, vrací sloučený záznam. */
 function dbUpdate_(table, id, patch) {
-  return withLock_(() => {
+  const result = withLock_(() => {
     const sheet = dbSheet_(table);
     const headers = DB_SCHEMA[table];
     const lastRow = sheet.getLastRow();
@@ -137,6 +173,8 @@ function dbUpdate_(table, id, patch) {
     sheet.getRange(rowIndex + 2, 1, 1, headers.length).setValues([headers.map((header) => merged[header])]);
     return merged;
   });
+  dbCacheInvalidate_(table);
+  return result;
 }
 
 /**
@@ -158,6 +196,7 @@ function dbBatchReplace_(table, records) {
       sheet.getRange(2, 1, values.length, headers.length).setValues(values);
     }
   });
+  dbCacheInvalidate_(table);
 }
 
 function dbDelete_(table, id) {
@@ -172,6 +211,7 @@ function dbDelete_(table, id) {
     if (rowIndex === -1) throw new Error('Záznam nenalezen.');
     sheet.deleteRow(rowIndex + 2);
   });
+  dbCacheInvalidate_(table);
 }
 
 /* ── Nastavení (klíč/hodnota v listu _settings) ─────────────────── */
@@ -195,4 +235,5 @@ function settingsSet_(key, value) {
       sheet.getRange(index + 2, 1, 1, record.length).setValues([record]);
     }
   });
+  dbCacheInvalidate_(SHEETS.SETTINGS);
 }

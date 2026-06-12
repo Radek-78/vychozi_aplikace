@@ -1,14 +1,14 @@
-/**
- * Centrální konfigurace šablony.
+﻿/**
+ * CentrĂˇlnĂ­ konfigurace Ĺˇablony.
  *
- * Hodnoty specifické pro konkrétní projekt (název, podtitul) se po inicializaci
- * čtou z listu _settings v databázi — zde jsou jen výchozí hodnoty a konstanty,
- * které se mezi projekty nemění.
+ * Hodnoty specifickĂ© pro konkrĂ©tnĂ­ projekt (nĂˇzev, podtitul) se po inicializaci
+ * ÄŤtou z listu _settings v databĂˇzi â€” zde jsou jen vĂ˝chozĂ­ hodnoty a konstanty,
+ * kterĂ© se mezi projekty nemÄ›nĂ­.
  */
 const CONFIG = {
-  defaultAppName: 'Výchozí aplikace',
+  defaultAppName: 'VĂ˝chozĂ­ aplikace',
   defaultAppSubtitle: '',
-  version: 'v2.1.43',
+  version: 'v2.2.0',
   logoUrl: 'https://drive.google.com/thumbnail?id=18mu_Lq1F_FqqSZcolMjLwG0aaQDPMdyD&sz=w320',
   theme: {
     blue: '#0050aa',
@@ -21,13 +21,13 @@ const CONFIG = {
   },
 };
 
-/** Klíče ve Script Properties. */
+/** KlĂ­ÄŤe ve Script Properties. */
 const PROPS = {
   DB_ID: 'DB_SPREADSHEET_ID',
   SETUP_AT: 'SETUP_COMPLETED_AT',
 };
 
-/** Role a jejich hierarchie. Vyšší číslo = vyšší oprávnění. */
+/** Role a jejich hierarchie. VyĹˇĹˇĂ­ ÄŤĂ­slo = vyĹˇĹˇĂ­ oprĂˇvnÄ›nĂ­. */
 const ROLES = {
   SUPERADMIN: 'SUPERADMIN',
   ADMIN: 'ADMIN',
@@ -40,11 +40,12 @@ const ROLE_LEVEL = {
   USER: 1,
 };
 
-/** Systémové listy v DB spreadsheetu. */
+/** SystĂ©movĂ© listy v DB spreadsheetu. */
 const SHEETS = {
   USERS: '_users',
   SETTINGS: '_settings',
   AUDIT: '_audit_log',
   STORES: 'stores',
   LOGISTICS: 'logistics',
+  APPS: 'apps',
 };

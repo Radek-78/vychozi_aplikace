@@ -7,6 +7,64 @@ function apiGetCurrentUser() {
   return guard_(ROLES.USER, (user) => user);
 }
 
+/**
+ * Hromadný bootstrap: vrátí data všech sekcí jedním voláním.
+ * Frontend si je uloží do paměti a přepínání záložek je pak okamžité.
+ */
+function apiGetBootstrap() {
+  return guard_(ROLES.USER, (user) => {
+    dbEnsureApps_();
+    const isAdmin = (ROLE_LEVEL[user.role] || 0) >= ROLE_LEVEL[ROLES.ADMIN];
+    const data = {
+      apps: dbGetAll_(SHEETS.APPS)
+        .filter((a) => a.active === true)
+        .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0)),
+    };
+    if (isAdmin) {
+      const s = settingsAll_();
+      data.users = dbGetAll_(SHEETS.USERS);
+      data.stores = dbGetAll_(SHEETS.STORES);
+      data.logistics = dbGetAll_(SHEETS.LOGISTICS);
+      data.audit = dbGetAll_(SHEETS.AUDIT).slice(-100).reverse();
+      data.settings = s;
+      data.syncSettings = {
+        syncFolderUrl: s.syncFolderUrl || '',
+        syncStoresSheet: s.syncStoresSheet || 'VTBZL_export',
+        syncTempClosedPrefix: s.syncTempClosedPrefix || 'Dočasné zavření',
+        syncLogisticsSheet: s.syncLogisticsSheet || 'LC',
+        lastSyncAt: s.lastSyncAt || null,
+        lastSyncResult: s.lastSyncResult ? JSON.parse(s.lastSyncResult) : null,
+      };
+    }
+    return data;
+  });
+}
+
+/**
+ * Ověří přístupnost Drive složky s 5min cache — DriveApp.getFolderById
+ * je pomalé (externí volání) a výsledek se mění jen výjimečně.
+ */
+function driveFolderAccessible_(folderUrl) {
+  const folderId = extractFolderIdFromUrl_(folderUrl);
+  if (!folderId) return false;
+  let cache = null;
+  try {
+    cache = CacheService.getScriptCache();
+    const hit = cache.get('drivecheck:' + folderId);
+    if (hit) return hit === 'ok';
+  } catch (e) { /* cache je jen optimalizace */ }
+  let accessible = true;
+  try {
+    DriveApp.getFolderById(folderId);
+  } catch (e) {
+    accessible = false;
+  }
+  try {
+    if (cache) cache.put('drivecheck:' + folderId, accessible ? 'ok' : 'fail', 300);
+  } catch (e) { /* cache je jen optimalizace */ }
+  return accessible;
+}
+
 function apiGetHome() {
   return guard_(ROLES.USER, (user) => {
     const isAdmin = (ROLE_LEVEL[user.role] || 0) >= ROLE_LEVEL[ROLES.ADMIN];
@@ -15,23 +73,22 @@ function apiGetHome() {
     if (isAdmin) {
       if (!s.syncFolderUrl) {
         warnings.push({ key: 'no_sync_folder', message: 'Není nastavena složka pro synchronizaci filiálek.', action: 'Nastavit', section: 'sync' });
-      } else {
-        try {
-          const folderId = extractFolderIdFromUrl_(s.syncFolderUrl);
-          if (folderId) DriveApp.getFolderById(folderId);
-        } catch (e) {
-          warnings.push({ key: 'sync_folder_inaccessible', message: 'Složka pro synchronizaci filiálek není přístupná.', action: 'Zkontrolovat', section: 'sync' });
-        }
+      } else if (!driveFolderAccessible_(s.syncFolderUrl)) {
+        warnings.push({ key: 'sync_folder_inaccessible', message: 'Složka pro synchronizaci filiálek není přístupná.', action: 'Zkontrolovat', section: 'sync' });
       }
       if (!s.lastSyncAt) {
         warnings.push({ key: 'never_synced', message: 'Synchronizace filiálek nebyla ještě nikdy spuštěna.', action: 'Synchronizovat', section: 'sync' });
       }
     }
+    const stores = dbGetAll_(SHEETS.STORES);
+    const logistics = dbGetAll_(SHEETS.LOGISTICS);
     return {
       warnings: warnings,
       lastSyncAt: s.lastSyncAt || null,
-      activity: isAdmin ? dbGetAll_(SHEETS.AUDIT).slice(-10).reverse() : [],
-      userCount: isAdmin ? dbGetAll_(SHEETS.USERS).filter((u) => u.active === true).length : null,
+      storesActive: stores.filter((st) => st.active === true).length,
+      storesTempClosed: stores.filter((st) => st.active === true && st.temporarily_closed === true).length,
+      logisticsActive: logistics.filter((lc) => lc.active === true).length,
+      lastChange: isAdmin ? (dbGetAll_(SHEETS.AUDIT).slice(-1)[0] || null) : null,
     };
   });
 }
@@ -55,6 +112,16 @@ function apiSaveUser(payload) {
     const actorIsSuper = actor.role === ROLES.SUPERADMIN;
     if (role === ROLES.SUPERADMIN && !actorIsSuper) {
       throw new Error('Roli superadmin může přidělit pouze superadmin.');
+    }
+
+    const permission = String((payload && payload.permission) || 'READER').toUpperCase();
+    if (permission !== 'READER' && permission !== 'EDITOR') throw new Error('Neplatné oprávnění (musí být Čtenář nebo Editor).');
+
+    const location = String((payload && payload.location) || 'HQ').trim().toUpperCase();
+    if (location !== 'HQ' && location !== 'CENTRÁLA' && location !== 'CENTRAL') {
+      const logistics = dbGetAll_(SHEETS.LOGISTICS);
+      const exists = logistics.some(lc => String(lc.abbreviation).toUpperCase() === location && lc.active === true);
+      if (!exists) throw new Error('Neplatné logistické centrum: ' + location);
     }
 
     const users = dbGetAll_(SHEETS.USERS);
@@ -87,12 +154,14 @@ function apiSaveUser(payload) {
       lastName: lastName,
       role: role,
       active: active,
+      permission: permission,
+      location: location,
     };
 
     const saved = existing
       ? dbUpdate_(SHEETS.USERS, existing.id, data)
       : dbInsert_(SHEETS.USERS, data);
-    audit_(existing ? 'user_update' : 'user_create', email + ' (' + role + (active ? '' : ', blokován') + ')');
+    audit_(existing ? 'user_update' : 'user_create', email + ' (' + role + ', ' + permission + ', ' + location + (active ? '' : ', blokován') + ')');
     return saved;
   });
 }
@@ -117,7 +186,15 @@ function apiSaveSettings(payload) {
 /* ── Stores ─────────────────────────────────────────────────────── */
 
 function apiListStores() {
-  return guard_(ROLES.ADMIN, () => dbGetAll_(SHEETS.STORES));
+  return guard_(ROLES.USER, (user) => {
+    const allStores = dbGetAll_(SHEETS.STORES);
+    const userLoc = String(user.location || 'HQ').toUpperCase();
+    
+    if (userLoc === 'HQ' || userLoc === 'CENTRÁLA' || userLoc === 'CENTRAL' || user.role === 'SUPERADMIN') {
+      return allStores;
+    }
+    return allStores.filter(store => String(store.lc_code).toUpperCase() === userLoc);
+  });
 }
 
 function apiDebugStores() {
@@ -191,7 +268,24 @@ function apiDebugStores() {
 }
 
 function apiSaveStore(payload) {
-  return guard_(ROLES.ADMIN, (actor) => {
+  return guard_(ROLES.USER, (actor) => {
+    if (!isAllowed_(actor, 'USER', true)) {
+      throw new Error('Nemáte oprávnění k zápisu/úpravám dat.');
+    }
+
+    const lc_code = String((payload && payload.lc_code) || '').trim();
+
+    if (payload && payload.id) {
+      const existing = dbGetById_(SHEETS.STORES, payload.id);
+      if (existing && !isAllowed_(actor, 'USER', true, existing.lc_code)) {
+        throw new Error('Nemáte oprávnění upravovat prodejnu v lokaci ' + existing.lc_code);
+      }
+    }
+
+    if (!isAllowed_(actor, 'USER', true, lc_code)) {
+      throw new Error('Nemáte oprávnění přiřadit prodejnu pod lokaci ' + lc_code);
+    }
+
     const code = String((payload && payload.code) || '').trim();
     if (!/^\d{1,3}$/.test(code)) throw new Error('Číslo prodejny musí být 1–3 cifry.');
     const paddedCode = code.padStart(3, '0');
@@ -207,7 +301,7 @@ function apiSaveStore(payload) {
     const data = {
       code: paddedCode,
       name,
-      lc_code: String((payload && payload.lc_code) || '').trim(),
+      lc_code: lc_code,
       phone: String((payload && payload.phone) || '').trim(),
       area_manager: String((payload && payload.area_manager) || '').trim(),
       regional_manager: String((payload && payload.regional_manager) || '').trim(),
@@ -231,44 +325,79 @@ function apiSaveStore(payload) {
       : dbInsert_(SHEETS.STORES, data);
     audit_('store_' + (existing ? 'update' : 'create'), paddedCode + ' ' + name);
     return saved;
-  });
+  }, { requireWrite: true });
 }
 
 function apiDeleteStore(id) {
-  return guard_(ROLES.ADMIN, () => {
+  return guard_(ROLES.USER, (actor) => {
+    if (!isAllowed_(actor, 'USER', true)) {
+      throw new Error('Nemáte oprávnění k mazání dat.');
+    }
     const store = dbGetById_(SHEETS.STORES, id);
     if (!store) throw new Error('Filiálka nenalezena.');
+    if (!isAllowed_(actor, 'USER', true, store.lc_code)) {
+      throw new Error('Nemáte oprávnění mazat filiálku v lokaci ' + store.lc_code);
+    }
     dbUpdate_(SHEETS.STORES, id, { active: false });
     audit_('store_delete', store.code + ' ' + store.name);
     return null;
-  });
+  }, { requireWrite: true });
 }
 
 function apiToggleStoreActive(id) {
-  return guard_(ROLES.ADMIN, () => {
+  return guard_(ROLES.USER, (actor) => {
+    if (!isAllowed_(actor, 'USER', true)) {
+      throw new Error('Nemáte oprávnění k úpravám dat.');
+    }
     const store = dbGetById_(SHEETS.STORES, id);
     if (!store) throw new Error('Filiálka nenalezena.');
+    if (!isAllowed_(actor, 'USER', true, store.lc_code)) {
+      throw new Error('Nemáte oprávnění upravovat filiálku v lokaci ' + store.lc_code);
+    }
     const newActive = store.active !== true;
     dbUpdate_(SHEETS.STORES, id, { active: newActive, manually_inactive: !newActive });
-    audit_('store_toggle', store.code + ' ' + store.name + ' → ' + (newActive ? 'aktivíní' : 'neaktivní (ručně)'));
+    audit_('store_toggle', store.code + ' ' + store.name + ' → ' + (newActive ? 'aktivní' : 'neaktivní (ručně)'));
     return null;
-  });
+  }, { requireWrite: true });
 }
 
 /* ── Logistics ──────────────────────────────────────────────────── */
 
 function apiListLogistics() {
-  return guard_(ROLES.ADMIN, () => dbGetAll_(SHEETS.LOGISTICS));
+  return guard_(ROLES.USER, (user) => {
+    const allLogistics = dbGetAll_(SHEETS.LOGISTICS);
+    const userLoc = String(user.location || 'HQ').toUpperCase();
+    if (userLoc === 'HQ' || userLoc === 'CENTRÁLA' || userLoc === 'CENTRAL' || user.role === 'SUPERADMIN') {
+      return allLogistics;
+    }
+    return allLogistics.filter((lc) => String(lc.abbreviation).toUpperCase() === userLoc);
+  });
 }
 
 function apiSaveLogistic(payload) {
-  return guard_(ROLES.ADMIN, () => {
+  return guard_(ROLES.USER, (user) => {
+    if (!isAllowed_(user, 'USER', true)) {
+      throw new Error('Nemáte oprávnění k zápisu/úpravám dat.');
+    }
+
+    const abbreviation = String((payload && payload.abbreviation) || '').trim().toUpperCase();
+    if (!/^[A-Z]{2,4}$/.test(abbreviation)) throw new Error('Zkratka musí mít 2–4 písmena.');
+
+    if (payload && payload.id) {
+      const existing = dbGetById_(SHEETS.LOGISTICS, payload.id);
+      if (existing && !isAllowed_(user, 'USER', true, existing.abbreviation)) {
+        throw new Error('Nemáte oprávnění upravovat logistické centrum ' + existing.abbreviation);
+      }
+    }
+
+    if (!isAllowed_(user, 'USER', true, abbreviation)) {
+      throw new Error('Nemáte oprávnění spravovat logistické centrum se zkratkou ' + abbreviation);
+    }
+
     const code = String((payload && payload.code) || '').trim();
     if (!code) throw new Error('Číslo LC je povinné.');
     const name = String((payload && payload.name) || '').trim();
     if (!name) throw new Error('Název je povinný.');
-    const abbreviation = String((payload && payload.abbreviation) || '').trim().toUpperCase();
-    if (!/^[A-Z]{2,4}$/.test(abbreviation)) throw new Error('Zkratka musí mít 2–4 písmena.');
 
     const data = {
       code,
@@ -291,17 +420,23 @@ function apiSaveLogistic(payload) {
       : dbInsert_(SHEETS.LOGISTICS, data);
     audit_('logistic_' + (existing ? 'update' : 'create'), abbreviation + ' ' + name);
     return saved;
-  });
+  }, { requireWrite: true });
 }
 
 function apiDeleteLogistic(id) {
-  return guard_(ROLES.ADMIN, () => {
+  return guard_(ROLES.USER, (user) => {
+    if (!isAllowed_(user, 'USER', true)) {
+      throw new Error('Nemáte oprávnění k mazání dat.');
+    }
     const lc = dbGetById_(SHEETS.LOGISTICS, id);
     if (!lc) throw new Error('LC nenalezeno.');
+    if (!isAllowed_(user, 'USER', true, lc.abbreviation)) {
+      throw new Error('Nemáte oprávnění mazat logistické centrum ' + lc.abbreviation);
+    }
     dbUpdate_(SHEETS.LOGISTICS, id, { active: false });
     audit_('logistic_delete', lc.abbreviation + ' ' + lc.name);
     return null;
-  });
+  }, { requireWrite: true });
 }
 
 function apiUpdateLastVisit() {
@@ -338,6 +473,92 @@ function apiSaveSyncSettings(payload) {
     settingsSet_('syncTempClosedPrefix', String((payload && payload.syncTempClosedPrefix) || 'Dočasné zavření').trim());
     settingsSet_('syncLogisticsSheet', String((payload && payload.syncLogisticsSheet) || 'LC').trim());
     audit_('sync_settings_update', 'Aktualizace konfigurace synchronizace.');
+    return null;
+  });
+}
+
+/* ── Apps ───────────────────────────────────────────────────────── */
+
+/** Doplní list apps včetně nově přidaných sloupců (levná kontrola posledního záhlaví). */
+function dbEnsureApps_() {
+  const ss = dbSpreadsheet_();
+  const sheetsToCheck = [SHEETS.APPS, SHEETS.USERS];
+  let needsMigration = false;
+  
+  for (const name of sheetsToCheck) {
+    const sheet = ss.getSheetByName(name);
+    const headers = DB_SCHEMA[name];
+    if (!sheet || sheet.getLastColumn() < headers.length || sheet.getRange(1, headers.length).getValue() !== headers[headers.length - 1]) {
+      needsMigration = true;
+      break;
+    }
+  }
+  
+  if (needsMigration) {
+    dbEnsureSchema_(ss);
+    sheetsToCheck.forEach(name => dbCacheInvalidate_(name));
+  }
+}
+
+/** Převede text na slug do URL: malá písmena bez diakritiky, pomlčky. */
+function slugify_(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function apiListApps() {
+  return guard_(ROLES.USER, () => {
+    dbEnsureApps_();
+    return dbGetAll_(SHEETS.APPS)
+      .filter((a) => a.active === true)
+      .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+  });
+}
+
+function apiSaveApp(payload) {
+  return guard_(ROLES.ADMIN, () => {
+    const name = String((payload && payload.name) || '').trim();
+    if (!name) throw new Error('Název je povinný.');
+    const STATUSES = ['available', 'coming', 'inactive'];
+    const COLORS = ['', 'dark', 'light', 'yellow', 'red', 'green', 'teal', 'orange', 'purple', 'slate', 'pink', 'indigo'];
+    const data = {
+      name,
+      description: String((payload && payload.description) || '').trim(),
+      icon: String((payload && payload.icon) || 'info').trim(),
+      color: COLORS.includes(payload && payload.color) ? (payload.color || '') : '',
+      status: STATUSES.includes(payload && payload.status) ? payload.status : 'coming',
+      order: parseInt(payload && payload.order) || 0,
+      active: payload && payload.active !== false,
+    };
+    const apps = dbGetAll_(SHEETS.APPS);
+    const existing = payload && payload.id ? apps.find((a) => a.id === payload.id) : null;
+    if (payload && payload.id && !existing) throw new Error('Aplikace nenalezena.');
+
+    const slug = slugify_((payload && payload.slug) || name);
+    if (!slug) throw new Error('Odkaz (slug) nelze vytvořit — použijte písmena nebo číslice.');
+    const slugTaken = apps.find((a) => a.slug === slug && (!existing || a.id !== existing.id));
+    if (slugTaken) throw new Error('Aplikace s tímto odkazem už existuje.');
+    data.slug = slug;
+
+    const saved = existing
+      ? dbUpdate_(SHEETS.APPS, existing.id, data)
+      : dbInsert_(SHEETS.APPS, data);
+    audit_('app_' + (existing ? 'update' : 'create'), name);
+    return saved;
+  });
+}
+
+function apiDeleteApp(id) {
+  return guard_(ROLES.ADMIN, () => {
+    const app = dbGetById_(SHEETS.APPS, id);
+    if (!app) throw new Error('Aplikace nenalezena.');
+    dbUpdate_(SHEETS.APPS, id, { active: false });
+    audit_('app_delete', app.name);
     return null;
   });
 }

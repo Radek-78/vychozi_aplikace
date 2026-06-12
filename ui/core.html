@@ -19,9 +19,9 @@
       overlay.innerHTML =
         '<div class="busy-box">' +
         '<span class="sp-ring">' +
-        '<svg class="sp-ring-svg" viewBox="0 0 100 100">' +
-        '<circle class="sp-ring-track" cx="50" cy="50" r="42"></circle>' +
-        '<circle class="sp-ring-arc" cx="50" cy="50" r="42"></circle>' +
+        '<svg class="sp-ring-svg" viewBox="0 0 72 72">' +
+        '<circle class="sp-ring-track" cx="36" cy="36" r="30"></circle>' +
+        '<circle class="sp-ring-arc" cx="36" cy="36" r="30"></circle>' +
         '</svg>' +
         '<img class="sp-logo sp-ring-logo" alt="" src="' + ((window.APP_BOOTSTRAP || {}).logoUrl || '') + '">' +
         '</span>' +
@@ -50,12 +50,15 @@
       const settings = options || {};
       if (!settings.silent) this.showLoader();
       if (settings.busy) this.busy(settings.busy);
+      const bgLabel = (settings.silent && !settings.busy) ? this._bgLabel(functionName) : null;
+      if (bgLabel) this.bgStart(bgLabel);
 
       return new Promise((resolve, reject) => {
         google.script.run
           .withSuccessHandler((result) => {
             if (!settings.silent) this.hideLoader();
             if (settings.busy) this.endBusy();
+            if (bgLabel) this.bgEnd(bgLabel);
             if (result && result.ok) {
               resolve(result.data);
             } else {
@@ -65,9 +68,52 @@
           .withFailureHandler((error) => {
             if (!settings.silent) this.hideLoader();
             if (settings.busy) this.endBusy();
+            if (bgLabel) this.bgEnd(bgLabel);
             reject(error);
           })[functionName](payload);
       });
+    },
+
+    /* Indikátor aktivity na pozadí (tichá volání) ve stavové liště. */
+    _bgActive: [],
+
+    _bgLabel(functionName) {
+      const labels = {
+        apiGetBootstrap: 'Načítám data aplikace',
+        apiGetHome: 'Aktualizuji přehled',
+        apiListUsers: 'Aktualizuji uživatele',
+        apiListStores: 'Aktualizuji filiálky',
+        apiListLogistics: 'Aktualizuji logistická centra',
+        apiListApps: 'Aktualizuji aplikace',
+        apiGetAudit: 'Aktualizuji audit',
+        apiGetSettings: 'Aktualizuji nastavení',
+        apiGetSyncSettings: 'Aktualizuji konfiguraci',
+        apiUpdateLastVisit: 'Zaznamenávám návštěvu',
+        apiGetChangelog: 'Načítám historii změn',
+      };
+      return labels[functionName] || 'Aktualizuji data';
+    },
+
+    bgStart(label) {
+      this._bgActive.push(label);
+      this._renderBgActivity();
+    },
+
+    bgEnd(label) {
+      const i = this._bgActive.indexOf(label);
+      if (i !== -1) this._bgActive.splice(i, 1);
+      this._renderBgActivity();
+    },
+
+    _renderBgActivity() {
+      const el = document.querySelector('#bgActivity');
+      if (!el) return;
+      const n = this._bgActive.length;
+      el.classList.toggle('is-active', n > 0);
+      if (n > 0) {
+        const text = this._bgActive[0] + (n > 1 ? ' (+' + (n - 1) + ')' : '') + '…';
+        el.querySelector('.bg-activity-text').textContent = text;
+      }
     },
 
     showLoader() {
@@ -160,5 +206,6 @@
     const page = document.body.dataset.page;
     if (page === 'wizard' && typeof Wizard !== 'undefined') Wizard.init();
     if (page === 'app' && typeof App !== 'undefined') App.init();
+    if (page === 'subapp' && typeof SubApp !== 'undefined') SubApp.init();
   });
 </script>

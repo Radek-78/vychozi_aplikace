@@ -11,18 +11,22 @@
     <nav class="navigation" aria-label="Hlavní navigace">
       <p>Přehled</p>
       <button class="nav-link is-active" type="button" data-section="home" data-tooltip="Domů"><svg><use href="#i-home"></use></svg><span>Domů</span></button>
-      <p class="admin-only">Síť</p>
-      <button class="nav-link admin-only" type="button" data-section="stores" data-tooltip="Filiálky"><svg><use href="#i-store"></use></svg><span>Filiálky</span></button>
-      <button class="nav-link admin-only" type="button" data-section="logistics" data-tooltip="Log. centra"><svg><use href="#i-truck"></use></svg><span>Log. centra</span></button>
-      <button class="nav-link admin-only" type="button" data-section="sync" data-tooltip="Synchronizace"><svg><use href="#i-sync"></use></svg><span>Synchronizace</span></button>
+      
+      <p>Data sítě</p>
+      <button class="nav-link" type="button" data-section="stores" data-tooltip="Filiálky"><svg><use href="#i-store"></use></svg><span>Filiálky</span></button>
+      <button class="nav-link" type="button" data-section="logistics" data-tooltip="Log. centra"><svg><use href="#i-truck"></use></svg><span>Log. centra</span></button>
+      
       <p class="admin-only">Administrace</p>
+      <button class="nav-link admin-only" type="button" data-section="sync" data-tooltip="Synchronizace"><svg><use href="#i-sync"></use></svg><span>Synchronizace</span></button>
       <button class="nav-link admin-only" type="button" data-section="users" data-tooltip="Uživatelé"><svg><use href="#i-users"></use></svg><span>Uživatelé</span></button>
+      <button class="nav-link admin-only" type="button" data-section="apps" data-tooltip="Aplikace"><svg><use href="#i-home"></use></svg><span>Aplikace</span></button>
       <button class="nav-link admin-only" type="button" data-section="settings" data-tooltip="Nastavení"><svg><use href="#i-settings"></use></svg><span>Nastavení</span></button>
       <button class="nav-link admin-only" type="button" data-section="audit" data-tooltip="Audit"><svg><use href="#i-list"></use></svg><span>Audit</span></button>
     </nav>
 
     <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Přepnout postranní panel">
       <svg><use href="#i-chevron-right"></use></svg>
+      <span>Skrýt panel</span>
     </button>
 
     <div class="sidebar-user">
@@ -38,165 +42,54 @@
   <main class="main">
     <section class="page" data-page-section="home">
       <div class="home-hero">
-        <div>
-          <p class="home-hero-greeting" id="heroGreeting"></p>
-          <p class="hero-status" id="heroStatus"></p>
-        </div>
-        <div class="hero-right">
-          <div class="hero-meta">
-            <p class="home-hero-date" id="heroDate"></p>
-            <p class="hero-sync-time" id="heroSyncTime"></p>
-          </div>
-          <div class="hero-actions">
-            <div class="warnings-bell admin-only" id="warningsBell" style="display:none">
-              <button class="hero-icon-btn" type="button" id="warningsBellBtn" aria-label="Upozornění">
-                <svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-bell"></use></svg>
-                <span class="warnings-badge" id="warningsBadge">0</span>
-              </button>
-              <div class="warnings-tooltip" id="warningsTooltip"></div>
+        <div class="hero-main-layout">
+          <div class="hero-left">
+            <p class="home-hero-greeting" id="heroGreeting"></p>
+            <p class="hero-status" id="heroStatus"></p>
+            <div class="hero-meta-subtitle">
+              <span class="hero-meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;opacity:0.75;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span id="heroDate"></span>
+              </span>
+              <span class="hero-meta-separator">•</span>
+              <span class="hero-meta-item">
+                <span>Svátek: <strong id="nameDayText">—</strong></span>
+              </span>
             </div>
-            <button class="hero-icon-btn" type="button" data-action="reload" aria-label="Obnovit data" title="Obnovit data">
-              <svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-refresh"></use></svg>
-            </button>
+          </div>
+          <div class="hero-right">
+            <div class="hero-stats-grid" id="heroStatsGrid"></div>
+            <div class="hero-actions">
+              <div class="warnings-bell admin-only" id="warningsBell" style="display:none">
+                <button class="hero-icon-btn" type="button" id="warningsBellBtn" aria-label="Upozornění">
+                  <svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-bell"></use></svg>
+                  <span class="warnings-badge" id="warningsBadge">0</span>
+                </button>
+                <div class="warnings-tooltip" id="warningsTooltip"></div>
+              </div>
+              <button class="hero-icon-btn" type="button" data-action="reload" aria-label="Obnovit data" title="Obnovit data">
+                <svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-refresh"></use></svg>
+              </button>
+            </div>
           </div>
         </div>
-        <div class="hero-info-row">
-          <div class="hero-info-chip">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            <span>Svátek: <strong id="nameDayText">—</strong></span>
-          </div>
-          <div id="lcWeatherChips"></div>
-          <div class="hero-info-chip hero-info-chip--right">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <span>Naposledy: <strong id="lastVisitText">—</strong></span>
-          </div>
+        <div class="hero-weather-bar">
+          <span class="hero-weather-title">Počasí v LC:</span>
+          <div id="lcWeatherChips" class="hero-weather-chips"></div>
         </div>
       </div>
 
       <div class="module-grid" id="moduleGrid">
-
-        <article class="module-card mc--sidebar mc--available">
-          <div class="mc-side">
-            <svg><use href="#i-store"></use></svg>
-            <i></i>
-          </div>
-          <div class="mc-body">
-            <h2>Filiálky</h2>
-            <span class="mc-badge">Dostupné</span>
-            <p>Správa a přehled sítě prodejen v systému.</p>
-            <footer>
-              <button class="button button-secondary button-small" type="button" data-go-section="stores">Otevřít</button>
-            </footer>
-          </div>
-        </article>
-
-        <article class="module-card mc--sidebar mc--available">
-          <div class="mc-side mc-side--light">
-            <svg><use href="#i-sync"></use></svg>
-            <i></i>
-          </div>
-          <div class="mc-body">
-            <h2>Synchronizace</h2>
-            <span class="mc-badge">Dostupné</span>
-            <p>Import dat z externího xlsx souboru.</p>
-            <footer>
-              <button class="button button-secondary button-small" type="button" data-go-section="sync">Spustit</button>
-            </footer>
-          </div>
-        </article>
-
-        <article class="module-card mc--sidebar mc--coming">
-          <div class="mc-side mc-side--dark">
-            <svg><use href="#i-users"></use></svg>
-            <i></i>
-          </div>
-          <div class="mc-body">
-            <div class="mc-status-icon"><svg><use href="#i-clock"></use></svg></div>
-            <h2>Uživatelé</h2>
-            <span class="mc-badge">V přípravě</span>
-            <p><span id="statUsers">—</span> aktivních účtů s přístupem.</p>
-            <footer>
-              <button class="button button-secondary button-small" type="button" data-go-section="users">Spravovat</button>
-            </footer>
-          </div>
-        </article>
-
-        <article class="module-card mc--sidebar mc--coming">
-          <div class="mc-side mc-side--yellow">
-            <svg><use href="#i-truck"></use></svg>
-            <i></i>
-          </div>
-          <div class="mc-body">
-            <div class="mc-status-icon"><svg><use href="#i-clock"></use></svg></div>
-            <h2>Log. centra</h2>
-            <span class="mc-badge">V přípravě</span>
-            <p>Správa logistických center LC.</p>
-            <footer>
-              <button class="button button-secondary button-small" type="button" data-go-section="logistics">Správa</button>
-            </footer>
-          </div>
-        </article>
-
-        <article class="module-card mc--sidebar mc--inactive">
-          <div class="mc-side mc-side--green">
-            <svg><use href="#i-settings"></use></svg>
-            <i></i>
-          </div>
-          <div class="mc-body">
-            <div class="mc-status-icon"><svg><use href="#i-lock"></use></svg></div>
-            <h2>Nastavení</h2>
-            <span class="mc-badge">Nedostupné</span>
-            <p>Konfigurace aplikace a brandingu.</p>
-            <footer>
-              <button class="button button-secondary button-small" type="button" data-go-section="settings">Otevřít</button>
-            </footer>
-          </div>
-        </article>
-
-        <article class="module-card mc--sidebar mc--inactive">
-          <div class="mc-side mc-side--red">
-            <svg><use href="#i-list"></use></svg>
-            <i></i>
-          </div>
-          <div class="mc-body">
-            <div class="mc-status-icon"><svg><use href="#i-lock"></use></svg></div>
-            <h2>Audit</h2>
-            <span class="mc-badge">Nedostupné</span>
-            <p>Přehled systémových událostí.</p>
-            <footer>
-              <button class="button button-secondary button-small" type="button" data-go-section="audit">Zobrazit</button>
-            </footer>
-          </div>
-        </article>
-
-
+        <p class="modules-empty is-hidden" id="modulesEmpty">Zatím žádné aplikace. Přidejte je v sekci <strong>Administrace → Aplikace</strong>.</p>
       </div>
 
-      <section class="panel admin-only">
-        <div class="panel-header panel-header--compact">
-          <div>
-            <h2>Poslední události</h2>
-          </div>
-          <div class="activity-nav">
-            <button class="act-nav-btn" id="activityUp" type="button" aria-label="Novější" disabled>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
-            </button>
-            <button class="act-nav-btn" id="activityDown" type="button" aria-label="Starší">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-            </button>
-          </div>
-        </div>
-        <div class="activity-viewport" id="activityViewport">
-          <div class="activity-track" id="activityTrack"></div>
-        </div>
-      </section>
     </section>
 
     <section class="page is-hidden" data-page-section="users">
       <div class="section-bar">
         <span class="section-title">Uživatelé</span>
         <div class="section-bar-actions">
-          <button class="button button-primary" type="button" id="addUserButton"><svg><use href="#i-plus"></use></svg>Přidat uživatele</button>
+          <button class="button button-primary write-only" type="button" id="addUserButton"><svg><use href="#i-plus"></use></svg>Přidat uživatele</button>
         </div>
       </div>
       <div class="section-body">
@@ -208,6 +101,8 @@
                   <th><button class="th-btn" type="button" data-table="users" data-col="email">E-mail<span class="sort-ind" data-sort-ind="users-email"></span></button></th>
                   <th><button class="th-btn" type="button" data-table="users" data-col="_name">Jméno<span class="sort-ind" data-sort-ind="users-_name"></span></button></th>
                   <th><button class="th-btn" type="button" data-table="users" data-col="role">Role<span class="sort-ind" data-sort-ind="users-role"></span></button></th>
+                  <th><button class="th-btn" type="button" data-table="users" data-col="permission">Přístup<span class="sort-ind" data-sort-ind="users-permission"></span></button></th>
+                  <th><button class="th-btn" type="button" data-table="users" data-col="location">Lokace<span class="sort-ind" data-sort-ind="users-location"></span></button></th>
                   <th><button class="th-btn" type="button" data-table="users" data-col="active">Stav<span class="sort-ind" data-sort-ind="users-active"></span></button></th>
                   <th></th>
                 </tr>
@@ -236,7 +131,7 @@
               <input name="appSubtitle" type="text">
             </label>
             <div class="form-actions">
-              <button class="button button-primary" type="submit"><svg><use href="#i-check"></use></svg>Uložit nastavení</button>
+              <button class="button button-primary write-only" type="submit"><svg><use href="#i-check"></use></svg>Uložit nastavení</button>
             </div>
           </form>
         </section>
@@ -261,6 +156,34 @@
                 </tr>
               </thead>
               <tbody id="auditRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <!-- ── Aplikace (admin) ─────────────────────────────── -->
+    <section class="page is-hidden" data-page-section="apps">
+      <div class="section-bar">
+        <span class="section-title">Aplikace</span>
+        <div class="section-bar-actions">
+          <button class="button button-primary" type="button" id="addAppButton"><svg><use href="#i-plus"></use></svg>Přidat aplikaci</button>
+        </div>
+      </div>
+      <div class="section-body">
+        <section class="panel">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th><button class="th-btn" type="button" data-table="apps" data-col="order">#<span class="sort-ind" data-sort-ind="apps-order"></span></button></th>
+                  <th><button class="th-btn" type="button" data-table="apps" data-col="name">Název<span class="sort-ind" data-sort-ind="apps-name"></span></button></th>
+                  <th><button class="th-btn" type="button" data-table="apps" data-col="description">Popis<span class="sort-ind" data-sort-ind="apps-description"></span></button></th>
+                  <th><button class="th-btn" type="button" data-table="apps" data-col="status">Status<span class="sort-ind" data-sort-ind="apps-status"></span></button></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="appRows"></tbody>
             </table>
           </div>
         </section>
@@ -297,7 +220,7 @@
       <div class="section-bar">
         <span class="section-title">Logistická centra</span>
         <div class="section-bar-actions">
-          <button class="button button-secondary" type="button" id="addLogisticButton"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-plus"></use></svg>Přidat LC</button>
+          <button class="button button-secondary write-only" type="button" id="addLogisticButton"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-plus"></use></svg>Přidat LC</button>
         </div>
       </div>
       <div class="section-body">
@@ -324,7 +247,7 @@
       <div class="section-bar">
         <span class="section-title">Synchronizace</span>
         <div class="section-bar-actions">
-          <button class="button button-primary" type="button" id="runSyncButton"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-sync"></use></svg>Spustit synchronizaci</button>
+          <button class="button button-primary write-only" type="button" id="runSyncButton"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-sync"></use></svg>Spustit synchronizaci</button>
         </div>
       </div>
       <div class="section-body">
@@ -351,7 +274,7 @@
                 <input name="syncLogisticsSheet" type="text" placeholder="LC">
               </label>
               <div class="form-actions">
-                <button class="button button-secondary" type="submit" id="saveSyncSettingsButton"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-check"></use></svg>Uložit konfiguraci</button>
+                <button class="button button-secondary write-only" type="submit" id="saveSyncSettingsButton"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-check"></use></svg>Uložit konfiguraci</button>
               </div>
             </form>
           </div>
@@ -365,6 +288,7 @@
 
     <footer class="statusbar">
       <span>© <span id="footerYear"></span> Lidl</span>
+      <span class="bg-activity" id="bgActivity"><span class="bg-activity-dot"></span><span class="bg-activity-text">Aktualizuji data…</span></span>
       <span><a href="#" id="version" class="version-link"></a>&nbsp;&nbsp;|&nbsp;&nbsp;Aktualizace: <span id="updatedAt">-</span></span>
     </footer>
   </main>
@@ -411,26 +335,44 @@
             <input name="lastName" type="text" placeholder="Novák">
           </label>
         </div>
-        <label>
-          <span>Role</span>
-          <select name="role">
-            <option value="USER">Uživatel</option>
-            <option value="ADMIN">Administrátor</option>
-            <option value="SUPERADMIN" id="superadminOption">Superadmin</option>
-          </select>
-        </label>
-        <label>
-          <span>Stav</span>
-          <select name="active">
-            <option value="true">Aktivní</option>
-            <option value="false">Blokován</option>
-          </select>
-        </label>
+        <div class="form-row-2">
+          <label>
+            <span>Role</span>
+            <select name="role">
+              <option value="USER">Uživatel</option>
+              <option value="ADMIN">Administrátor</option>
+              <option value="SUPERADMIN" id="superadminOption">Superadmin</option>
+            </select>
+          </label>
+          <label>
+            <span>Stav</span>
+            <select name="active">
+              <option value="true">Aktivní</option>
+              <option value="false">Blokován</option>
+            </select>
+          </label>
+        </div>
+        <div class="form-row-2">
+          <label>
+            <span>Přístup</span>
+            <select name="permission">
+              <option value="READER">Čtenář (Reader)</option>
+              <option value="EDITOR">Editor (Writer)</option>
+            </select>
+          </label>
+          <label>
+            <span>Výchozí lokace</span>
+            <select name="location" id="userLocationSelect">
+              <option value="HQ">Centrála (HQ)</option>
+              <!-- LC se načtou dynamicky -->
+            </select>
+          </label>
+        </div>
       </div>
     </div>
     <footer class="modal-actions">
       <button class="button button-secondary" type="button" data-action="close-user-modal"><svg><use href="#i-close"></use></svg>Zrušit</button>
-      <button class="button button-primary" type="submit"><svg><use href="#i-check"></use></svg>Uložit</button>
+      <button class="button button-primary write-only" type="submit"><svg><use href="#i-check"></use></svg>Uložit</button>
     </footer>
   </form>
 </dialog>
@@ -463,7 +405,7 @@
     </div>
     <footer class="modal-actions">
       <button class="button button-secondary" type="button" data-action="close-logistic-modal"><svg><use href="#i-close"></use></svg>Zrušit</button>
-      <button class="button button-primary" type="submit"><svg><use href="#i-check"></use></svg>Uložit</button>
+      <button class="button button-primary write-only" type="submit"><svg><use href="#i-check"></use></svg>Uložit</button>
     </footer>
   </form>
 </dialog>
@@ -550,16 +492,15 @@
     sectionTitles: {
       home: 'Domů',
       stores: 'Filiálky', logistics: 'Logistická centra', sync: 'Synchronizace',
-      users: 'Uživatelé', settings: 'Nastavení', audit: 'Audit',
+      users: 'Uživatelé', apps: 'Aplikace', settings: 'Nastavení', audit: 'Audit',
     },
     section: 'home',
     users: [],
     stores: [],
     logistics: [],
     audit: [],
-    _activityOffset: 0,
-    _activityRows: [],
-    _sfState: {},
+    apps: [],
+_sfState: {},
     _sfMenu: null,
     lastVisit: null,
     _colMenuOutside: null,
@@ -622,6 +563,12 @@
       return this.roleLevel(this.boot.user && this.boot.user.role) >= 2;
     },
 
+    get hasWriteAccess() {
+      const u = this.boot.user;
+      if (!u) return false;
+      return u.role === 'SUPERADMIN' || u.permission === 'EDITOR';
+    },
+
     init() {
       google.script.run
         .withSuccessHandler((res) => this.onUserLoaded(res.data))
@@ -636,12 +583,51 @@
       if (!this.isAdmin) {
         document.querySelectorAll('.admin-only').forEach((node) => node.classList.add('is-hidden'));
       }
+      if (!this.hasWriteAccess) {
+        document.querySelectorAll('.write-only').forEach((node) => node.classList.add('is-hidden'));
+      }
       if (user.role !== 'SUPERADMIN') {
         document.querySelector('#superadminOption').disabled = true;
       }
       Ui.hideLoader();
       this.initVisit();
       this.loadHome();
+      this.bootstrapData();
+    },
+
+    /**
+     * Jedno hromadné volání naplní lokální cache všech sekcí —
+     * přepínání záložek je pak okamžité (render z paměti,
+     * obnova dat běží potichu na pozadí).
+     */
+    bootstrapData() {
+      Ui.call('apiGetBootstrap', null, { silent: true })
+        .then((d) => {
+          if (d.apps) { this.apps = d.apps; this.renderModules(); }
+          if (d.users) this.users = this.decorateUsers(d.users);
+          if (d.stores) this.stores = d.stores;
+          if (d.logistics) this.logistics = d.logistics;
+          if (d.audit) this.audit = d.audit;
+          if (d.settings) this._settings = d.settings;
+          if (d.syncSettings) this._syncSettings = d.syncSettings;
+          this.renderSection(this.section);
+        })
+        .catch(() => {});
+    },
+
+    /** Překreslí aktuální sekci z lokální cache (bez volání serveru). */
+    renderSection(name) {
+      if (name === 'users' && this.users.length) this.renderUsers();
+      else if (name === 'apps' && this.apps.length) this.renderApps();
+      else if (name === 'stores' && this.stores.length) this.renderStores();
+      else if (name === 'logistics' && this.logistics.length) this.renderLogistics();
+      else if (name === 'audit' && this.audit.length) this.renderAudit();
+      else if (name === 'settings' && this._settings) this.fillSettingsForm(this._settings);
+      else if (name === 'sync' && this._syncSettings) this.fillSyncForm(this._syncSettings);
+    },
+
+    decorateUsers(users) {
+      return users.map((u) => Object.assign({ _name: [u.firstName, u.lastName].filter(Boolean).join(' ').trim() || '–' }, u));
     },
 
     onUserDenied(message) {
@@ -710,6 +696,7 @@
       });
 
       document.querySelector('#addUserButton').addEventListener('click', () => this.openUserModal(null));
+      document.querySelector('#addAppButton').addEventListener('click', () => this.openAppModal(null));
       document.querySelectorAll('[data-action="close-user-modal"]').forEach((b) => {
         b.addEventListener('click', () => Ui.closeModal(document.querySelector('#userModal')));
       });
@@ -738,7 +725,8 @@
       });
 
       document.addEventListener('click', (e) => {
-        const thBtn = e.target.closest('.th-btn[data-table][data-col]');
+        const thBtn = e.target.closest('.th-btn[data-table][data-col]')
+          || e.target.closest('th')?.querySelector('.th-btn[data-table][data-col]');
         if (thBtn) {
           const tableKey = thBtn.dataset.table;
           const col = thBtn.dataset.col;
@@ -747,17 +735,19 @@
             stores: () => this.renderStores(),
             logistics: () => this.renderLogistics(),
             audit: () => this.renderAudit(),
+            apps: () => this.renderApps(),
           };
           if (renderFns[tableKey]) this.openColMenu(thBtn, tableKey, col, this[tableKey] || [], renderFns[tableKey]);
         }
+        const actionBtn = e.target.closest('[data-action]');
+        if (actionBtn) {
+          const action = actionBtn.dataset.action;
+          const id = actionBtn.dataset.id;
+          if (action === 'edit-app') this.openAppModal(id);
+          else if (action === 'delete-app') this.deleteApp(id);
+        }
       });
 
-      document.querySelector('#activityUp').addEventListener('click', () => {
-        if (this._activityOffset > 0) { this._activityOffset--; this._updateActivityNav(); }
-      });
-      document.querySelector('#activityDown').addEventListener('click', () => {
-        if (this._activityOffset < this._activityRows.length - 5) { this._activityOffset++; this._updateActivityNav(); }
-      });
     },
 
     showSection(name) {
@@ -774,6 +764,7 @@
     loadSection(name) {
       if (name === 'home') this.loadHome();
       if (name === 'users') this.loadUsers();
+      if (name === 'apps') this.loadApps();
       if (name === 'stores') this.loadStores();
       if (name === 'logistics') this.loadLogistics();
       if (name === 'sync') this.loadSync();
@@ -789,21 +780,105 @@
     },
 
     loadHome() {
-      Ui.call('apiGetHome', null, { silent: true, busy: 'Načítám přehled…' })
+      if (this._home) this.renderHome(this._home);
+      Ui.call('apiGetHome', null, { silent: true })
         .then((data) => {
-          this.renderWarnings(data.warnings || []);
-          this.renderActivity(data.activity || []);
-          if (data.lastSyncAt) {
-            Ui.setText('#heroSyncTime', 'Sync: ' + Ui.formatDateTime(data.lastSyncAt));
-          }
-          if (data.userCount !== null && data.userCount !== undefined) {
-            Ui.setText('#statUsers', data.userCount);
-          }
+          this._home = data;
+          this.renderHome(data);
           this.markUpdated();
         })
         .catch((error) => Ui.toast(error.message, 'error'));
       this.renderNameDay();
       this.loadWeather();
+      this.loadModules();
+    },
+
+    renderHome(data) {
+      this.renderWarnings(data.warnings || []);
+
+      const grid = document.querySelector('#heroStatsGrid');
+      if (!grid) return;
+      const click = this.isAdmin;
+      
+      const storesCount = typeof data.storesActive === 'number' ? data.storesActive : 0;
+      const closedCount = typeof data.storesTempClosed === 'number' ? data.storesTempClosed : 0;
+      const lcCount = typeof data.logisticsActive === 'number' ? data.logisticsActive : 0;
+      
+      const closedClass = closedCount > 0 ? ' hero-grid-item--warn' : '';
+      
+      let lastChangeText = '—';
+      let lastChangeUser = '—';
+      if (data.lastChange && data.lastChange.timestamp) {
+        lastChangeText = this.fmtRelative(new Date(data.lastChange.timestamp));
+        lastChangeUser = String(data.lastChange.user || '').replace(/@.*/, '');
+      }
+
+      grid.innerHTML = `
+        <!-- Řádek 1: Statistiky sítě (LC, Filiálky, Uzavřené) -->
+        <div class="hero-grid-item${click ? ' hero-grid-item--click' : ''}"${click ? ' data-section-link="logistics"' : ''} title="Aktivní logistická centra">
+          <svg width="13" height="13" viewBox="0 0 24 24"><use href="#i-truck"></use></svg>
+          <span>LC: <strong>${lcCount}</strong></span>
+        </div>
+        <div class="hero-grid-item${click ? ' hero-grid-item--click' : ''}"${click ? ' data-section-link="stores"' : ''} title="Aktivní filiálky">
+          <svg width="13" height="13" viewBox="0 0 24 24"><use href="#i-store"></use></svg>
+          <span>Filiálky: <strong>${storesCount}</strong></span>
+        </div>
+        <div class="hero-grid-item${closedClass}${click ? ' hero-grid-item--click' : ''}"${click ? ' data-section-link="stores"' : ''} title="Dočasně uzavřené filiálky">
+          <svg width="13" height="13" viewBox="0 0 24 24"><use href="#i-clock"></use></svg>
+          <span>Uzavřené: <strong>${closedCount}</strong></span>
+        </div>
+
+        <!-- Řádek 2: Systémové informace (Login, Sync, Změna) -->
+        <div class="hero-grid-item" title="Vaše poslední přihlášení">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Login: <strong id="lastVisitText">—</strong></span>
+        </div>
+        <div class="hero-grid-item" title="Poslední synchronizace dat z Google Drive">
+          <svg width="13" height="13" viewBox="0 0 24 24"><use href="#i-sync"></use></svg>
+          <span>Sync: <strong id="heroSyncTime">—</strong></span>
+        </div>
+        <div class="hero-grid-item${click ? ' hero-grid-item--click' : ''}"${click ? ' data-section-link="audit"' : ''} title="Poslední změna v databázi (${lastChangeUser})">
+          <svg width="13" height="13" viewBox="0 0 24 24"><use href="#i-pencil"></use></svg>
+          <span>Změna: <strong>${lastChangeText}</strong></span>
+        </div>
+      `;
+
+      grid.querySelectorAll('[data-section-link]').forEach((el) => {
+        el.addEventListener('click', () => this.showSection(el.dataset.sectionLink));
+      });
+
+      // Srozumitelný stav dat filiálek místo nejasného „Sync:"
+      const syncEl = document.querySelector('#heroSyncTime');
+      if (syncEl) {
+        if (data.lastSyncAt) {
+          const d = new Date(data.lastSyncAt);
+          syncEl.textContent = this.fmtRelative(d);
+          syncEl.classList.toggle('is-stale', Date.now() - d.getTime() > 48 * 3600 * 1000);
+        } else {
+          syncEl.textContent = 'Nenačtena';
+          syncEl.classList.add('is-stale');
+        }
+      }
+
+      // Vykreslit poslední přihlášení (vyřešení race condition při prvním načtení)
+      this.renderLastVisit();
+    },
+
+    /** Český výběr tvaru podle počtu: 1 / 2–4 / ostatní. */
+    plural(n, one, few, many) {
+      return n === 1 ? one : (n >= 2 && n <= 4 ? few : many);
+    },
+
+    /** „dnes v 9:15", „včera v 22:14", jinak plné datum s časem. */
+    fmtRelative(d) {
+      if (Number.isNaN(d.getTime())) return '-';
+      const hm = d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0');
+      const today = new Date();
+      const startOfDay = (x) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+      const diffDays = Math.round((startOfDay(today) - startOfDay(d)) / 86400000);
+      if (diffDays === 0) return 'dnes v ' + hm;
+      if (diffDays === 1) return 'včera v ' + hm;
+      return Ui.formatDateTime(d.toISOString());
     },
 
     renderNameDay() {
@@ -816,15 +891,17 @@
     loadWeather() {
       const container = document.querySelector('#lcWeatherChips');
       if (!container) return;
+      // Počasí stačí obnovit jednou za 10 minut — chipy mezitím zůstávají.
+      if (container.children.length && this._weatherAt && Date.now() - this._weatherAt < 600000) return;
+      this._weatherAt = Date.now();
       container.innerHTML = '';
-      Ui.call('apiListLogistics', null, { silent: true })
-        .then((lcs) => {
+      const renderChips = (lcs) => {
           const active = (lcs || []).filter((lc) => lc.active === true);
           if (!active.length) return;
           active.forEach((lc) => {
             const chip = document.createElement('div');
             chip.className = 'hero-info-chip hero-info-chip--center';
-            chip.innerHTML = '<span><strong>…</strong><span class="wlabel"> ' + lc.abbreviation + '</span></span>';
+            chip.innerHTML = '<span class="wlabel">' + Ui.escape(lc.abbreviation) + ':</span><strong> …</strong>';
             container.appendChild(chip);
             fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(lc.name) + '&count=1&language=cs&format=json')
               .then((r) => r.json())
@@ -832,18 +909,75 @@
                 const res = geo.results && geo.results[0];
                 if (!res) return;
                 return fetch('https://api.open-meteo.com/v1/forecast?latitude=' + res.latitude +
-                  '&longitude=' + res.longitude + '&current=temperature_2m,weather_code&timezone=auto')
+                  '&longitude=' + res.longitude + '&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code&timezone=auto')
                   .then((r) => r.json())
                   .then((json) => {
                     const c = json.current;
                     const desc = this._wmoDesc(c.weather_code);
-                    chip.querySelector('strong').textContent = desc.icon + ' ' + Math.round(c.temperature_2m) + ' °C';
+                    chip.querySelector('strong').textContent = desc.icon + ' ' + Math.round(c.temperature_2m) + '°C';
+                    chip.dataset.weatherTip = JSON.stringify({
+                      city: lc.name,
+                      label: desc.label,
+                      icon: desc.icon,
+                      temp: Math.round(c.temperature_2m),
+                      feels: Math.round(c.apparent_temperature),
+                      humidity: c.relative_humidity_2m,
+                      wind: Math.round(c.wind_speed_10m),
+                    });
+                    chip.classList.add('has-weather-tip');
                   });
               })
               .catch(() => { chip.querySelector('strong').textContent = '—'; });
           });
-        })
-        .catch(() => {});
+      };
+      if (this.logistics.length) {
+        renderChips(this.logistics);
+      } else {
+        Ui.call('apiListLogistics', null, { silent: true })
+          .then((lcs) => { this.logistics = lcs || []; renderChips(this.logistics); })
+          .catch(() => {});
+      }
+      this._initWeatherTooltip();
+    },
+
+    _initWeatherTooltip() {
+      if (this._weatherTipBound) return;
+      this._weatherTipBound = true;
+      let tip = null;
+      const show = (chip) => {
+        const d = JSON.parse(chip.dataset.weatherTip || 'null');
+        if (!d) return;
+        hide();
+        tip = document.createElement('div');
+        tip.className = 'weather-tooltip';
+        tip.innerHTML = `
+          <div class="wt-city">${Ui.escape(d.city)}</div>
+          <div class="wt-main">${d.icon} <span class="wt-temp">${d.temp}°C</span></div>
+          <div class="wt-desc">${Ui.escape(d.label)}</div>
+          <div class="wt-details">
+            <span>🌡️ Pocit ${d.feels}°C</span>
+            <span>💧 ${d.humidity}%</span>
+            <span>💨 ${d.wind} km/h</span>
+          </div>`;
+        document.body.appendChild(tip);
+        const r = chip.getBoundingClientRect();
+        const tw = tip.offsetWidth || 180;
+        let left = r.left + r.width / 2 - tw / 2;
+        if (left < 8) left = 8;
+        if (left + tw > window.innerWidth - 8) left = window.innerWidth - 8 - tw;
+        tip.style.left = left + 'px';
+        tip.style.top = (r.bottom + 8) + 'px';
+        requestAnimationFrame(() => tip.classList.add('is-visible'));
+      };
+      const hide = () => { if (tip) { tip.remove(); tip = null; } };
+      document.addEventListener('mouseover', (e) => {
+        const chip = e.target.closest('.has-weather-tip');
+        if (chip) show(chip);
+      });
+      document.addEventListener('mouseout', (e) => {
+        const chip = e.target.closest('.has-weather-tip');
+        if (chip && !chip.contains(e.relatedTarget)) hide();
+      });
     },
 
     _wmoDesc(code) {
@@ -918,75 +1052,6 @@
       });
     },
 
-    renderActivity(rows) {
-      const VISIBLE = 5;
-      const ROW_H = 30;
-      this._activityOffset = 0;
-      this._activityRows = rows;
-      const actionLabels = {
-        setup: 'Inicializace', sync_run: 'Synchronizace',
-        user_create: 'Nový uživatel', user_update: 'Úprava uživatele',
-        settings_update: 'Nastavení', store_create: 'Nová filiálka',
-        store_update: 'Filiálka', store_delete: 'Filiálka smazána',
-        logistic_create: 'Nové LC', logistic_update: 'LC',
-        logistic_delete: 'LC smazáno', sync_settings_update: 'Nastavení sync',
-        store_toggle: 'Filiálka přepnuta',
-      };
-      const actionIcons = {
-        setup: 'settings', sync_run: 'sync',
-        user_create: 'users', user_update: 'users',
-        settings_update: 'settings', store_create: 'store',
-        store_update: 'store', store_delete: 'store', store_toggle: 'power',
-        logistic_create: 'truck', logistic_update: 'truck',
-        logistic_delete: 'truck', sync_settings_update: 'settings',
-      };
-      const actionColors = {
-        sync_run: 'act-c-blue', sync_settings_update: 'act-c-blue',
-        user_create: 'act-c-green', user_update: 'act-c-green',
-        store_create: 'act-c-purple', store_update: 'act-c-purple',
-        store_delete: 'act-c-red', store_toggle: 'act-c-red',
-        logistic_create: 'act-c-yellow', logistic_update: 'act-c-yellow', logistic_delete: 'act-c-red',
-        settings_update: 'act-c-grey', setup: 'act-c-grey',
-      };
-      const track = document.querySelector('#activityTrack');
-      const viewport = document.querySelector('#activityViewport');
-      if (!rows.length) {
-        track.innerHTML = '<p class="activity-empty">Zatím žádná aktivita.</p>';
-        viewport.style.height = 'auto';
-        document.querySelector('#activityUp').disabled = true;
-        document.querySelector('#activityDown').disabled = true;
-        return;
-      }
-      track.innerHTML = rows.map((row) => `
-        <div class="activity-row">
-          <span class="activity-icon ${Ui.escape(actionColors[row.action] || 'act-c-grey')}">
-            <svg width="11" height="11" viewBox="0 0 24 24"><use href="#i-${Ui.escape(actionIcons[row.action] || 'info')}"></use></svg>
-          </span>
-          <div class="activity-main">
-            <span class="activity-label">${Ui.escape(actionLabels[row.action] || row.action)}</span>
-            <span class="activity-detail">${Ui.escape(row.detail || '')}</span>
-          </div>
-          <div class="activity-meta">
-            <span class="act-time">${Ui.escape(Ui.formatDateTime(row.timestamp))}</span>
-            <span class="act-user">${Ui.escape((row.user || '').replace(/@.*/, ''))}</span>
-          </div>
-        </div>`).join('');
-      viewport.style.height = Math.min(rows.length, VISIBLE) * ROW_H + 'px';
-      this._updateActivityNav();
-    },
-
-    _updateActivityNav() {
-      const VISIBLE = 5;
-      const ROW_H = 30;
-      const total = this._activityRows.length;
-      const offset = this._activityOffset;
-      const track = document.querySelector('#activityTrack');
-      if (track) track.style.transform = `translateY(${-offset * ROW_H}px)`;
-      const up = document.querySelector('#activityUp');
-      const down = document.querySelector('#activityDown');
-      if (up) up.disabled = offset <= 0;
-      if (down) down.disabled = offset >= Math.max(0, total - VISIBLE);
-    },
 
     openChangelog() {
       Ui.call('apiGetChangelog', null, { silent: true, busy: 'Načítám historii změn…' })
@@ -1014,9 +1079,11 @@
     },
 
     loadUsers() {
-      Ui.call('apiListUsers', null, { silent: true, busy: 'Načítám uživatele…' })
+      const cached = this.users.length > 0;
+      if (cached) this.renderUsers();
+      Ui.call('apiListUsers', null, cached ? { silent: true } : { silent: true, busy: 'Načítám uživatele…' })
         .then((users) => {
-          this.users = users.map((u) => Object.assign({ _name: [u.firstName, u.lastName].filter(Boolean).join(' ').trim() || '–' }, u));
+          this.users = this.decorateUsers(users);
           this.renderUsers();
           this.markUpdated();
         })
@@ -1025,19 +1092,29 @@
 
     renderUsers() {
       const rows = this.sortFilter('users', this.users);
-      document.querySelector('#userRows').innerHTML = rows.map((user) => `
-        <tr>
-          <td>${Ui.escape(user.email)}</td>
-          <td>${Ui.escape(user._name)}</td>
-          <td><span class="pill">${Ui.escape(this.roleLabel(user.role))}</span></td>
-          <td>${user.active === true ? 'Aktivní' : 'Blokován'}</td>
-          <td>
-            <button class="icon-action" type="button" data-user-id="${Ui.escape(user.id)}" title="Upravit uživatele">
-              <svg><use href="#i-pencil"></use></svg>
-            </button>
-          </td>
-        </tr>
-      `).join('') || '<tr><td colspan="5">Žádní uživatelé.</td></tr>';
+      document.querySelector('#userRows').innerHTML = rows.map((user) => {
+        const permLabel = user.permission === 'EDITOR' ? 'Editor' : 'Čtenář';
+        const permClass = user.permission === 'EDITOR' ? 'is-green' : 'is-blue';
+        const locLabel = user.location === 'HQ' ? 'Centrála (HQ)' : (user.location || 'HQ');
+        return `
+          <tr>
+            <td>${Ui.escape(user.email)}</td>
+            <td>${Ui.escape(user._name)}</td>
+            <td><span class="pill">${Ui.escape(this.roleLabel(user.role))}</span></td>
+            <td><span class="pill ${permClass}">${Ui.escape(permLabel)}</span></td>
+            <td><strong>${Ui.escape(locLabel)}</strong></td>
+            <td>${user.active === true ? 'Aktivní' : 'Blokován'}</td>
+            <td>
+              ${this.hasWriteAccess
+                ? `<button class="icon-action" type="button" data-user-id="${Ui.escape(user.id)}" title="Upravit uživatele">
+                    <svg><use href="#i-pencil"></use></svg>
+                   </button>`
+                : '—'
+              }
+            </td>
+          </tr>
+        `;
+      }).join('') || '<tr><td colspan="7">Žádní uživatelé.</td></tr>';
       document.querySelectorAll('[data-user-id]').forEach((btn) => {
         btn.addEventListener('click', () => this.openUserModal(this.users.find((u) => u.id === btn.dataset.userId)));
       });
@@ -1047,12 +1124,27 @@
     openUserModal(user) {
       const form = document.querySelector('#userForm');
       form.reset();
+
+      // Dynamické naplnění lokací
+      const locSelect = document.querySelector('#userLocationSelect');
+      if (locSelect) {
+        locSelect.innerHTML = '<option value="HQ">Centrála (HQ)</option>';
+        (this.logistics || []).forEach(lc => {
+          if (lc.active === true) {
+            locSelect.innerHTML += `<option value="${Ui.escape(lc.abbreviation)}">${Ui.escape(lc.name)} (${Ui.escape(lc.abbreviation)})</option>`;
+          }
+        });
+      }
+
       form.elements.id.value = user ? user.id : '';
       form.elements.email.value = user ? user.email : '';
       form.elements.firstName.value = user ? (user.firstName || '') : '';
       form.elements.lastName.value = user ? (user.lastName || '') : '';
       form.elements.role.value = user ? user.role : 'USER';
       form.elements.active.value = user && user.active !== true ? 'false' : 'true';
+      form.elements.permission.value = user ? (user.permission || 'READER') : 'READER';
+      form.elements.location.value = user ? (user.location || 'HQ') : 'HQ';
+
       Ui.setText('#userModalTitle', user ? 'Upravit uživatele' : 'Přidat uživatele');
       Ui.openModal(document.querySelector('#userModal'));
     },
@@ -1067,6 +1159,8 @@
         lastName: form.elements.lastName.value,
         role: form.elements.role.value,
         active: form.elements.active.value === 'true',
+        permission: form.elements.permission.value,
+        location: form.elements.location.value,
       }, { silent: true, busy: 'Ukládám uživatele…' })
         .then(() => {
           Ui.setButtonLoading(button, false);
@@ -1081,14 +1175,21 @@
     },
 
     loadSettings() {
-      Ui.call('apiGetSettings', null, { silent: true, busy: 'Načítám nastavení…' })
+      const cached = !!this._settings;
+      if (cached) this.fillSettingsForm(this._settings);
+      Ui.call('apiGetSettings', null, cached ? { silent: true } : { silent: true, busy: 'Načítám nastavení…' })
         .then((settings) => {
-          const form = document.querySelector('#settingsForm');
-          form.elements.appName.value = settings.appName || '';
-          form.elements.appSubtitle.value = settings.appSubtitle || '';
+          this._settings = settings;
+          this.fillSettingsForm(settings);
           this.markUpdated();
         })
         .catch((error) => Ui.toast(error.message, 'error'));
+    },
+
+    fillSettingsForm(settings) {
+      const form = document.querySelector('#settingsForm');
+      form.elements.appName.value = settings.appName || '';
+      form.elements.appSubtitle.value = settings.appSubtitle || '';
     },
 
     saveSettings(button) {
@@ -1112,7 +1213,9 @@
     },
 
     loadAudit() {
-      Ui.call('apiGetAudit', null, { silent: true, busy: 'Načítám audit…' })
+      const cached = this.audit.length > 0;
+      if (cached) this.renderAudit();
+      Ui.call('apiGetAudit', null, cached ? { silent: true } : { silent: true, busy: 'Načítám audit…' })
         .then((rows) => {
           this.audit = rows;
           this.renderAudit();
@@ -1134,10 +1237,274 @@
       this.updateSortIndicators('audit');
     },
 
+    /* ── Aplikace ────────────────────────────────── */
+
+    loadApps() {
+      const cached = this.apps.length > 0;
+      if (cached) this.renderApps();
+      Ui.call('apiListApps', null, cached ? { silent: true } : { silent: true, busy: 'Načítám aplikace…' })
+        .then((rows) => {
+          this.apps = rows;
+          this.renderApps();
+          this.renderModules();
+          this.markUpdated();
+        })
+        .catch((e) => Ui.toast(e.message, 'error'));
+    },
+
+    renderApps() {
+      const STATUS_LABEL = { available: 'Dostupná', coming: 'V přípravě', inactive: 'Nedostupná' };
+      const rows = this.sortFilter('apps', this.apps);
+      document.querySelector('#appRows').innerHTML = rows.map((app) => `
+        <tr>
+          <td style="width:40px;text-align:center;color:var(--muted)">${Ui.escape(String(app.order || ''))}</td>
+          <td><strong>${Ui.escape(app.name)}</strong></td>
+          <td style="color:var(--muted)">${Ui.escape(app.description || '')}</td>
+          <td><span class="app-status-badge app-status--${Ui.escape(app.status || 'coming')}">${Ui.escape(STATUS_LABEL[app.status] || app.status)}</span></td>
+          <td class="td-actions">
+            <button class="icon-action" type="button" title="Upravit" data-action="edit-app" data-id="${Ui.escape(app.id)}"><svg width="14" height="14" viewBox="0 0 24 24"><use href="#i-pencil"></use></svg></button>
+            <button class="icon-action icon-action--danger" type="button" title="Smazat" data-action="delete-app" data-id="${Ui.escape(app.id)}"><svg width="14" height="14" viewBox="0 0 24 24"><use href="#i-trash"></use></svg></button>
+          </td>
+        </tr>`).join('') || '<tr><td colspan="5">Zatím žádné aplikace.</td></tr>';
+      this.updateSortIndicators('apps');
+    },
+
+    loadModules() {
+      if (this.apps.length) { this.renderModules(); return; }
+      Ui.call('apiListApps', null, { silent: true })
+        .then((rows) => {
+          this.apps = rows || [];
+          this.renderModules();
+        })
+        .catch(() => {});
+    },
+
+    renderModules() {
+      const grid = document.querySelector('#moduleGrid');
+      const empty = document.querySelector('#modulesEmpty');
+      const active = this.apps || [];
+      if (!active.length) {
+        grid.querySelectorAll('.module-card').forEach((c) => c.remove());
+        if (empty) empty.classList.remove('is-hidden');
+        return;
+      }
+      if (empty) empty.classList.add('is-hidden');
+      const COLOR_CLASS = { dark: 'mc-side--dark', light: 'mc-side--light', yellow: 'mc-side--yellow', red: 'mc-side--red', green: 'mc-side--green', teal: 'mc-side--teal', orange: 'mc-side--orange', purple: 'mc-side--purple', slate: 'mc-side--slate', pink: 'mc-side--pink', indigo: 'mc-side--indigo' };
+      const STATUS_CLASS = { available: 'mc--available', coming: 'mc--coming', inactive: 'mc--inactive' };
+      const STATUS_BADGE = { available: 'Dostupná', coming: 'V přípravě', inactive: 'Nedostupná' };
+      const STATUS_ICON = { coming: '#i-clock', inactive: '#i-lock' };
+      grid.querySelectorAll('.module-card').forEach((c) => c.remove());
+      active.forEach((app) => {
+        const colorCls = COLOR_CLASS[app.color] || '';
+        const statusCls = STATUS_CLASS[app.status] || 'mc--coming';
+        const statusIcon = STATUS_ICON[app.status] ? `<div class="mc-status-icon"><svg><use href="${STATUS_ICON[app.status]}"></use></svg></div>` : '';
+        const isAvailable = app.status === 'available';
+        const art = document.createElement('article');
+        art.className = 'module-card mc--sidebar ' + statusCls;
+        art.dataset.appId = app.id;
+        art.innerHTML = `
+          <div class="mc-side ${colorCls}">
+            <svg><use href="#i-${Ui.escape(app.icon || 'info')}"></use></svg>
+            <i></i>
+          </div>
+          <div class="mc-body">
+            ${statusIcon}
+            <h2>${Ui.escape(app.name)}</h2>
+            <span class="mc-badge">${Ui.escape(STATUS_BADGE[app.status] || '')}</span>
+            <p>${Ui.escape(app.description || '')}</p>
+            <footer>
+              ${isAvailable
+                ? `<a class="button button-secondary button-small" href="${Ui.escape((this.boot.execUrl || '') + '?app=' + (app.slug || app.id))}" target="_blank" rel="noopener">Otevřít</a>`
+                : '<button class="button button-secondary button-small" type="button" disabled>Otevřít</button>'}
+            </footer>
+          </div>`;
+        grid.appendChild(art);
+      });
+    },
+
+    openAppModal(appIdOrObj) {
+      document.querySelector('#appModal')?.remove();
+      const app = typeof appIdOrObj === 'string'
+        ? (this.apps || []).find((a) => a.id === appIdOrObj) || null
+        : appIdOrObj;
+      const isNew = !app;
+      const name = isNew ? '' : (app.name || '');
+      const desc = isNew ? '' : (app.description || '');
+      const icon = isNew ? 'info' : (app.icon || 'info');
+      const color = isNew ? '' : (app.color || '');
+      const status = isNew ? 'coming' : (app.status || 'coming');
+      const order = isNew ? '' : String(app.order || '');
+      const COLORS = [
+        { value: '',        label: 'Lidl modrá',    hex: '#0053b3' },
+        { value: 'dark',    label: 'Tmavě modrá',   hex: '#002466' },
+        { value: 'light',   label: 'Světle modrá',  hex: '#008cd2' },
+        { value: 'yellow',  label: 'Žlutá',         hex: '#ffd100' },
+        { value: 'red',     label: 'Červená',        hex: '#e60a14' },
+        { value: 'green',   label: 'Zelená',         hex: '#00833e' },
+        { value: 'teal',    label: 'Tyrkysová',     hex: '#00a0af' },
+        { value: 'orange',  label: 'Oranžová',      hex: '#e87722' },
+        { value: 'purple',  label: 'Fialová',       hex: '#6b21a8' },
+        { value: 'slate',   label: 'Šedá',          hex: '#475569' },
+        { value: 'pink',    label: 'Růžová',        hex: '#db2777' },
+        { value: 'indigo',  label: 'Indigová',      hex: '#4338ca' },
+      ];
+      const statuses = [['available', 'Dostupná'], ['coming', 'V přípravě'], ['inactive', 'Nedostupná']];
+      const STATUS_BADGE = { available: 'Dostupná', coming: 'V přípravě', inactive: 'Nedostupná' };
+      const ICON_GROUPS = [
+        { label: 'Provoz', icons: [['store','Filiálka'],['truck','Logistika'],['map-pin','Mapa'],['package','Sklad'],['tag','Ceny/Štítky'],['sync','Synchronizace']] },
+        { label: 'Analytika & finance', icons: [['chart','Analytika'],['euro','Finance'],['star','KPI'],['award','Ocenění'],['file-text','Dokumenty'],['clipboard','Úkoly']] },
+        { label: 'Lidé & správa', icons: [['users','Uživatelé'],['shield','Bezpečnost'],['settings','Nastavení'],['bell','Upozornění'],['zap','Automatizace'],['layers','Víceúrovňové']] },
+        { label: 'Obecné', icons: [['home','Domů'],['calendar','Kalendář'],['folder','Složka'],['list','Seznam'],['info','Info'],['refresh','Obnovit']] },
+      ];
+      const COLOR_CLASS = { dark: 'mc-side--dark', light: 'mc-side--light', yellow: 'mc-side--yellow', red: 'mc-side--red', green: 'mc-side--green', teal: 'mc-side--teal', orange: 'mc-side--orange', purple: 'mc-side--purple', slate: 'mc-side--slate', pink: 'mc-side--pink', indigo: 'mc-side--indigo' };
+      const STATUS_CLASS = { available: 'mc--available', coming: 'mc--coming', inactive: 'mc--inactive' };
+      const STATUS_ICON_REF = { coming: '#i-clock', inactive: '#i-lock' };
+
+      const buildPreviewHTML = (pName, pDesc, pIcon, pColor, pStatus) => {
+        const colorCls = COLOR_CLASS[pColor] || '';
+        const statusCls = STATUS_CLASS[pStatus] || '';
+        const statusIconHtml = STATUS_ICON_REF[pStatus] ? `<div class="mc-status-icon"><svg><use href="${STATUS_ICON_REF[pStatus]}"></use></svg></div>` : '';
+        const isAvail = pStatus === 'available';
+        return `<article class="module-card mc--sidebar ${statusCls}" style="pointer-events:none;width:100%">
+          <div class="mc-side ${colorCls}"><svg><use href="#i-${pIcon || 'info'}"></use></svg><i></i></div>
+          <div class="mc-body">${statusIconHtml}
+            <h2>${pName || '<em style="opacity:.4">Název aplikace</em>'}</h2>
+            <span class="mc-badge">${STATUS_BADGE[pStatus] || ''}</span>
+            <p>${pDesc || '<em style="opacity:.4">Popis aplikace</em>'}</p>
+            <footer><button class="button button-secondary button-small" ${isAvail ? '' : 'disabled'}>Otevřít</button></footer>
+          </div></article>`;
+      };
+
+      const dialog = document.createElement('dialog');
+      dialog.id = 'appModal';
+      dialog.className = 'modal modal-app';
+      dialog.innerHTML = `
+        <form id="appForm">
+          <header class="modal-header">
+            <span class="modal-icon"><svg><use href="#i-settings"></use></svg></span>
+            <div class="modal-header-text"><p class="kicker">Administrace</p><h2>${isNew ? 'Nová aplikace' : 'Upravit aplikaci'}</h2></div>
+            <button class="modal-close" type="button" id="closeAppModal" aria-label="Zavřít"><svg><use href="#i-close"></use></svg></button>
+          </header>
+          <div class="modal-body modal-app-body">
+            <div class="form form-plain modal-app-form">
+              ${app ? `<input type="hidden" name="id" value="${Ui.escape(app.id)}">` : ''}
+              <label><span>Název</span><input name="name" id="appName" type="text" value="${Ui.escape(name)}" required autofocus></label>
+              <label><span>Popis</span><input name="description" id="appDesc" type="text" value="${Ui.escape(desc)}"></label>
+              <label><span>Odkaz v URL (?app=…)</span><input name="slug" id="appSlug" type="text" value="${Ui.escape(isNew ? '' : (app.slug || ''))}" placeholder="např. sklad" pattern="[a-z0-9-]+" title="Jen malá písmena, číslice a pomlčky"></label>
+              <div>
+                <span class="form-field-label">Ikona</span>
+                <input type="hidden" name="icon" id="appIconInput" value="${Ui.escape(icon)}">
+                <div class="icon-picker-groups">
+                  ${ICON_GROUPS.map((g) => `
+                    <div class="icon-picker-group">
+                      <span class="icon-picker-group-label">${g.label}</span>
+                      <div class="icon-picker">
+                        ${g.icons.map(([k, l]) => `<button type="button" class="icon-picker-btn${k === icon ? ' is-selected' : ''}" data-icon="${k}" title="${l}"><svg><use href="#i-${k}"></use></svg><span>${l}</span></button>`).join('')}
+                      </div>
+                    </div>`).join('')}
+                </div>
+              </div>
+              <div class="form-row-2">
+                <div>
+                  <span class="form-field-label">Barva pruhu</span>
+                  <input type="hidden" name="color" id="appColor" value="${Ui.escape(color)}">
+                  <div class="color-picker">
+                    ${COLORS.map((c) => `<button type="button" class="color-picker-btn${c.value === color ? ' is-selected' : ''}" data-color="${c.value}" data-hex="${c.hex}" title="${c.label}" style="--swatch:${c.hex}"></button>`).join('')}
+                  </div>
+                </div>
+                <label><span>Status</span>
+                  <select name="status" id="appStatus">${statuses.map(([v, l]) => `<option value="${v}"${v === status ? ' selected' : ''}>${l}</option>`).join('')}</select>
+                </label>
+              </div>
+              <label><span>Pořadí</span><input name="order" type="number" value="${Ui.escape(order)}" min="0" style="max-width:90px"></label>
+            </div>
+            <div class="modal-app-preview">
+              <span class="form-field-label">Náhled</span>
+              <div id="appPreview">${buildPreviewHTML(name, desc, icon, color, status)}</div>
+            </div>
+          </div>
+          <footer class="modal-actions">
+            <button class="button button-secondary" type="button" id="closeAppModal2"><svg><use href="#i-close"></use></svg>Zrušit</button>
+            <button class="button button-primary" type="button" id="saveAppBtn"><svg><use href="#i-check"></use></svg>${isNew ? 'Vytvořit' : 'Uložit'}</button>
+          </footer>
+        </form>`;
+      document.body.appendChild(dialog);
+
+      const updatePreview = () => {
+        const p = dialog.querySelector('#appPreview');
+        if (p) p.innerHTML = buildPreviewHTML(
+          dialog.querySelector('#appName').value,
+          dialog.querySelector('#appDesc').value,
+          dialog.querySelector('#appIconInput').value,
+          dialog.querySelector('#appColor').value,
+          dialog.querySelector('#appStatus').value
+        );
+      };
+
+      const close = () => { Ui.closeModal(dialog); setTimeout(() => dialog.remove(), 400); };
+      dialog.querySelector('#closeAppModal').addEventListener('click', close);
+      dialog.querySelector('#closeAppModal2').addEventListener('click', close);
+      dialog.addEventListener('click', (e) => { if (e.target === dialog) close(); });
+
+      dialog.querySelectorAll('.icon-picker-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          dialog.querySelectorAll('.icon-picker-btn').forEach((b) => b.classList.remove('is-selected'));
+          btn.classList.add('is-selected');
+          dialog.querySelector('#appIconInput').value = btn.dataset.icon;
+          updatePreview();
+        });
+      });
+      ['#appName','#appDesc','#appStatus'].forEach((sel) => {
+        dialog.querySelector(sel).addEventListener('input', updatePreview);
+        dialog.querySelector(sel).addEventListener('change', updatePreview);
+      });
+
+      // Slug se předvyplňuje z názvu, dokud ho uživatel ručně neupraví.
+      const slugInput = dialog.querySelector('#appSlug');
+      const slugify = (v) => String(v || '').trim().toLowerCase()
+        .normalize('NFD').replace(/[̀-ͯ]/g, '')
+        .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      let slugTouched = !isNew && !!slugInput.value;
+      slugInput.addEventListener('input', () => { slugTouched = slugInput.value !== ''; });
+      dialog.querySelector('#appName').addEventListener('input', () => {
+        if (!slugTouched) slugInput.value = slugify(dialog.querySelector('#appName').value);
+      });
+      dialog.querySelectorAll('.color-picker-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          dialog.querySelectorAll('.color-picker-btn').forEach((b) => b.classList.remove('is-selected'));
+          btn.classList.add('is-selected');
+          dialog.querySelector('#appColor').value = btn.dataset.color;
+          updatePreview();
+        });
+      });
+
+      dialog.querySelector('#saveAppBtn').addEventListener('click', () => {
+        const form = dialog.querySelector('#appForm');
+        if (!form.reportValidity()) return;
+        const saveBtn = dialog.querySelector('#saveAppBtn');
+        Ui.setButtonLoading(saveBtn, true);
+        const fd = new FormData(form);
+        const payload = { id: fd.get('id') || undefined, name: fd.get('name'), description: fd.get('description'), slug: fd.get('slug'), icon: fd.get('icon'), color: fd.get('color'), status: fd.get('status'), order: parseInt(fd.get('order')) || 0 };
+        Ui.call('apiSaveApp', payload, { silent: true })
+          .then(() => { close(); this.loadApps(); })
+          .catch((err) => { Ui.setButtonLoading(saveBtn, false); Ui.toast(err.message, 'error'); });
+      });
+      Ui.openModal(dialog);
+    },
+
+    deleteApp(id) {
+      if (!confirm('Opravdu smazat tuto aplikaci?')) return;
+      Ui.call('apiDeleteApp', id, { busy: 'Mažu aplikaci…' })
+        .then(() => { this.loadApps(); })
+        .catch((err) => Ui.toast(err.message, 'error'));
+    },
+
     /* ── Filiálky ─────────────────────────────────── */
 
     loadStores() {
-      Ui.call('apiListStores', null, { silent: true, busy: 'Načítám filiálky…' })
+      const cached = this.stores.length > 0;
+      if (cached) this.renderStores();
+      Ui.call('apiListStores', null, cached ? { silent: true } : { silent: true, busy: 'Načítám filiálky…' })
         .then((stores) => {
           this.stores = stores;
           this.renderStores();
@@ -1157,11 +1524,14 @@
             <td>${Ui.escape(s.regional_manager || '–')}</td>
             <td>${s.active === false ? '<span class="pill is-red">Neaktivní</span>' : '<span class="pill is-green">Aktivní</span>'}</td>
             <td>
-              <button class="icon-action${s.manually_inactive === true ? '' : (s.active === false ? '' : ' danger')}" type="button"
-                data-store-toggle="${Ui.escape(s.id)}"
-                title="${s.active === false ? 'Aktivovat filiálku' : 'Deaktivovat filiálku'}">
-                <svg><use href="#i-power"></use></svg>
-              </button>
+              ${this.hasWriteAccess
+                ? `<button class="icon-action${s.manually_inactive === true ? '' : (s.active === false ? '' : ' danger')}" type="button"
+                    data-store-toggle="${Ui.escape(s.id)}"
+                    title="${s.active === false ? 'Aktivovat filiálku' : 'Deaktivovat filiálku'}">
+                    <svg><use href="#i-power"></use></svg>
+                   </button>`
+                : '—'
+              }
             </td>
           </tr>`).join('')
         : '<tr><td colspan="6">Žádné filiálky. Spusťte synchronizaci.</td></tr>';
@@ -1180,7 +1550,9 @@
     /* ── Logistická centra ────────────────────────── */
 
     loadLogistics() {
-      Ui.call('apiListLogistics', null, { silent: true, busy: 'Načítám logistická centra…' })
+      const cached = this.logistics.length > 0;
+      if (cached) this.renderLogistics();
+      Ui.call('apiListLogistics', null, cached ? { silent: true } : { silent: true, busy: 'Načítám logistická centra…' })
         .then((list) => {
           this.logistics = list;
           this.renderLogistics();
@@ -1199,9 +1571,12 @@
             <td>${Ui.escape(lc.name)}</td>
             <td>${lc.active === false ? '<span class="pill is-red">Neaktivní</span>' : '<span class="pill is-green">Aktivní</span>'}</td>
             <td>
-              <button class="icon-action" type="button" data-lc-id="${Ui.escape(lc.id)}" title="Upravit">
-                <svg><use href="#i-pencil"></use></svg>
-              </button>
+              ${this.hasWriteAccess
+                ? `<button class="icon-action" type="button" data-lc-id="${Ui.escape(lc.id)}" title="Upravit">
+                    <svg><use href="#i-pencil"></use></svg>
+                   </button>`
+                : '—'
+              }
             </td>
           </tr>`).join('')
         : '<tr><td colspan="5">Žádná logistická centra.</td></tr>';
@@ -1245,22 +1620,29 @@
     /* ── Synchronizace ────────────────────────────── */
 
     loadSync() {
-      Ui.call('apiGetSyncSettings', null, { silent: true, busy: 'Načítám konfiguraci…' })
+      const cached = !!this._syncSettings;
+      if (cached) this.fillSyncForm(this._syncSettings);
+      Ui.call('apiGetSyncSettings', null, cached ? { silent: true } : { silent: true, busy: 'Načítám konfiguraci…' })
         .then((s) => {
-          const form = document.querySelector('#syncSettingsForm');
-          form.elements.syncFolderUrl.value = s.syncFolderUrl || '';
-          form.elements.syncStoresSheet.value = s.syncStoresSheet || '';
-          form.elements.syncTempClosedPrefix.value = s.syncTempClosedPrefix || '';
-          form.elements.syncLogisticsSheet.value = s.syncLogisticsSheet || '';
-          if (s.lastSyncAt || s.lastSyncResult) {
-            this.renderSyncResult(s.lastSyncAt, s.lastSyncResult, false);
-          } else {
-            document.querySelector('#syncResultArea').innerHTML =
-              '<p style="color:var(--muted);font-size:13px">Synchronizace zatím nebyla spuštěna.</p>';
-          }
+          this._syncSettings = s;
+          this.fillSyncForm(s);
           this.markUpdated();
         })
         .catch((e) => Ui.toast(e.message, 'error'));
+    },
+
+    fillSyncForm(s) {
+      const form = document.querySelector('#syncSettingsForm');
+      form.elements.syncFolderUrl.value = s.syncFolderUrl || '';
+      form.elements.syncStoresSheet.value = s.syncStoresSheet || '';
+      form.elements.syncTempClosedPrefix.value = s.syncTempClosedPrefix || '';
+      form.elements.syncLogisticsSheet.value = s.syncLogisticsSheet || '';
+      if (s.lastSyncAt || s.lastSyncResult) {
+        this.renderSyncResult(s.lastSyncAt, s.lastSyncResult, false);
+      } else {
+        document.querySelector('#syncResultArea').innerHTML =
+          '<p style="color:var(--muted);font-size:13px">Synchronizace zatím nebyla spuštěna.</p>';
+      }
     },
 
     saveSyncSettings(button) {
@@ -1358,12 +1740,16 @@
           }
         });
       }
-      if (st.col) {
-        const dir = st.dir === 'desc' ? -1 : 1;
+      const sorts = st.sorts || [];
+      if (sorts.length) {
         result = [...result].sort((a, b) => {
-          const av = this._colDisplayVal(tableKey, st.col, a[st.col]);
-          const bv = this._colDisplayVal(tableKey, st.col, b[st.col]);
-          return dir * av.localeCompare(bv, 'cs');
+          for (const { col, dir } of sorts) {
+            const av = this._colDisplayVal(tableKey, col, a[col]);
+            const bv = this._colDisplayVal(tableKey, col, b[col]);
+            const cmp = av.localeCompare(bv, 'cs');
+            if (cmp !== 0) return dir === 'desc' ? -cmp : cmp;
+          }
+          return 0;
         });
       }
       return result;
@@ -1371,26 +1757,74 @@
 
     updateSortIndicators(tableKey) {
       const st = this._sfState[tableKey] || {};
+      const sorts = st.sorts || [];
+      const filters = st.filters || {};
       document.querySelectorAll(`[data-sort-ind^="${tableKey}-"]`).forEach((el) => {
         const col = el.dataset.sortInd.slice(tableKey.length + 1);
-        el.textContent = st.col === col ? (st.dir === 'desc' ? ' ▼' : ' ▲') : '';
+        const sortIdx = sorts.findIndex((s) => s.col === col);
+        const hasFilter = filters[col] && filters[col].size > 0;
+        const btn = el.closest('.th-btn');
+        if (btn) {
+          btn.classList.toggle('is-sorted', sortIdx >= 0);
+          btn.classList.toggle('is-filtered', hasFilter);
+        }
+        if (sortIdx >= 0) {
+          const arrow = sorts[sortIdx].dir === 'desc' ? '▼' : '▲';
+          el.textContent = sorts.length > 1 ? ' ' + (sortIdx + 1) + arrow : ' ' + arrow;
+        } else {
+          el.textContent = hasFilter ? ' ⬤' : '';
+        }
       });
     },
 
     openColMenu(thEl, tableKey, col, allRows, applyFn) {
       this.closeColMenu();
-      const st = this._sfState[tableKey] || {};
-      const activeFilters = st.filters && st.filters[col] ? st.filters[col] : null;
+      if (!this._sfState[tableKey]) this._sfState[tableKey] = { sorts: [], filters: {} };
+      const st = this._sfState[tableKey];
+      if (!st.sorts) st.sorts = [];
+      if (!st.filters) st.filters = {};
+      const activeFilters = st.filters[col] || null;
+      const sortIdx = st.sorts.findIndex((s) => s.col === col);
+      const curDir = sortIdx >= 0 ? st.sorts[sortIdx].dir : null;
       const uniqueVals = [...new Set(allRows.map((r) => this._colDisplayVal(tableKey, col, r[col])))].sort((a, b) => a.localeCompare(b, 'cs'));
 
       const menu = document.createElement('div');
       menu.className = 'col-menu';
       menu.innerHTML = `
-        <div class="col-menu-sorts">
-          <button class="col-menu-sort${st.col === col && st.dir === 'asc' ? ' is-active' : ''}" type="button" data-dir="asc">▲ Seřadit A → Z</button>
-          <button class="col-menu-sort${st.col === col && st.dir === 'desc' ? ' is-active' : ''}" type="button" data-dir="desc">▼ Seřadit Z → A</button>
+        <div class="col-menu-head">
+          <span>Sloupec: <strong>${Ui.escape(col)}</strong></span>
+          ${st.sorts.length > 0 || st.filters[col] ? `<span>${st.sorts.length > 0 ? '↕ řazení' : ''}${st.sorts.length > 0 && st.filters[col] ? ' · ' : ''}${st.filters[col] ? '⊟ filtr' : ''}</span>` : ''}
+        </div>
+        <div class="col-menu-sort-row">
+          <button class="col-menu-sort-btn${curDir === 'asc' ? ' is-active' : ''}" type="button" data-action="sort-primary" data-dir="asc">
+            <span class="csb-arrow">↑</span><span class="csb-label">A → Z</span>
+          </button>
+          <button class="col-menu-sort-btn${curDir === 'desc' ? ' is-active' : ''}" type="button" data-action="sort-primary" data-dir="desc">
+            <span class="csb-arrow">↓</span><span class="csb-label">Z → A</span>
+          </button>
+        </div>
+        <div class="col-menu-sort-extras">
+          ${st.sorts.length > 0 && sortIdx < 0 ? `
+          <button class="col-menu-sort-secondary" type="button" data-action="sort-add" data-dir="asc">
+            + Přidat A → Z jako ${st.sorts.length + 1}. klíč <span class="col-menu-sort-badge">${st.sorts.length + 1}</span>
+          </button>
+          <button class="col-menu-sort-secondary" type="button" data-action="sort-add" data-dir="desc">
+            + Přidat Z → A jako ${st.sorts.length + 1}. klíč <span class="col-menu-sort-badge">${st.sorts.length + 1}</span>
+          </button>` : ''}
+          ${sortIdx >= 0 ? `<button class="col-menu-sort-clear" type="button" data-action="sort-clear">✕ Zrušit řazení tohoto sloupce</button>` : ''}
+          ${st.sorts.length > 1 ? `<button class="col-menu-sort-clear" type="button" data-action="sort-clear-all">✕ Zrušit veškeré řazení</button>` : ''}
         </div>
         <div class="col-menu-divider"></div>
+        <div class="col-menu-filter-head">
+          <span class="col-menu-filter-label">Filtr hodnot</span>
+          <span>
+            <button type="button" class="col-menu-sel-all">Vše</button>
+            <button type="button" class="col-menu-sel-none">Nic</button>
+          </span>
+        </div>
+        <div class="col-menu-search">
+          <input type="text" class="col-menu-search-input" placeholder="Hledat…" autocomplete="off">
+        </div>
         <div class="col-menu-filters">
           ${uniqueVals.map((v) => `
             <label class="col-menu-item">
@@ -1399,31 +1833,55 @@
             </label>`).join('')}
         </div>
         <div class="col-menu-actions">
-          <button class="col-menu-apply button button-primary" type="button">Použít</button>
+          <button class="col-menu-apply button button-primary button-small" type="button">Použít</button>
         </div>`;
 
       const rect = thEl.getBoundingClientRect();
-      menu.style.top = rect.bottom + 'px';
-      menu.style.left = rect.left + 'px';
+      const menuLeft = Math.min(rect.left, window.innerWidth - 220);
+      menu.style.top = rect.bottom + 4 + 'px';
+      menu.style.left = Math.max(4, menuLeft) + 'px';
       document.body.appendChild(menu);
 
-      menu.querySelectorAll('.col-menu-sort').forEach((btn) => {
+      menu.querySelectorAll('[data-action^="sort"]').forEach((btn) => {
         btn.addEventListener('click', () => {
-          menu.querySelectorAll('.col-menu-sort').forEach((b) => b.classList.remove('is-active'));
-          btn.classList.add('is-active');
+          const action = btn.dataset.action;
+          const dir = btn.dataset.dir;
+          if (action === 'sort-primary') {
+            st.sorts = st.sorts.filter((s) => s.col !== col);
+            st.sorts.unshift({ col, dir });
+          } else if (action === 'sort-add') {
+            st.sorts = st.sorts.filter((s) => s.col !== col);
+            st.sorts.push({ col, dir });
+          } else if (action === 'sort-clear') {
+            st.sorts = st.sorts.filter((s) => s.col !== col);
+          } else if (action === 'sort-clear-all') {
+            st.sorts = [];
+          }
+          this.closeColMenu();
+          applyFn();
+          this.updateSortIndicators(tableKey);
         });
       });
 
+      menu.querySelector('.col-menu-search-input').addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase();
+        menu.querySelectorAll('.col-menu-item').forEach((item) => {
+          item.style.display = item.textContent.toLowerCase().includes(q) ? '' : 'none';
+        });
+      });
+      menu.querySelector('.col-menu-sel-all').addEventListener('click', () => {
+        menu.querySelectorAll('.col-menu-item:not([style*="none"]) input').forEach((i) => { i.checked = true; });
+      });
+      menu.querySelector('.col-menu-sel-none').addEventListener('click', () => {
+        menu.querySelectorAll('.col-menu-item:not([style*="none"]) input').forEach((i) => { i.checked = false; });
+      });
+
       menu.querySelector('.col-menu-apply').addEventListener('click', () => {
-        const activeSort = menu.querySelector('.col-menu-sort.is-active');
         const checked = [...menu.querySelectorAll('.col-menu-filters input:checked')].map((i) => i.value);
-        if (!this._sfState[tableKey]) this._sfState[tableKey] = { filters: {} };
-        const s = this._sfState[tableKey];
-        if (activeSort) { s.col = col; s.dir = activeSort.dataset.dir; }
-        if (!s.filters) s.filters = {};
-        s.filters[col] = checked.length === uniqueVals.length ? null : new Set(checked);
+        st.filters[col] = checked.length === uniqueVals.length ? null : new Set(checked);
         this.closeColMenu();
         applyFn();
+        this.updateSortIndicators(tableKey);
       });
 
       this._sfMenu = { el: menu, tableKey, col };
