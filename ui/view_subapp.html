@@ -55,6 +55,16 @@
 
     onUserLoaded(user) {
       const app = this.boot.subApp || {};
+      
+      const allowed = String(user.allowed_apps || '').trim();
+      const isAllowed = (user.role === 'SUPERADMIN') || (allowed === '*') || 
+        allowed.split(',').map(s => s.trim().toLowerCase()).includes(String(app.slug || app.id).trim().toLowerCase());
+        
+      if (!isAllowed) {
+        this.onDenied('Nemáte oprávnění pro přístup do této subaplikace.');
+        return;
+      }
+
       document.querySelector('#subappLogo').src = this.boot.logoUrl || '';
       Ui.setText('#subappShellName', app.name || 'Aplikace');
       Ui.setText('#subappShellDesc', app.description || '');

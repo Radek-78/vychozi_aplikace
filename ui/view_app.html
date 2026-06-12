@@ -19,6 +19,7 @@
       <p class="admin-only">Administrace</p>
       <button class="nav-link admin-only" type="button" data-section="sync" data-tooltip="Synchronizace"><svg><use href="#i-sync"></use></svg><span>Synchronizace</span></button>
       <button class="nav-link admin-only" type="button" data-section="users" data-tooltip="Uživatelé"><svg><use href="#i-users"></use></svg><span>Uživatelé</span></button>
+      <button class="nav-link admin-only" type="button" data-section="roles" data-tooltip="Oprávnění"><svg><use href="#i-shield"></use></svg><span>Oprávnění</span></button>
       <button class="nav-link admin-only" type="button" data-section="apps" data-tooltip="Aplikace"><svg><use href="#i-home"></use></svg><span>Aplikace</span></button>
       <button class="nav-link admin-only" type="button" data-section="settings" data-tooltip="Nastavení"><svg><use href="#i-settings"></use></svg><span>Nastavení</span></button>
       <button class="nav-link admin-only" type="button" data-section="audit" data-tooltip="Audit"><svg><use href="#i-list"></use></svg><span>Audit</span></button>
@@ -109,6 +110,58 @@
               </thead>
               <tbody id="userRows"></tbody>
             </table>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="page is-hidden" data-page-section="roles">
+      <div class="section-bar">
+        <span class="section-title">Oprávnění rolí</span>
+        <div class="section-bar-actions"></div>
+      </div>
+      <div class="section-body">
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>Matice oprávnění</h2>
+              <p style="color:var(--muted);font-size:13px;margin-top:4px;">Definuje základní přístupy a subaplikace pro jednotlivé systémové role. Osobní nastavení (např. Čtenář) a lokace upřesní zápisová práva konkrétního uživatele.</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <form id="rolePermissionsForm">
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Role</th>
+                      <th>Filiálky (Čtení)</th>
+                      <th>Filiálky (Zápis)</th>
+                      <th>Log. centra (Čtení)</th>
+                      <th>Log. centra (Zápis)</th>
+                      <th>Správa uživatelů</th>
+                      <th>Nastavení a Sync</th>
+                    </tr>
+                  </thead>
+                  <tbody id="rolePermissionsRows">
+                    <!-- Načteno dynamicky -->
+                  </tbody>
+                </table>
+              </div>
+              
+              <div class="roles-apps-section" style="margin-top: 28px;">
+                <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;">Povolení subaplikací (modulů)</h3>
+                <div id="rolesAppsContainer" style="display:flex;gap:32px;flex-wrap:wrap;">
+                  <!-- Načteno dynamicky jako checklisty pro ADMIN a USER -->
+                </div>
+              </div>
+              
+              <div class="form-actions" style="margin-top: 28px;border-top:1px solid var(--border);padding-top:20px;">
+                <button class="button button-primary write-only" type="submit" id="saveRolePermissionsButton">
+                  <svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-check"></use></svg>Uložit nastavení rolí
+                </button>
+              </div>
+            </form>
           </div>
         </section>
       </div>
@@ -492,7 +545,7 @@
     sectionTitles: {
       home: 'Domů',
       stores: 'Filiálky', logistics: 'Logistická centra', sync: 'Synchronizace',
-      users: 'Uživatelé', apps: 'Aplikace', settings: 'Nastavení', audit: 'Audit',
+      users: 'Uživatelé', roles: 'Oprávnění', apps: 'Aplikace', settings: 'Nastavení', audit: 'Audit',
     },
     section: 'home',
     users: [],
@@ -500,6 +553,7 @@
     logistics: [],
     audit: [],
     apps: [],
+    rolePermissions: [],
 _sfState: {},
     _sfMenu: null,
     lastVisit: null,
@@ -610,6 +664,7 @@ _sfState: {},
           if (d.audit) this.audit = d.audit;
           if (d.settings) this._settings = d.settings;
           if (d.syncSettings) this._syncSettings = d.syncSettings;
+          if (d.rolePermissions) this.rolePermissions = d.rolePermissions;
           this.renderSection(this.section);
         })
         .catch(() => {});
@@ -624,6 +679,7 @@ _sfState: {},
       else if (name === 'audit' && this.audit.length) this.renderAudit();
       else if (name === 'settings' && this._settings) this.fillSettingsForm(this._settings);
       else if (name === 'sync' && this._syncSettings) this.fillSyncForm(this._syncSettings);
+      else if (name === 'roles' && this.rolePermissions.length) this.renderRolePermissions();
     },
 
     decorateUsers(users) {
@@ -706,6 +762,9 @@ _sfState: {},
       document.querySelector('#settingsForm').addEventListener('submit', (e) => {
         e.preventDefault(); this.saveSettings(e.submitter);
       });
+      document.querySelector('#rolePermissionsForm').addEventListener('submit', (e) => {
+        e.preventDefault(); this.saveRolePermissions(e.submitter);
+      });
 
       document.querySelector('#addLogisticButton').addEventListener('click', () => this.openLogisticModal(null));
       document.querySelectorAll('[data-action="close-logistic-modal"]').forEach((b) => {
@@ -770,6 +829,7 @@ _sfState: {},
       if (name === 'sync') this.loadSync();
       if (name === 'settings') this.loadSettings();
       if (name === 'audit') this.loadAudit();
+      if (name === 'roles') this.loadRolePermissions();
     },
 
     markUpdated() {
@@ -1267,6 +1327,154 @@ _sfState: {},
           </td>
         </tr>`).join('') || '<tr><td colspan="5">Zatím žádné aplikace.</td></tr>';
       this.updateSortIndicators('apps');
+    },
+
+    loadRolePermissions() {
+      const cached = this.rolePermissions.length > 0;
+      if (cached) this.renderRolePermissions();
+      Ui.call('apiGetRolePermissions', null, cached ? { silent: true } : { silent: true, busy: 'Načítám oprávnění…' })
+        .then((rows) => {
+          this.rolePermissions = rows || [];
+          this.renderRolePermissions();
+          this.markUpdated();
+        })
+        .catch((error) => Ui.toast(error.message, 'error'));
+    },
+
+    renderRolePermissions() {
+      const isSuperAdmin = this.boot.user && this.boot.user.role === 'SUPERADMIN';
+      const disabledAttr = !isSuperAdmin ? 'disabled' : '';
+      
+      const rolesOrder = ['SUPERADMIN', 'ADMIN', 'USER'];
+      const list = this.rolePermissions.slice().sort((a, b) => {
+        return rolesOrder.indexOf(a.role) - rolesOrder.indexOf(b.role);
+      });
+      
+      const rowsHtml = list.map((role) => {
+        const isRoleSuperAdmin = role.role === 'SUPERADMIN';
+        const cellDisabled = (isRoleSuperAdmin || !isSuperAdmin) ? 'disabled' : '';
+        const roleLbl = this.roleLabel(role.role);
+        const checked = (val) => (val === true || String(val) === 'true') ? 'checked' : '';
+        
+        return `
+          <tr>
+            <td><strong>${Ui.escape(roleLbl)}</strong></td>
+            <td style="text-align:center;">
+              <input type="checkbox" name="${role.role}_stores_read" ${checked(role.stores_read)} ${cellDisabled} style="margin:0;width:16px;height:16px;accent-color:var(--lidl-blue);">
+            </td>
+            <td style="text-align:center;">
+              <input type="checkbox" name="${role.role}_stores_write" ${checked(role.stores_write)} ${cellDisabled} style="margin:0;width:16px;height:16px;accent-color:var(--lidl-blue);">
+            </td>
+            <td style="text-align:center;">
+              <input type="checkbox" name="${role.role}_logistics_read" ${checked(role.logistics_read)} ${cellDisabled} style="margin:0;width:16px;height:16px;accent-color:var(--lidl-blue);">
+            </td>
+            <td style="text-align:center;">
+              <input type="checkbox" name="${role.role}_logistics_write" ${checked(role.logistics_write)} ${cellDisabled} style="margin:0;width:16px;height:16px;accent-color:var(--lidl-blue);">
+            </td>
+            <td style="text-align:center;">
+              <input type="checkbox" name="${role.role}_users_manage" ${checked(role.users_manage)} ${cellDisabled} style="margin:0;width:16px;height:16px;accent-color:var(--lidl-blue);">
+            </td>
+            <td style="text-align:center;">
+              <input type="checkbox" name="${role.role}_settings_manage" ${checked(role.settings_manage)} ${cellDisabled} style="margin:0;width:16px;height:16px;accent-color:var(--lidl-blue);">
+            </td>
+          </tr>
+        `;
+      }).join('');
+      
+      document.querySelector('#rolePermissionsRows').innerHTML = rowsHtml;
+      
+      const rolesForApps = list.filter(r => r.role !== 'SUPERADMIN');
+      const appsContainer = document.querySelector('#rolesAppsContainer');
+      
+      if (!this.apps.length) {
+        appsContainer.innerHTML = '<p style="color:var(--muted);font-size:13px;">Žádné subaplikace k dispozici.</p>';
+      } else {
+        appsContainer.innerHTML = rolesForApps.map((role) => {
+          const roleLbl = this.roleLabel(role.role);
+          const allowedStr = String(role.allowed_apps || '').trim();
+          const allowedList = allowedStr.split(',').map(s => s.trim().toLowerCase());
+          
+          const appsHtml = this.apps.map((app) => {
+            const isChecked = allowedStr === '*' || allowedList.includes(String(app.slug || app.id).trim().toLowerCase());
+            return `
+              <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:${!isSuperAdmin ? 'default' : 'pointer'};margin:4px 0;">
+                <input type="checkbox" data-role="${Ui.escape(role.role)}" data-app-slug="${Ui.escape(app.slug || app.id)}" ${isChecked ? 'checked' : ''} ${disabledAttr} style="accent-color:var(--lidl-blue);margin:0;width:16px;height:16px;">
+                <span>${Ui.escape(app.name)}</span>
+              </label>
+            `;
+          }).join('');
+          
+          return `
+            <div class="role-apps-card" style="flex:1;min-width:240px;padding:16px;border:1px solid var(--border);border-radius:8px;background:var(--bg-card);">
+              <h4 style="font-size:14px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;color:var(--text);border-bottom:1px solid var(--border);padding-bottom:8px;">
+                <svg width="16" height="16" style="color:var(--lidl-blue);fill:currentColor;"><use href="#i-layers"></use></svg>
+                Oprávnění pro: ${Ui.escape(roleLbl)}
+              </h4>
+              <div style="display:flex;flex-direction:column;gap:4px;">
+                ${appsHtml}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+      
+      const saveBtn = document.querySelector('#saveRolePermissionsButton');
+      if (saveBtn) {
+        if (isSuperAdmin) {
+          saveBtn.classList.remove('is-hidden');
+        } else {
+          saveBtn.classList.add('is-hidden');
+        }
+      }
+    },
+
+    saveRolePermissions(button) {
+      Ui.setButtonLoading(button, true);
+      const rolesToSave = ['ADMIN', 'USER'];
+      const payload = rolesToSave.map((roleName) => {
+        const checkedAppSlugs = Array.from(document.querySelectorAll(`input[data-role="${roleName}"][data-app-slug]:checked`))
+          .map(el => el.dataset.appSlug);
+        const totalApps = Array.from(document.querySelectorAll(`input[data-role="${roleName}"][data-app-slug]`));
+        
+        let allowedAppsStr = '';
+        if (checkedAppSlugs.length === totalApps.length && totalApps.length > 0) {
+          allowedAppsStr = '*';
+        } else {
+          allowedAppsStr = checkedAppSlugs.join(',');
+        }
+        
+        return {
+          role: roleName,
+          stores_read: document.querySelector(`input[name="${roleName}_stores_read"]`).checked,
+          stores_write: document.querySelector(`input[name="${roleName}_stores_write"]`).checked,
+          logistics_read: document.querySelector(`input[name="${roleName}_logistics_read"]`).checked,
+          logistics_write: document.querySelector(`input[name="${roleName}_logistics_write"]`).checked,
+          users_manage: document.querySelector(`input[name="${roleName}_users_manage"]`).checked,
+          settings_manage: document.querySelector(`input[name="${roleName}_settings_manage"]`).checked,
+          allowed_apps: allowedAppsStr
+        };
+      });
+      
+      Ui.call('apiSaveRolePermissions', payload, { silent: true, busy: 'Ukládám oprávnění…' })
+        .then(() => {
+          Ui.setButtonLoading(button, false);
+          Ui.toast('Oprávnění rolí byla úspěšně uložena.');
+          this.rolePermissions = this.rolePermissions.map((orig) => {
+            const updated = payload.find(p => p.role === orig.role);
+            if (updated) {
+              return Object.assign({}, orig, updated, {
+                updated_at: new Date().toISOString(),
+                updated_by: this.boot.user.email
+              });
+            }
+            return orig;
+          });
+          this.renderRolePermissions();
+        })
+        .catch((error) => {
+          Ui.setButtonLoading(button, false);
+          Ui.toast(error.message, 'error');
+        });
     },
 
     loadModules() {

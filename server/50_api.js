@@ -4,7 +4,12 @@
  */
 
 function apiGetCurrentUser() {
-  return guard_(ROLES.USER, (user) => user);
+  return guard_(ROLES.USER, (user) => {
+    const permSet = getRolePermissions_(user.role);
+    return Object.assign({}, user, {
+      allowed_apps: permSet.allowed_apps || ''
+    });
+  });
 }
 
 /**
@@ -17,7 +22,7 @@ function apiGetBootstrap() {
     const isAdmin = (ROLE_LEVEL[user.role] || 0) >= ROLE_LEVEL[ROLES.ADMIN];
     const data = {
       apps: dbGetAll_(SHEETS.APPS)
-        .filter((a) => a.active === true)
+        .filter((a) => a.active === true && (isAdmin || isAppAllowedForUser_(user, a)))
         .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0)),
     };
     if (isAdmin) {
@@ -35,6 +40,8 @@ function apiGetBootstrap() {
         lastSyncAt: s.lastSyncAt || null,
         lastSyncResult: s.lastSyncResult ? JSON.parse(s.lastSyncResult) : null,
       };
+      dbEnsureRolePermissions_();
+      data.rolePermissions = dbGetAll_(SHEETS.ROLE_PERMISSIONS);
     }
     return data;
   });
@@ -482,7 +489,7 @@ function apiSaveSyncSettings(payload) {
 /** Doplní list apps včetně nově přidaných sloupců (levná kontrola posledního záhlaví). */
 function dbEnsureApps_() {
   const ss = dbSpreadsheet_();
-  const sheetsToCheck = [SHEETS.APPS, SHEETS.USERS];
+  const sheetsToCheck = [SHEETS.APPS, SHEETS.USERS, SHEETS.ROLE_PERMISSIONS];
   let needsMigration = false;
   
   for (const name of sheetsToCheck) {
@@ -512,10 +519,11 @@ function slugify_(value) {
 }
 
 function apiListApps() {
-  return guard_(ROLES.USER, () => {
+  return guard_(ROLES.USER, (user) => {
     dbEnsureApps_();
+    const isAdmin = (ROLE_LEVEL[user.role] || 0) >= ROLE_LEVEL[ROLES.ADMIN];
     return dbGetAll_(SHEETS.APPS)
-      .filter((a) => a.active === true)
+      .filter((a) => a.active === true && (isAdmin || isAppAllowedForUser_(user, a)))
       .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
   });
 }
@@ -563,8 +571,55 @@ function apiDeleteApp(id) {
   });
 }
 
-/* ── Audit ──────────────────────────────────────────────────────── */
-
 function apiGetAudit() {
   return guard_(ROLES.ADMIN, () => dbGetAll_(SHEETS.AUDIT).slice(-100).reverse());
+}
+
+/* ── Role Permissions ───────────────────────────────────────────── */
+
+function apiGetRolePermissions() {
+  return guard_('ADMIN', () => {
+    dbEnsureRolePermissions_();
+    return dbGetAll_(SHEETS.ROLE_PERMISSIONS);
+  });
+}
+
+function apiSaveRolePermissions(payload) {
+  return guard_('SUPERADMIN', (actor) => {
+    if (!payload || !Array.isArray(payload)) {
+      throw new Error('Neplatná data pro uložení oprávnění.');
+    }
+    
+    // Načteme stávající role z DB
+    const list = dbGetAll_(SHEETS.ROLE_PERMISSIONS);
+    
+    payload.forEach((row) => {
+      const roleName = String(row.role || '').trim().toUpperCase();
+      if (!roleName) return;
+      
+      // Superadmina nelze přes API měnit, je chráněn vestavěnou logikou
+      if (roleName === 'SUPERADMIN') return;
+      
+      const existing = list.find((r) => String(r.role).trim().toUpperCase() === roleName);
+      if (!existing) return;
+      
+      const data = {
+        stores_read: row.stores_read === true || row.stores_read === 'true',
+        stores_write: row.stores_write === true || row.stores_write === 'true',
+        logistics_read: row.logistics_read === true || row.logistics_read === 'true',
+        logistics_write: row.logistics_write === true || row.logistics_write === 'true',
+        users_manage: row.users_manage === true || row.users_manage === 'true',
+        settings_manage: row.settings_manage === true || row.settings_manage === 'true',
+        allowed_apps: String(row.allowed_apps || '').trim(),
+        updated_at: new Date().toISOString(),
+        updated_by: actor.email
+      };
+      
+      dbUpdate_(SHEETS.ROLE_PERMISSIONS, existing.id, data);
+    });
+    
+    dbCacheInvalidate_(SHEETS.ROLE_PERMISSIONS);
+    audit_('roles_update', 'Změna matice oprávnění');
+    return null;
+  });
 }

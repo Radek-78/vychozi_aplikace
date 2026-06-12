@@ -1,5 +1,9 @@
 ﻿# Changelog
 
+## v2.3.0 - 12.06.2026 13:20
+- Vizualni matice roli a opravneni v administraci
+- Subaplikace routovani a opravneni
+
 ## v2.2.0 - 12.06.2026 13:08
 - Implementace RBAC
 - opravneni Ctenar/Editor

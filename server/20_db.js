@@ -27,6 +27,9 @@ const DB_SCHEMA = {
     'id', 'name', 'description', 'icon', 'color', 'status', 'order',
     'active', 'created_at', 'created_by', 'updated_at', 'slug',
   ],
+  '_role_permissions': [
+    'id', 'role', 'stores_read', 'stores_write', 'logistics_read', 'logistics_write', 'users_manage', 'settings_manage', 'allowed_apps', 'updated_at', 'updated_by'
+  ],
 };
 
 let dbHandle_ = null;     // spreadsheet pro aktuální běh skriptu
