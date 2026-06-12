@@ -1723,7 +1723,11 @@ _sfState: {},
                     </div>`).join('')}
                 </div>
               </div>
-              <div class="form-row-2">
+            </div>
+            <div class="modal-app-preview">
+              <span class="form-field-label">Náhled</span>
+              <div id="appPreview">${buildPreviewHTML(name, desc, icon, color, status)}</div>
+              <div class="form form-plain" style="margin-top: 16px; border-top: 1px solid var(--line-soft); padding-top: 16px; display: flex; flex-direction: column; gap: 14px;">
                 <div>
                   <span class="form-field-label">Barva pruhu</span>
                   <input type="hidden" name="color" id="appColor" value="${Ui.escape(color)}">
@@ -1731,15 +1735,15 @@ _sfState: {},
                     ${COLORS.map((c) => `<button type="button" class="color-picker-btn${c.value === color ? ' is-selected' : ''}" data-color="${c.value}" data-hex="${c.hex}" title="${c.label}" style="--swatch:${c.hex}"></button>`).join('')}
                   </div>
                 </div>
-                <label><span>Status</span>
-                  <select name="status" id="appStatus">${statuses.map(([v, l]) => `<option value="${v}"${v === status ? ' selected' : ''}>${l}</option>`).join('')}</select>
-                </label>
+                <div class="form-row-2">
+                  <label><span>Status</span>
+                    <select name="status" id="appStatus" style="width: 100%; min-height: 34px; padding: 6px 10px;">${statuses.map(([v, l]) => `<option value="${v}"${v === status ? ' selected' : ''}>${l}</option>`).join('')}</select>
+                  </label>
+                  <label><span>Pořadí</span>
+                    <input name="order" type="number" value="${Ui.escape(order)}" min="0" style="width: 100%; min-height: 34px; padding: 6px 10px;">
+                  </label>
+                </div>
               </div>
-              <label><span>Pořadí</span><input name="order" type="number" value="${Ui.escape(order)}" min="0" style="max-width:90px"></label>
-            </div>
-            <div class="modal-app-preview">
-              <span class="form-field-label">Náhled</span>
-              <div id="appPreview">${buildPreviewHTML(name, desc, icon, color, status)}</div>
             </div>
           </div>
           <footer class="modal-actions">

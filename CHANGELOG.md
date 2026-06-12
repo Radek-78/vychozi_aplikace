@@ -1,5 +1,8 @@
 ﻿# Changelog
 
+## v2.4.1 - 12.06.2026 15:50
+- Optimalizace layoutu modalniho okna pro upravu aplikaci bez nutnosti scrollovani
+
 ## v2.4.0 - 12.06.2026 15:20
 - Uzivatelska opravneni k subaplikacim (allowed_apps override)
 - Checklist subaplikaci v detailu uzivatele
