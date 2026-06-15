@@ -68,6 +68,9 @@
                 </button>
                 <div class="warnings-tooltip" id="warningsTooltip"></div>
               </div>
+              <button class="hero-icon-btn admin-only" type="button" id="heroSyncBtn" aria-label="Synchronizovat filiálky" title="Synchronizovat filiálky">
+                <svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-sync"></use></svg>
+              </button>
               <button class="hero-icon-btn" type="button" data-action="reload" aria-label="Obnovit data" title="Obnovit data">
                 <svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-refresh"></use></svg>
               </button>
@@ -754,6 +757,11 @@ _sfState: {},
       document.querySelectorAll('[data-action="reload"]').forEach((btn) => {
         btn.addEventListener('click', () => this.loadSection(this.section));
       });
+
+      const heroSyncBtn = document.querySelector('#heroSyncBtn');
+      if (heroSyncBtn) {
+        heroSyncBtn.addEventListener('click', () => this.heroRunSync());
+      }
 
       document.querySelector('#version').addEventListener('click', (e) => { e.preventDefault(); this.openChangelog(); });
       document.querySelector('#closeChangelogModal').addEventListener('click', () => Ui.closeModal(document.querySelector('#changelogModal')));
@@ -1979,6 +1987,29 @@ _sfState: {},
       }, { silent: true, busy: 'Ukládám konfiguraci…' })
         .then(() => { Ui.setButtonLoading(button, false); Ui.toast('Konfigurace uložena.'); })
         .catch((e) => { Ui.setButtonLoading(button, false); Ui.toast(e.message, 'error'); });
+    },
+
+    heroRunSync() {
+      const btn = document.querySelector('#heroSyncBtn');
+      if (btn) btn.disabled = true;
+      Ui.toast('Synchronizace probíhá… může trvat až minutu.');
+      Ui.call('apiRunSync', null, { silent: true })
+        .then((result) => {
+          if (btn) btn.disabled = false;
+          const s = result.stores || {};
+          const parts = [
+            s.added > 0 ? '+' + s.added + ' přidáno' : '',
+            s.updated > 0 ? s.updated + ' upraveno' : '',
+            s.deactivated > 0 ? s.deactivated + ' deaktivováno' : '',
+            s.reactivated > 0 ? s.reactivated + ' reaktivováno' : '',
+          ].filter(Boolean);
+          Ui.toast('Synchronizace dokončena' + (parts.length ? ': ' + parts.join(', ') : ' — žádné změny') + '.', parts.length ? 'info' : 'success');
+          this.loadHome();
+        })
+        .catch((e) => {
+          if (btn) btn.disabled = false;
+          Ui.toast('Synchronizace selhala: ' + e.message, 'error');
+        });
     },
 
     runSync() {

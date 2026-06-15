@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.4.3 - 15.06.2026 10:02
+- Tlacitko sync filialek na dashboardu (admin only)
+- po dokonceni zobrazi toast se souhrnem zmen a obnovi home data
+
 ## v2.4.2 - 15.06.2026 09:54
 - Oprava porovnani kodov filialek pri synchronizaci (typovy nesoulad string/number)
 - Detail zmen ve vysledku syncu
