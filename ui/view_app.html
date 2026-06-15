@@ -349,7 +349,7 @@
   </main>
 </div>
 
-<dialog class="modal" id="syncChangesModal">
+<dialog class="modal modal-large" id="syncChangesModal">
   <div class="modal-header">
     <span class="modal-icon"><svg><use href="#i-sync"></use></svg></span>
     <div class="modal-header-text">
@@ -2048,7 +2048,7 @@ _sfState: {},
     heroRunSync() {
       const btn = document.querySelector('#heroSyncBtn');
       if (btn) { btn.disabled = true; btn.classList.add('is-spinning'); }
-      Ui.call('apiRunSync', null, { silent: true })
+      Ui.call('apiRunSync', null, { busy: 'Synchronizace probíhá… může trvat až minutu' })
         .then((result) => {
           if (btn) { btn.disabled = false; btn.classList.remove('is-spinning'); }
           const s = result.stores || {};

@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.4.6 - 15.06.2026 10:25
+- Spinner pri synchronizaci
+- vetsi modal okno pro prehled zmen filialek (modal-large)
+
 ## v2.4.5 - 15.06.2026 10:19
 - Tlacitka (zvonecek, sync, obnovit) presunuta do radku pocasi zarovnana vpravo
 - sync upozorneni otevre modal se seznamem zmen pro vsechny uzivatele
