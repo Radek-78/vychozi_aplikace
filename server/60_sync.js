@@ -339,7 +339,11 @@ function formatCellValue_(val) {
     }
     return '';
   }
-  return (val !== undefined && val !== null) ? String(val).trim() : '';
+  const str = (val !== undefined && val !== null) ? String(val).trim() : '';
+  // Normalizace časového formátu "07:00" → "7:00" (h:mm)
+  const timeMatch = str.match(/^(\d{1,2}):(\d{2})$/);
+  if (timeMatch) return parseInt(timeMatch[1], 10) + ':' + timeMatch[2];
+  return str;
 }
 
 /** Extrahuje ID složky z Google Drive URL. */

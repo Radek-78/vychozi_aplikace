@@ -896,7 +896,9 @@ _sfState: {},
     },
 
     renderHome(data) {
-      this.renderWarnings(data.warnings || []);
+      const warnings = [...(data.warnings || [])];
+      if (this._syncWarning) warnings.push(this._syncWarning);
+      this.renderWarnings(warnings);
 
       const grid = document.querySelector('#heroStatsGrid');
       if (!grid) return;
@@ -1991,11 +1993,10 @@ _sfState: {},
 
     heroRunSync() {
       const btn = document.querySelector('#heroSyncBtn');
-      if (btn) btn.disabled = true;
-      Ui.toast('Synchronizace probíhá… může trvat až minutu.');
+      if (btn) { btn.disabled = true; btn.classList.add('is-spinning'); }
       Ui.call('apiRunSync', null, { silent: true })
         .then((result) => {
-          if (btn) btn.disabled = false;
+          if (btn) { btn.disabled = false; btn.classList.remove('is-spinning'); }
           const s = result.stores || {};
           const parts = [
             s.added > 0 ? '+' + s.added + ' přidáno' : '',
@@ -2003,11 +2004,17 @@ _sfState: {},
             s.deactivated > 0 ? s.deactivated + ' deaktivováno' : '',
             s.reactivated > 0 ? s.reactivated + ' reaktivováno' : '',
           ].filter(Boolean);
-          Ui.toast('Synchronizace dokončena' + (parts.length ? ': ' + parts.join(', ') : ' — žádné změny') + '.', parts.length ? 'info' : 'success');
+          const hasChanges = parts.length > 0;
+          Ui.toast('Synchronizace dokončena' + (hasChanges ? ': ' + parts.join(', ') : ' — žádné změny') + '.');
+          if (hasChanges) {
+            this._syncWarning = { message: 'Synchronizace: ' + parts.join(', '), action: 'Zobrazit', section: 'sync' };
+          } else {
+            this._syncWarning = null;
+          }
           this.loadHome();
         })
         .catch((e) => {
-          if (btn) btn.disabled = false;
+          if (btn) { btn.disabled = false; btn.classList.remove('is-spinning'); }
           Ui.toast('Synchronizace selhala: ' + e.message, 'error');
         });
     },

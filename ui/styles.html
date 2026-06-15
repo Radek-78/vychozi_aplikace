@@ -798,6 +798,18 @@
     transform: translateY(1px);
   }
 
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .hero-icon-btn.is-spinning {
+    pointer-events: none;
+  }
+
+  .hero-icon-btn.is-spinning svg {
+    animation: spin 0.9s linear infinite;
+  }
+
   .warnings-bell {
     position: relative;
   }

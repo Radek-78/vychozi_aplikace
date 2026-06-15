@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.4.4 - 15.06.2026 10:09
+- Spinner na tlacitku syncu na dashboardu
+- ikona upozorneni po dokonceni syncu se zmenami
+- oprava falesnych zmen hodin (normalizace formatu h:mm)
+
 ## v2.4.3 - 15.06.2026 10:02
 - Tlacitko sync filialek na dashboardu (admin only)
 - po dokonceni zobrazi toast se souhrnem zmen a obnovi home data
