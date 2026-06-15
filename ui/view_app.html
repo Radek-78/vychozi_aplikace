@@ -1876,7 +1876,7 @@ _sfState: {},
         Ui.setButtonLoading(saveBtn, true);
         const fd = new FormData(form);
         const payload = { id: fd.get('id') || undefined, name: fd.get('name'), description: fd.get('description'), slug: fd.get('slug'), icon: fd.get('icon'), color: fd.get('color'), status: fd.get('status'), order: parseInt(fd.get('order')) || 0 };
-        Ui.call('apiSaveApp', payload, { silent: true })
+        Ui.call('apiSaveApp', payload, { silent: true, busy: 'Ukládám aplikaci…' })
           .then(() => { close(); this.loadApps(); })
           .catch((err) => { Ui.setButtonLoading(saveBtn, false); Ui.toast(err.message, 'error'); });
       });
@@ -1885,7 +1885,7 @@ _sfState: {},
 
     deleteApp(id) {
       if (!confirm('Opravdu smazat tuto aplikaci?')) return;
-      Ui.call('apiDeleteApp', id, { busy: 'Mažu aplikaci…' })
+      Ui.call('apiDeleteApp', id, { silent: true, busy: 'Mažu aplikaci…' })
         .then(() => { this.loadApps(); })
         .catch((err) => Ui.toast(err.message, 'error'));
     },

@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.5.2 - 15.06.2026 12:43
+- Odstraneni modre uvodni obrazovky pri mazani a ukladani aplikaci - vsechna Ui.call volani maji silent:true
+
 ## v2.5.1 - 15.06.2026 11:11
 - Oprava zavreni modal okna pri oznacovani textu - modal se zavre jen kdyz mousedown i click probehl na pozadi
 
