@@ -563,6 +563,16 @@ function apiSaveApp(payload) {
     const saved = existing
       ? dbUpdate_(SHEETS.APPS, existing.id, data)
       : dbInsert_(SHEETS.APPS, data);
+
+    // Posun ostatních aplikací pokud bylo zadáno konkrétní pořadí
+    const targetOrder = data.order;
+    if (targetOrder > 0) {
+      apps
+        .filter((a) => a.active !== false && (!existing || a.id !== existing.id))
+        .filter((a) => (Number(a.order) || 0) >= targetOrder)
+        .forEach((a) => dbUpdate_(SHEETS.APPS, a.id, { order: (Number(a.order) || 0) + 1 }));
+    }
+
     audit_('app_' + (existing ? 'update' : 'create'), name);
     return saved;
   });
