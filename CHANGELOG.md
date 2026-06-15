@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.4.5 - 15.06.2026 10:19
+- Tlacitka (zvonecek, sync, obnovit) presunuta do radku pocasi zarovnana vpravo
+- sync upozorneni otevre modal se seznamem zmen pro vsechny uzivatele
+- po zavreni modalu zvonecek zmizi
+
 ## v2.4.4 - 15.06.2026 10:09
 - Spinner na tlacitku syncu na dashboardu
 - ikona upozorneni po dokonceni syncu se zmenami

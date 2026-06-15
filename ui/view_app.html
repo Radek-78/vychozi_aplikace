@@ -46,7 +46,6 @@
         <div class="hero-main-layout">
           <div class="hero-left">
             <p class="home-hero-greeting" id="heroGreeting"></p>
-            <p class="hero-status" id="heroStatus"></p>
             <div class="hero-meta-subtitle">
               <span class="hero-meta-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;opacity:0.75;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -60,26 +59,26 @@
           </div>
           <div class="hero-right">
             <div class="hero-stats-grid" id="heroStatsGrid"></div>
-            <div class="hero-actions">
-              <div class="warnings-bell admin-only" id="warningsBell" style="display:none">
-                <button class="hero-icon-btn" type="button" id="warningsBellBtn" aria-label="Upozornění">
-                  <svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-bell"></use></svg>
-                  <span class="warnings-badge" id="warningsBadge">0</span>
-                </button>
-                <div class="warnings-tooltip" id="warningsTooltip"></div>
-              </div>
-              <button class="hero-icon-btn admin-only" type="button" id="heroSyncBtn" aria-label="Synchronizovat filiálky" title="Synchronizovat filiálky">
-                <svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-sync"></use></svg>
-              </button>
-              <button class="hero-icon-btn" type="button" data-action="reload" aria-label="Obnovit data" title="Obnovit data">
-                <svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-refresh"></use></svg>
-              </button>
-            </div>
           </div>
         </div>
         <div class="hero-weather-bar">
           <span class="hero-weather-title">Počasí v LC:</span>
           <div id="lcWeatherChips" class="hero-weather-chips"></div>
+          <div class="hero-actions">
+            <div class="warnings-bell" id="warningsBell" style="display:none">
+              <button class="hero-icon-btn" type="button" id="warningsBellBtn" aria-label="Upozornění">
+                <svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-bell"></use></svg>
+                <span class="warnings-badge" id="warningsBadge">0</span>
+              </button>
+              <div class="warnings-tooltip" id="warningsTooltip"></div>
+            </div>
+            <button class="hero-icon-btn admin-only" type="button" id="heroSyncBtn" aria-label="Synchronizovat filiálky" title="Synchronizovat filiálky">
+              <svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-sync"></use></svg>
+            </button>
+            <button class="hero-icon-btn" type="button" data-action="reload" aria-label="Obnovit data" title="Obnovit data">
+              <svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-refresh"></use></svg>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -349,6 +348,18 @@
     </footer>
   </main>
 </div>
+
+<dialog class="modal" id="syncChangesModal">
+  <div class="modal-header">
+    <span class="modal-icon"><svg><use href="#i-sync"></use></svg></span>
+    <div class="modal-header-text">
+      <p class="kicker">Synchronizace</p>
+      <h2>Změny filiálek</h2>
+    </div>
+    <button class="modal-close" type="button" id="closeSyncChangesModal" aria-label="Zavřít"><svg><use href="#i-close"></use></svg></button>
+  </div>
+  <div class="modal-body" id="syncChangesBody"></div>
+</dialog>
 
 <dialog class="modal" id="changelogModal">
   <div class="modal-header">
@@ -767,7 +778,18 @@ _sfState: {},
       document.querySelector('#closeChangelogModal').addEventListener('click', () => Ui.closeModal(document.querySelector('#changelogModal')));
 
       document.querySelector('#warningsBellBtn').addEventListener('click', () => {
-        document.querySelector('#warningsTooltip').classList.toggle('is-visible');
+        const btn = document.querySelector('#warningsBellBtn');
+        if (btn._syncOnly) {
+          this.openSyncChangesModal();
+        } else {
+          document.querySelector('#warningsTooltip').classList.toggle('is-visible');
+        }
+      });
+      document.querySelector('#closeSyncChangesModal').addEventListener('click', () => {
+        Ui.closeModal(document.querySelector('#syncChangesModal'));
+        this._syncWarning = null;
+        this._syncResult = null;
+        this.renderWarnings((this._home && this._home.warnings) || []);
       });
       document.addEventListener('click', (e) => {
         if (!e.target.closest('#warningsBell')) {
@@ -1127,33 +1149,65 @@ _sfState: {},
       const bell = document.querySelector('#warningsBell');
       const badge = document.querySelector('#warningsBadge');
       const tooltip = document.querySelector('#warningsTooltip');
-      const status = document.querySelector('#heroStatus');
-      if (status) {
-        if (warnings.length) {
-          const n = warnings.length;
-          const verb = (n === 1 || n >= 5) ? 'vyžaduje' : 'vyžadují';
-          status.textContent = n + ' upozornění ' + verb + ' pozornost';
-          status.classList.add('has-warnings');
-        } else {
-          status.textContent = '';
-          status.classList.remove('has-warnings');
-        }
-      }
       if (!warnings.length) { bell.style.display = 'none'; return; }
-      bell.style.display = 'block';
+
+      const syncWarning = warnings.find((w) => w.modal === 'sync');
+      const adminWarnings = warnings.filter((w) => w.modal !== 'sync');
+
+      bell.style.display = 'flex';
       badge.textContent = warnings.length;
-      tooltip.innerHTML = warnings.map((w) => `
-        <div class="tooltip-warning-item">
-          <span>${Ui.escape(w.message)}</span>
-          ${w.section ? `<button class="tooltip-warning-action" type="button" data-section="${Ui.escape(w.section)}">${Ui.escape(w.action)}</button>` : ''}
-        </div>
-      `).join('');
-      tooltip.querySelectorAll('.tooltip-warning-action').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          tooltip.classList.remove('is-visible');
-          this.showSection(btn.dataset.section);
+
+      if (syncWarning && !adminWarnings.length) {
+        // Pouze sync upozornění — klik otevře modal
+        tooltip.innerHTML = '';
+        bell.querySelector('#warningsBellBtn')._syncOnly = true;
+      } else {
+        bell.querySelector('#warningsBellBtn')._syncOnly = false;
+        tooltip.innerHTML = adminWarnings.map((w) => `
+          <div class="tooltip-warning-item">
+            <span>${Ui.escape(w.message)}</span>
+            ${w.section ? `<button class="tooltip-warning-action" type="button" data-section="${Ui.escape(w.section)}">${Ui.escape(w.action)}</button>` : ''}
+          </div>
+        `).join('');
+        tooltip.querySelectorAll('.tooltip-warning-action').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            tooltip.classList.remove('is-visible');
+            this.showSection(btn.dataset.section);
+          });
         });
-      });
+      }
+    },
+
+    openSyncChangesModal() {
+      const result = this._syncResult;
+      if (!result) return;
+      const esc = Ui.escape.bind(Ui);
+      const s = result.stores || {};
+      const ch = s.changes || {};
+      const sections = [];
+      const group = (label, cls, items) => {
+        if (!(items || []).length) return '';
+        return `<div class="sync-change-group">
+          <div class="sync-change-label ${cls}">${label} (${items.length})</div>
+          ${items.map((it) => it.fields
+            ? `<details class="sync-change-store"><summary>${esc(it.code)} — ${esc(it.name)}</summary>
+                <table class="sync-diff-table">${it.fields.map((f) => `<tr>
+                  <td class="sync-diff-field">${esc(f.field)}</td>
+                  <td class="sync-diff-old">${esc(f.old) || '<em>prázdné</em>'}</td>
+                  <td class="sync-diff-arrow">→</td>
+                  <td class="sync-diff-new">${esc(f.new) || '<em>prázdné</em>'}</td>
+                </tr>`).join('')}</table></details>`
+            : `<div class="sync-change-row">${esc(it.code)} — ${esc(it.name)}</div>`
+          ).join('')}
+        </div>`;
+      };
+      sections.push(group('Přidáno', 'is-green', ch.added));
+      sections.push(group('Deaktivováno', 'is-red', ch.deactivated));
+      sections.push(group('Reaktivováno', 'is-orange', ch.reactivated));
+      sections.push(group('Upraveno', 'is-blue', ch.updated));
+      const body = sections.filter(Boolean).join('') || '<p style="color:var(--muted)">Žádné změny.</p>';
+      document.querySelector('#syncChangesBody').innerHTML = body;
+      Ui.openModal(document.querySelector('#syncChangesModal'));
     },
 
 
@@ -2007,8 +2061,10 @@ _sfState: {},
           const hasChanges = parts.length > 0;
           Ui.toast('Synchronizace dokončena' + (hasChanges ? ': ' + parts.join(', ') : ' — žádné změny') + '.');
           if (hasChanges) {
-            this._syncWarning = { message: 'Synchronizace: ' + parts.join(', '), action: 'Zobrazit', section: 'sync' };
+            this._syncResult = result;
+            this._syncWarning = { message: 'Synchronizace: ' + parts.join(', '), modal: 'sync' };
           } else {
+            this._syncResult = null;
             this._syncWarning = null;
           }
           this.loadHome();
