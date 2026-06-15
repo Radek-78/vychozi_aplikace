@@ -1833,7 +1833,9 @@ _sfState: {},
       const close = () => { Ui.closeModal(dialog); setTimeout(() => dialog.remove(), 400); };
       dialog.querySelector('#closeAppModal').addEventListener('click', close);
       dialog.querySelector('#closeAppModal2').addEventListener('click', close);
-      dialog.addEventListener('click', (e) => { if (e.target === dialog) close(); });
+      let _mousedownOnBackdrop = false;
+      dialog.addEventListener('mousedown', (e) => { _mousedownOnBackdrop = e.target === dialog; });
+      dialog.addEventListener('click', (e) => { if (e.target === dialog && _mousedownOnBackdrop) close(); });
 
       dialog.querySelectorAll('.icon-picker-btn').forEach((btn) => {
         btn.addEventListener('click', () => {

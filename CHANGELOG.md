@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.5.1 - 15.06.2026 11:11
+- Oprava zavreni modal okna pri oznacovani textu - modal se zavre jen kdyz mousedown i click probehl na pozadi
+
 ## v2.5.0 - 15.06.2026 11:00
 - Moduly v priprave: ikona hodin misto ikony aplikace, srafovani na barvene lište, pulzovani, vyraznejsi badge
 
