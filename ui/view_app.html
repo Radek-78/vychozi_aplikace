@@ -2048,7 +2048,7 @@ _sfState: {},
     heroRunSync() {
       const btn = document.querySelector('#heroSyncBtn');
       if (btn) { btn.disabled = true; btn.classList.add('is-spinning'); }
-      Ui.call('apiRunSync', null, { busy: 'Synchronizace probíhá… může trvat až minutu' })
+      Ui.call('apiRunSync', null, { silent: true, busy: 'Synchronizace probíhá… může trvat až minutu' })
         .then((result) => {
           if (btn) { btn.disabled = false; btn.classList.remove('is-spinning'); }
           const s = result.stores || {};

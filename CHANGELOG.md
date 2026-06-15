@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.4.7 - 15.06.2026 10:29
+- Oprava spinneru pri synchronizaci - pozadi zustava dashboard misto modre obrazovky
+
 ## v2.4.6 - 15.06.2026 10:25
 - Spinner pri synchronizaci
 - vetsi modal okno pro prehled zmen filialek (modal-large)
