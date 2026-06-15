@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.4.8 - 15.06.2026 10:38
+- Vylepseny spinner: dychajici oblouk + protismerny tenky oblouk + glow efekt
+
 ## v2.4.7 - 15.06.2026 10:29
 - Oprava spinneru pri synchronizaci - pozadi zustava dashboard misto modre obrazovky
 

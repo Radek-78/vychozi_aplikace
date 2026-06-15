@@ -2256,7 +2256,8 @@
   }
 
   .sp-ring-svg {
-    animation: sp-ring-rotate 0.9s linear infinite;
+    animation: sp-ring-rotate 1.5s linear infinite;
+    filter: drop-shadow(0 0 5px rgba(0, 83, 179, 0.45));
     height: 72px;
     left: 0;
     position: absolute;
@@ -2266,17 +2267,28 @@
 
   .sp-ring-track {
     fill: none;
-    stroke: rgba(0, 83, 179, 0.1);
-    stroke-width: 4;
+    stroke: rgba(0, 83, 179, 0.12);
+    stroke-width: 3;
   }
 
   .sp-ring-arc {
+    animation: sp-ring-dash 1.3s ease-in-out infinite;
     fill: none;
     stroke: var(--lidl-blue);
-    stroke-dasharray: 141 47;
+    stroke-dasharray: 8 180;
     stroke-dashoffset: 0;
     stroke-linecap: round;
-    stroke-width: 4;
+    stroke-width: 5;
+  }
+
+  .sp-ring-arc2 {
+    animation: sp-ring-rotate-r 2.3s linear infinite, sp-ring-dash2 1.9s ease-in-out infinite;
+    fill: none;
+    stroke: rgba(0, 83, 179, 0.3);
+    stroke-dasharray: 4 184;
+    stroke-dashoffset: 0;
+    stroke-linecap: round;
+    stroke-width: 2.5;
   }
 
   .sp-ring-logo {
@@ -2386,7 +2398,23 @@
   /* ── Spinner keyframes ───────────────────── */
 
   @keyframes sp-ring-rotate {
-    100% { transform: rotate(360deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes sp-ring-rotate-r {
+    to { transform: rotate(-360deg); }
+  }
+
+  @keyframes sp-ring-dash {
+    0%   { stroke-dasharray:   8, 180; stroke-dashoffset:    0; }
+    50%  { stroke-dasharray: 158,  30; stroke-dashoffset:  -52; }
+    100% { stroke-dasharray:   8, 180; stroke-dashoffset: -188; }
+  }
+
+  @keyframes sp-ring-dash2 {
+    0%   { stroke-dasharray:  4, 184; stroke-dashoffset:    0; }
+    50%  { stroke-dasharray: 72, 116; stroke-dashoffset:  -28; }
+    100% { stroke-dasharray:  4, 184; stroke-dashoffset: -188; }
   }
 
   @keyframes sp-squish {
