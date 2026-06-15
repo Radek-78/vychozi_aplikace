@@ -197,6 +197,15 @@ function apiSaveSettings(payload) {
   });
 }
 
+function apiClearCache() {
+  return guard_(ROLES.ADMIN, () => {
+    const cache = CacheService.getScriptCache();
+    cache.removeAll(Object.values(SHEETS).map((t) => 'tbl:' + t).concat(['tbl:_settings']));
+    audit_('cache_clear', 'Manuální vymazání cache');
+    return null;
+  });
+}
+
 /* ── Stores ─────────────────────────────────────────────────────── */
 
 function apiListStores() {

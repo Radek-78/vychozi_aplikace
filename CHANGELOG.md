@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.5.4 - 15.06.2026 12:57
+- Tlacitko Vymazat cache v Nastaveni
+- po primych upravach v DB sheetu se zmeny projevi okamzite
+
 ## v2.5.3 - 15.06.2026 12:49
 - Poradi aplikaci: vlozeni na konkretni pozici posune ostatni aplikace o 1 nahoru
 

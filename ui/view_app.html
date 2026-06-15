@@ -190,6 +190,14 @@
             </div>
           </form>
         </section>
+        <section class="panel">
+          <div class="panel-body" style="display:flex;flex-direction:column;gap:6px">
+            <p class="form-hint">Po přímých úpravách v databázovém sheetu (mazání řádků, editace buněk) může být potřeba vymazat server-side cache, aby se změny projevily okamžitě.</p>
+            <div>
+              <button class="button button-secondary write-only" type="button" id="clearCacheBtn"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-refresh"></use></svg>Vymazat cache</button>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
 
@@ -825,6 +833,13 @@ _sfState: {},
       });
       document.querySelector('#settingsForm').addEventListener('submit', (e) => {
         e.preventDefault(); this.saveSettings(e.submitter);
+      });
+      document.querySelector('#clearCacheBtn').addEventListener('click', (e) => {
+        const btn = e.currentTarget;
+        btn.disabled = true;
+        Ui.call('apiClearCache', null, { silent: true, busy: 'Mažu cache…' })
+          .then(() => { btn.disabled = false; Ui.toast('Cache vymazána — data se nyní načtou čerstvě.'); })
+          .catch((err) => { btn.disabled = false; Ui.toast(err.message, 'error'); });
       });
       document.querySelector('#rolePermissionsForm').addEventListener('submit', (e) => {
         e.preventDefault(); this.saveRolePermissions(e.submitter);

@@ -37,6 +37,14 @@ function TOOLS_resetInicializace() {
   console.log('Inicializace zrušena. Další otevření aplikace spustí průvodce.');
 }
 
+/** Smaže celou server-side cache (CacheService). Použij po přímých úpravách v DB sheetu. */
+function TOOLS_clearCache() {
+  CacheService.getScriptCache().removeAll(
+    Object.values(SHEETS).map((t) => 'tbl:' + t).concat(['tbl:_settings'])
+  );
+  console.log('Cache smazána.');
+}
+
 /** Rychlý test DB vrstvy: vlož, načti, uprav a smaž testovací záznam v _settings. */
 function TOOLS_testDb() {
   const key = '_test_' + uuid_();
