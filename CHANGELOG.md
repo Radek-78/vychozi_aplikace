@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.5.0 - 15.06.2026 11:00
+- Moduly v priprave: ikona hodin misto ikony aplikace, srafovani na barvene lište, pulzovani, vyraznejsi badge
+
 ## v2.4.9 - 15.06.2026 10:43
 - Spinner: odstranena druha cara, zpomaleni na 2s, pruzny efekt (rychle vyskoci, drzi se, rychle sklapne)
 

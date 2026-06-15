@@ -1682,12 +1682,14 @@ _sfState: {},
         const statusCls = STATUS_CLASS[app.status] || 'mc--coming';
         const statusIcon = STATUS_ICON[app.status] ? `<div class="mc-status-icon"><svg><use href="${STATUS_ICON[app.status]}"></use></svg></div>` : '';
         const isAvailable = app.status === 'available';
+        const isComing = app.status === 'coming';
+        const sideIcon = isComing ? 'clock' : (app.icon || 'info');
         const art = document.createElement('article');
         art.className = 'module-card mc--sidebar ' + statusCls;
         art.dataset.appId = app.id;
         art.innerHTML = `
           <div class="mc-side ${colorCls}">
-            <svg><use href="#i-${Ui.escape(app.icon || 'info')}"></use></svg>
+            <svg><use href="#i-${Ui.escape(sideIcon)}"></use></svg>
             <i></i>
           </div>
           <div class="mc-body">
