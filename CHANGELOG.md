@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.4.9 - 15.06.2026 10:43
+- Spinner: odstranena druha cara, zpomaleni na 2s, pruzny efekt (rychle vyskoci, drzi se, rychle sklapne)
+
 ## v2.4.8 - 15.06.2026 10:38
 - Vylepseny spinner: dychajici oblouk + protismerny tenky oblouk + glow efekt
 

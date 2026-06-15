@@ -2256,7 +2256,7 @@
   }
 
   .sp-ring-svg {
-    animation: sp-ring-rotate 1.5s linear infinite;
+    animation: sp-ring-rotate 2.0s linear infinite;
     filter: drop-shadow(0 0 5px rgba(0, 83, 179, 0.45));
     height: 72px;
     left: 0;
@@ -2272,23 +2272,13 @@
   }
 
   .sp-ring-arc {
-    animation: sp-ring-dash 1.3s ease-in-out infinite;
+    animation: sp-ring-dash 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     fill: none;
     stroke: var(--lidl-blue);
     stroke-dasharray: 8 180;
     stroke-dashoffset: 0;
     stroke-linecap: round;
     stroke-width: 5;
-  }
-
-  .sp-ring-arc2 {
-    animation: sp-ring-rotate-r 2.3s linear infinite, sp-ring-dash2 1.9s ease-in-out infinite;
-    fill: none;
-    stroke: rgba(0, 83, 179, 0.3);
-    stroke-dasharray: 4 184;
-    stroke-dashoffset: 0;
-    stroke-linecap: round;
-    stroke-width: 2.5;
   }
 
   .sp-ring-logo {
@@ -2401,20 +2391,11 @@
     to { transform: rotate(360deg); }
   }
 
-  @keyframes sp-ring-rotate-r {
-    to { transform: rotate(-360deg); }
-  }
-
   @keyframes sp-ring-dash {
-    0%   { stroke-dasharray:   8, 180; stroke-dashoffset:    0; }
-    50%  { stroke-dasharray: 158,  30; stroke-dashoffset:  -52; }
-    100% { stroke-dasharray:   8, 180; stroke-dashoffset: -188; }
-  }
-
-  @keyframes sp-ring-dash2 {
-    0%   { stroke-dasharray:  4, 184; stroke-dashoffset:    0; }
-    50%  { stroke-dasharray: 72, 116; stroke-dashoffset:  -28; }
-    100% { stroke-dasharray:  4, 184; stroke-dashoffset: -188; }
+    0%   { stroke-dasharray:   6, 182; stroke-dashoffset:    0; }
+    28%  { stroke-dasharray: 155,  33; stroke-dashoffset:  -18; }
+    68%  { stroke-dasharray: 155,  33; stroke-dashoffset:  -88; }
+    100% { stroke-dasharray:   6, 182; stroke-dashoffset: -188; }
   }
 
   @keyframes sp-squish {
