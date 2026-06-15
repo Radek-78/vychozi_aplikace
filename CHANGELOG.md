@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.5.5 - 15.06.2026 13:12
+- Weather tooltip: bile pozadi s tmavym textem misto modre - lepsi kontrast vuci hero liste
+
 ## v2.5.4 - 15.06.2026 12:57
 - Tlacitko Vymazat cache v Nastaveni
 - po primych upravach v DB sheetu se zmeny projevi okamzite
