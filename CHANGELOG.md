@@ -1,4 +1,9 @@
-﻿# Changelog
+# Changelog
+
+## v2.4.2 - 15.06.2026 09:54
+- Oprava porovnani kodov filialek pri synchronizaci (typovy nesoulad string/number)
+- Detail zmen ve vysledku syncu
+- Docasny debug vystup pro diagnostiku
 
 ## v2.4.1 - 12.06.2026 15:50
 - Optimalizace layoutu modalniho okna pro upravu aplikaci bez nutnosti scrollovani

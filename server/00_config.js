@@ -1,4 +1,4 @@
-﻿/**
+/**
  * CentrÄ‚Ë‡lnÄ‚Â­ konfigurace ÄąË‡ablony.
  *
  * Hodnoty specifickÄ‚Â© pro konkrÄ‚Â©tnÄ‚Â­ projekt (nÄ‚Ë‡zev, podtitul) se po inicializaci
@@ -8,7 +8,7 @@
 const CONFIG = {
   defaultAppName: 'VÄ‚ËťchozÄ‚Â­ aplikace',
   defaultAppSubtitle: '',
-  version: 'v2.4.1',
+  version: 'v2.4.2',
   logoUrl: 'https://drive.google.com/thumbnail?id=18mu_Lq1F_FqqSZcolMjLwG0aaQDPMdyD&sz=w320',
   theme: {
     blue: '#0050aa',

@@ -2003,6 +2003,7 @@ _sfState: {},
     renderSyncResult(syncAt, result, fresh) {
       if (!result) return;
       const fmt = (n) => n > 0 ? n : 0;
+      const esc = Ui.escape.bind(Ui);
       const statPills = (stats) => {
         if (!stats) return '<span class="pill">Neprobíhala</span>';
         const errs = (stats.errors || []).length;
@@ -2017,7 +2018,49 @@ _sfState: {},
       };
       const errList = (stats) => {
         if (!stats || !(stats.errors || []).length) return '';
-        return '<div class="sync-errors">' + stats.errors.map((e) => Ui.escape(e)).join('<br>') + '</div>';
+        return '<div class="sync-errors">' + stats.errors.map((e) => esc(e)).join('<br>') + '</div>';
+      };
+      const changeDetail = (stats) => {
+        const ch = stats && stats.changes;
+        if (!ch) return '';
+        const sections = [];
+        if ((ch.added || []).length) {
+          sections.push(`<div class="sync-change-group">
+            <div class="sync-change-label is-green">Přidáno (${ch.added.length}${stats.added > ch.added.length ? '+' : ''})</div>
+            ${ch.added.map((s) => `<div class="sync-change-row">${esc(s.code)} — ${esc(s.name)}</div>`).join('')}
+          </div>`);
+        }
+        if ((ch.deactivated || []).length) {
+          sections.push(`<div class="sync-change-group">
+            <div class="sync-change-label is-red">Deaktivováno (${ch.deactivated.length}${stats.deactivated > ch.deactivated.length ? '+' : ''})</div>
+            ${ch.deactivated.map((s) => `<div class="sync-change-row">${esc(s.code)} — ${esc(s.name)}</div>`).join('')}
+          </div>`);
+        }
+        if ((ch.reactivated || []).length) {
+          sections.push(`<div class="sync-change-group">
+            <div class="sync-change-label is-orange">Reaktivováno (${ch.reactivated.length}${stats.reactivated > ch.reactivated.length ? '+' : ''})</div>
+            ${ch.reactivated.map((s) => `<div class="sync-change-row">${esc(s.code)} — ${esc(s.name)}</div>`).join('')}
+          </div>`);
+        }
+        if ((ch.updated || []).length) {
+          sections.push(`<div class="sync-change-group">
+            <div class="sync-change-label is-blue">Upraveno (${ch.updated.length}${stats.updated > ch.updated.length ? '+' : ''})</div>
+            ${ch.updated.map((s) => `
+              <details class="sync-change-store">
+                <summary>${esc(s.code)} — ${esc(s.name)}</summary>
+                <table class="sync-diff-table">
+                  ${s.fields.map((f) => `<tr>
+                    <td class="sync-diff-field">${esc(f.field)}</td>
+                    <td class="sync-diff-old">${esc(f.old) || '<em>prázdné</em>'}</td>
+                    <td class="sync-diff-arrow">→</td>
+                    <td class="sync-diff-new">${esc(f.new) || '<em>prázdné</em>'}</td>
+                  </tr>`).join('')}
+                </table>
+              </details>`).join('')}
+          </div>`);
+        }
+        if (!sections.length) return '';
+        return `<details class="sync-change-detail"><summary>Zobrazit detail změn</summary>${sections.join('')}</details>`;
       };
       const ts = syncAt ? Ui.formatDateTime(syncAt) : '';
       document.querySelector('#syncResultArea').innerHTML = `
@@ -2025,14 +2068,16 @@ _sfState: {},
           <div class="sync-result-header">
             <span class="sync-badge is-success">✓</span>
             <strong>${fresh ? 'Synchronizace dokončena' : 'Poslední synchronizace'}</strong>
-            <span class="sync-result-timestamp">${Ui.escape(ts)}</span>
+            <span class="sync-result-timestamp">${esc(ts)}</span>
           </div>
           <div class="sync-result-body">
-            ${result.fileName ? `<p style="font-size:12px;color:var(--muted);margin:0">Soubor: <strong>${Ui.escape(result.fileName)}</strong></p>` : ''}
+            ${result.fileName ? `<p style="font-size:12px;color:var(--muted);margin:0">Soubor: <strong>${esc(result.fileName)}</strong></p>` : ''}
+            ${result.stores && result.stores._debug ? `<details style="font-size:11px;font-family:monospace;background:#f5f5f5;padding:8px;border-radius:4px;margin-bottom:8px"><summary style="cursor:pointer;color:var(--muted)">DEBUG — porovnání kódů</summary><pre style="margin:6px 0 0;white-space:pre-wrap">${esc(JSON.stringify(result.stores._debug, null, 2))}</pre></details>` : ''}
             <div class="sync-result-row">
               <span>Filiálky</span>
               <div class="sync-pills">${statPills(result.stores)}</div>
               ${errList(result.stores)}
+              ${changeDetail(result.stores)}
             </div>
             <div class="sync-result-row">
               <span>Logistická centra</span>

@@ -106,25 +106,37 @@ function syncStores_(ss, settings) {
   tempRows.forEach((r) => { if (!xlsxMap.has(r.code)) xlsxMap.set(r.code, r); });
 
   const currentRecords = dbGetAll_(SHEETS.STORES);
-  const currentMap = new Map(currentRecords.map((r) => [r.code, r]));
 
-  const stats = { added: 0, updated: 0, deactivated: 0, reactivated: 0, unchanged: 0, errors: [] };
+  // DEBUG – odstraň po diagnostice
+  const _dbSample = currentRecords.slice(0, 3).map((r) => ({ code: r.code, typeOf: typeof r.code, active: r.active }));
+  const _xlsxKeys = Array.from(xlsxMap.keys()).slice(0, 3);
+  Logger.log('DB sample: ' + JSON.stringify(_dbSample));
+  Logger.log('xlsx keys sample: ' + JSON.stringify(_xlsxKeys));
+  Logger.log('match test: ' + (currentRecords.length ? xlsxMap.has(String(currentRecords[0].code)) : 'n/a'));
+
+  const CHANGES_LIMIT = 50;
+  const stats = { added: 0, updated: 0, deactivated: 0, reactivated: 0, unchanged: 0, errors: [],
+                  changes: { added: [], updated: [], deactivated: [], reactivated: [] },
+                  _debug: { dbSample: _dbSample, xlsxKeys: _xlsxKeys } };
   const now = nowIso_();
   const newRecords = [];
 
   // Zpracování stávajících DB záznamů
   currentRecords.forEach((existing) => {
-    if (!xlsxMap.has(existing.code)) {
+    const codeKey = String(existing.code);
+    if (!xlsxMap.has(codeKey)) {
       if (existing.active === true) {
         newRecords.push(Object.assign({}, existing, { active: false, updated_at: now }));
         stats.deactivated++;
+        if (stats.changes.deactivated.length < CHANGES_LIMIT)
+          stats.changes.deactivated.push({ code: existing.code, name: existing.name });
       } else {
         newRecords.push(existing);
         stats.unchanged++;
       }
     } else {
-      const xlsxRow = xlsxMap.get(existing.code);
-      const tempClosed = tempCodes.has(existing.code);
+      const xlsxRow = xlsxMap.get(codeKey);
+      const tempClosed = tempCodes.has(codeKey);
       const patch = buildStorePatch_(xlsxRow, tempClosed, now);
 
       if (existing.manually_inactive === true) {
@@ -132,19 +144,26 @@ function syncStores_(ss, settings) {
         newRecords.push(Object.assign({}, existing, patch, { active: false, manually_inactive: true }));
         stats.unchanged++;
       } else {
-        const changed = storeDiffers_(existing, patch);
+        const changedFields = storeChangedFields_(existing, patch);
         const wasInactive = existing.active !== true;
 
-        if (changed || wasInactive) {
+        if (changedFields.length > 0 || wasInactive) {
           newRecords.push(Object.assign({}, existing, patch));
-          if (wasInactive) stats.reactivated++;
-          else stats.updated++;
+          if (wasInactive) {
+            stats.reactivated++;
+            if (stats.changes.reactivated.length < CHANGES_LIMIT)
+              stats.changes.reactivated.push({ code: existing.code, name: patch.name || existing.name });
+          } else {
+            stats.updated++;
+            if (stats.changes.updated.length < CHANGES_LIMIT)
+              stats.changes.updated.push({ code: existing.code, name: patch.name || existing.name, fields: changedFields });
+          }
         } else {
           newRecords.push(existing);
           stats.unchanged++;
         }
       }
-      xlsxMap.delete(existing.code);
+      xlsxMap.delete(codeKey);
     }
   });
 
@@ -158,6 +177,8 @@ function syncStores_(ss, settings) {
       synced_at: now,
     }));
     stats.added++;
+    if (stats.changes.added.length < CHANGES_LIMIT)
+      stats.changes.added.push({ code, name: xlsxRow.name || '' });
   });
 
   dbBatchReplace_(SHEETS.STORES, newRecords);
@@ -240,14 +261,39 @@ function buildStorePatch_(xlsxRow, temporarilyClosed, now) {
   return patch;
 }
 
+const STORE_DIFF_FIELDS = [
+  'name','lc_code','phone','area_manager','regional_manager','rm_phone',
+  'mon_open','mon_close','tue_open','tue_close','wed_open','wed_close',
+  'thu_open','thu_close','fri_open','fri_close','sat_open','sat_close','sun_open','sun_close',
+  'temporarily_closed',
+];
+
+const STORE_FIELD_LABELS = {
+  name: 'Název', lc_code: 'LC', phone: 'Telefon prodejny',
+  area_manager: 'VT', regional_manager: 'RM', rm_phone: 'Telefon RM',
+  mon_open: 'Po otevřeno', mon_close: 'Po zavřeno',
+  tue_open: 'Út otevřeno', tue_close: 'Út zavřeno',
+  wed_open: 'St otevřeno', wed_close: 'St zavřeno',
+  thu_open: 'Čt otevřeno', thu_close: 'Čt zavřeno',
+  fri_open: 'Pá otevřeno', fri_close: 'Pá zavřeno',
+  sat_open: 'So otevřeno', sat_close: 'So zavřeno',
+  sun_open: 'Ne otevřeno', sun_close: 'Ne zavřeno',
+  temporarily_closed: 'Dočasně zavřeno',
+};
+
 function storeDiffers_(existing, patch) {
-  const CHECK = [
-    'name','lc_code','phone','area_manager','regional_manager','rm_phone',
-    'mon_open','mon_close','tue_open','tue_close','wed_open','wed_close',
-    'thu_open','thu_close','fri_open','fri_close','sat_open','sat_close','sun_open','sun_close',
-    'temporarily_closed',
-  ];
-  return CHECK.some((f) => String(existing[f] || '') !== String(patch[f] || ''));
+  return STORE_DIFF_FIELDS.some((f) => String(existing[f] || '') !== String(patch[f] || ''));
+}
+
+function storeChangedFields_(existing, patch) {
+  const result = [];
+  STORE_DIFF_FIELDS.forEach((f) => {
+    const oldVal = String(existing[f] || '');
+    const newVal = String(patch[f] || '');
+    if (oldVal !== newVal)
+      result.push({ field: STORE_FIELD_LABELS[f] || f, old: oldVal, new: newVal });
+  });
+  return result;
 }
 
 /**
