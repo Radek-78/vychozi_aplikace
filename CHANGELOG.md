@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.8.6 - 16.06.2026 09:44
+- Popup filtru sloupce: ciselne hodnoty razeny numericky, ne abecedne
+
 ## v2.8.5 - 16.06.2026 09:41
 - Popup filtru sloupce: tlacitko pro okamzite smazani aktivniho filtru v hlavicce okna
 

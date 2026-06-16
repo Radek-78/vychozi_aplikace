@@ -2481,7 +2481,11 @@ _sfState: {},
       const activeFilters = st.filters[col] || null;
       const sortIdx = st.sorts.findIndex((s) => s.col === col);
       const curDir = sortIdx >= 0 ? st.sorts[sortIdx].dir : null;
-      const uniqueVals = [...new Set(allRows.map((r) => this._colDisplayVal(tableKey, col, r[col])))].sort((a, b) => a.localeCompare(b, 'cs'));
+      const uniqueVals = [...new Set(allRows.map((r) => this._colDisplayVal(tableKey, col, r[col])))].sort((a, b) => {
+        const na = Number(a), nb = Number(b);
+        if (!isNaN(na) && !isNaN(nb)) return na - nb;
+        return a.localeCompare(b, 'cs');
+      });
 
       const menu = document.createElement('div');
       menu.className = 'col-menu';
