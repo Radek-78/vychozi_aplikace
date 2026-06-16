@@ -400,18 +400,26 @@ function apiSearchWorkspaceUsers(query) {
     if (!query || String(query).trim().length < 2) return [];
     var q = String(query).trim();
     try {
-      var result = AdminDirectory.Users.list({
-        domain: Session.getActiveUser().getEmail().split('@')[1],
-        query: q,
-        maxResults: 20,
-        orderBy: 'familyName',
-        fields: 'users(primaryEmail,name)',
+      var url = 'https://people.googleapis.com/v1/people:searchDirectoryPeople'
+        + '?query=' + encodeURIComponent(q)
+        + '&readMask=names%2CemailAddresses'
+        + '&sources=DIRECTORY_SOURCE_TYPE_DOMAIN_PROFILE'
+        + '&pageSize=20';
+      var resp = UrlFetchApp.fetch(url, {
+        headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() },
+        muteHttpExceptions: true,
       });
-      return (result.users || []).map(function(u) {
+      if (resp.getResponseCode() !== 200) {
+        throw new Error(JSON.parse(resp.getContentText()).error.message);
+      }
+      var result = JSON.parse(resp.getContentText());
+      return (result.people || []).map(function(p) {
+        var name  = (p.names && p.names[0]) || {};
+        var email = (p.emailAddresses && p.emailAddresses[0]) || {};
         return {
-          email: u.primaryEmail || '',
-          firstName: (u.name && u.name.givenName) || '',
-          lastName: (u.name && u.name.familyName) || '',
+          email:     email.value     || '',
+          firstName: name.givenName  || '',
+          lastName:  name.familyName || '',
         };
       });
     } catch (e) {

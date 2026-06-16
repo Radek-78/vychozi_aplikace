@@ -1548,7 +1548,7 @@ _sfState: {},
             .catch((e) => {
               spinner.hidden = true;
               // Pokud chybí oprávnění, schovat celý search widget — funkce není dostupná
-              if (e.message && e.message.includes('authorization')) {
+              if (e.message && /authorization|permission|Insufficient|oprávnění/i.test(e.message)) {
                 document.querySelector('#uwSearchWrap').hidden = true;
                 document.querySelector('#uwDivider').hidden = true;
               } else {

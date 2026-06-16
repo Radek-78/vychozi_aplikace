@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.0.8 - 16.06.2026 13:09
+- Workspace search: People API pres UrlFetchApp REST misto advanced service - funguje bez admin prav
+
+## v3.0.7 - 16.06.2026 13:08
+- Workspace search: AdminDirectory nahrazen People API (directory.readonly) - funguje bez admin prav
+
 ## v3.0.6 - 16.06.2026 13:06
 - Email se generuje live pri psani jmena
 - workspace search se ticho skryje pri chybe opravneni
