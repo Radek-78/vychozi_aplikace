@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.9.1 - 16.06.2026 10:19
+- Filialky: oprava poradi sloupce temp_closed_ranges v DB schematu
+- oprava JS chyby v openStoreModal
+- hlavicka Akce v poslednim sloupci
+- tlacitka ve spolecnem sloupci
+
 ## v2.9.0 - 16.06.2026 10:08
 - Filialky: modal s detailem filialky a kalendarem pro rucni spravou docasneho uzavreni
 - badge docasne uzavrena rizena rozsahy dat misto sync pole

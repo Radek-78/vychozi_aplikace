@@ -309,7 +309,7 @@
                   <th><button class="th-btn" type="button" data-table="stores" data-col="area_manager">VT<span class="sort-ind" data-sort-ind="stores-area_manager"></span></button></th>
                   <th><button class="th-btn" type="button" data-table="stores" data-col="regional_manager">RM<span class="sort-ind" data-sort-ind="stores-regional_manager"></span></button></th>
                   <th><button class="th-btn" type="button" data-table="stores" data-col="active">Stav<span class="sort-ind" data-sort-ind="stores-active"></span></button></th>
-                  <th></th>
+                  <th style="text-align:center">Akce</th>
                 </tr>
               </thead>
               <tbody id="storeRows"></tbody>
@@ -2043,7 +2043,7 @@ _sfState: {},
             <td>${Ui.escape(s.area_manager || '–')}</td>
             <td>${Ui.escape(s.regional_manager || '–')}</td>
             <td>${s.active === false ? '<span class="pill is-red">Neaktivní</span>' : '<span class="pill is-green">Aktivní</span>'}</td>
-            <td style="display:flex;gap:4px;align-items:center;justify-content:flex-end">
+            <td style="text-align:center;white-space:nowrap">
               ${this.hasStoresWrite
                 ? `<button class="icon-action" type="button" data-store-edit="${Ui.escape(s.id)}" title="Upravit filiálku">
                     <svg><use href="#i-pencil"></use></svg>
@@ -2090,7 +2090,11 @@ _sfState: {},
       this._smStore = store;
 
       let ranges = [];
-      try { ranges = JSON.parse(store.temp_closed_ranges || '[]'); } catch { ranges = []; }
+      try {
+        const raw = store.temp_closed_ranges;
+        const parsed = raw ? JSON.parse(String(raw)) : [];
+        ranges = Array.isArray(parsed) ? parsed : [];
+      } catch { ranges = []; }
       this._smRanges = ranges.map((r) => ({ from: r.from, to: r.to }));
       this._smSelStart = null;
 

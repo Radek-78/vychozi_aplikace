@@ -17,7 +17,7 @@ const DB_SCHEMA = {
     'mon_open', 'mon_close', 'tue_open', 'tue_close', 'wed_open', 'wed_close',
     'thu_open', 'thu_close', 'fri_open', 'fri_close', 'sat_open', 'sat_close',
     'sun_open', 'sun_close',
-    'temporarily_closed', 'temp_closed_ranges', 'active', 'manually_inactive', 'synced_at', 'created_at', 'created_by', 'updated_at',
+    'temporarily_closed', 'active', 'manually_inactive', 'synced_at', 'created_at', 'created_by', 'updated_at', 'temp_closed_ranges',
   ],
   'logistics': [
     'id', 'code', 'name', 'abbreviation',
