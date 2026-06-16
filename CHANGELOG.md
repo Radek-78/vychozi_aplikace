@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.0.3 - 16.06.2026 12:38
+- Modal filiálky: kalendar ma vzdy 6 radku
+- mezery mezi kartami s informacemi
+
 ## v3.0.2 - 16.06.2026 12:29
 - Sloupec Nazev: zobrazeni aktivniho rozsahu datumu vlevo od badge Docasne uzavrena
 

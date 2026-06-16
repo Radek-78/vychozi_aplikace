@@ -2277,6 +2277,8 @@ _sfState: {},
         const marked = isInRange(d);
         html += `<button class="sm-cal-day${marked ? ' is-marked' : ''}${isToday ? ' is-today' : ''}" type="button" data-date="${iso}">${day}</button>`;
       }
+      const trailing = 42 - startOffset - daysInMonth;
+      for (let i = 0; i < trailing; i++) html += '<span></span>';
       html += '</div>';
       document.querySelector('#smCal').innerHTML = html;
 
