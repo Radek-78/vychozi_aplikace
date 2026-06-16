@@ -2160,6 +2160,7 @@ _sfState: {},
             <div class="sm-field-row">
               <div class="sm-field"><span class="sm-label">Číslo prodejny</span><span class="sm-value sm-value--bold">${Ui.escape(s.code)}</span></div>
               <div class="sm-field sm-field--wide"><span class="sm-label">Název</span><span class="sm-value">${Ui.escape(s.name)}</span></div>
+              <div class="sm-field"><span class="sm-label">Telefon prodejny</span><span class="sm-value">${Ui.escape(s.phone || '–')}</span></div>
             </div>
           </div>
         </div>
@@ -2168,7 +2169,6 @@ _sfState: {},
           <div class="sm-card-body">
             <div class="sm-field-row">
               <div class="sm-field"><span class="sm-label">LC</span><span class="sm-value sm-value--bold">${Ui.escape(s.lc_code || '–')}</span></div>
-              <div class="sm-field"><span class="sm-label">Telefon prodejny</span><span class="sm-value">${Ui.escape(s.phone || '–')}</span></div>
             </div>
           </div>
         </div>

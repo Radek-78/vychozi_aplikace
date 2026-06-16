@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.9.3 - 16.06.2026 10:40
+- Store modal: sirsi okno (860px)
+- telefon prodejny na radku s cislem a nazvem filialky
+
 ## v2.9.2 - 16.06.2026 10:31
 - Filialky: oprava timezone v kalendari
 - sync nezamazava oteviraci doby z DB
