@@ -87,6 +87,8 @@ function apiRunSync() {
 /* ── Interní funkce ───────────────────────────────────────────── */
 
 function syncStores_(ss, settings) {
+  dbEnsureSchema_(dbSpreadsheet_());
+
   const mainSheetName = settings.syncStoresSheet || 'VTBZL_export';
   const tempPrefix    = settings.syncTempClosedPrefix || 'Dočasné zavření';
 

@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.9.4 - 16.06.2026 10:44
+- Sync: dbEnsureSchema_ pred ctenim DB - sync obnovi chybejici list stores automaticky
+
 ## v2.9.3 - 16.06.2026 10:40
 - Store modal: sirsi okno (860px)
 - telefon prodejny na radku s cislem a nazvem filialky
