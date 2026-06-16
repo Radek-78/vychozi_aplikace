@@ -14,6 +14,7 @@
       
       <p>Data sítě</p>
       <button class="nav-link" type="button" data-section="stores" data-tooltip="Filiálky"><svg><use href="#i-store"></use></svg><span>Filiálky</span></button>
+      <button class="nav-link" type="button" data-section="stores-filter" data-tooltip="Filiálky – filtry (test)"><svg><use href="#i-store"></use></svg><span>Filiálky ★</span></button>
       <button class="nav-link" type="button" data-section="logistics" data-tooltip="Log. centra"><svg><use href="#i-truck"></use></svg><span>Log. centra</span></button>
       
       <p class="admin-only">Administrace</p>
@@ -267,8 +268,8 @@
                   <th><button class="th-btn" type="button" data-table="stores" data-col="code">Č.p.<span class="sort-ind" data-sort-ind="stores-code"></span></button></th>
                   <th><button class="th-btn" type="button" data-table="stores" data-col="name">Název<span class="sort-ind" data-sort-ind="stores-name"></span></button></th>
                   <th><button class="th-btn" type="button" data-table="stores" data-col="lc_code">LC<span class="sort-ind" data-sort-ind="stores-lc_code"></span></button></th>
-                  <th><button class="th-btn" type="button" data-table="stores" data-col="regional_manager">RM<span class="sort-ind" data-sort-ind="stores-regional_manager"></span></button></th>
                   <th><button class="th-btn" type="button" data-table="stores" data-col="area_manager">VT<span class="sort-ind" data-sort-ind="stores-area_manager"></span></button></th>
+                  <th><button class="th-btn" type="button" data-table="stores" data-col="regional_manager">RM<span class="sort-ind" data-sort-ind="stores-regional_manager"></span></button></th>
                   <th><button class="th-btn" type="button" data-table="stores" data-col="active">Stav<span class="sort-ind" data-sort-ind="stores-active"></span></button></th>
                   <th></th>
                 </tr>
@@ -277,6 +278,63 @@
             </table>
           </div>
         </section>
+      </div>
+    </section>
+
+    <section class="page is-hidden" data-page-section="stores-filter">
+      <div class="section-bar sf-bar">
+        <span class="section-title sf-bar-title">Filiálky <span style="color:var(--lidl-yellow);font-size:0.8em;">★</span></span>
+        <div class="sf-filters">
+          <div class="sf-group sf-group--lc">
+            <span class="sf-grouplabel sf-grouplabel--lc">LC</span>
+            <div class="sf-badges" id="sfBadgesLc"></div>
+          </div>
+          <div class="sf-group sf-group--vt">
+            <span class="sf-grouplabel sf-grouplabel--vt">VT</span>
+            <div class="sf-badges sf-badges--vt" id="sfBadgesVt"></div>
+          </div>
+          <div class="sf-group sf-group--rm">
+            <span class="sf-grouplabel sf-grouplabel--rm">RM</span>
+            <div class="sf-rm-wrap">
+              <button class="sf-rm-trigger" type="button" id="sfRmTrigger">
+                <span id="sfRmTriggerLabel">Všichni RM</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="sf-rm-dropdown" id="sfRmDropdown" hidden>
+                <input class="sf-rm-search" type="search" placeholder="Hledat RM…" id="sfRmSearch" autocomplete="off">
+                <div class="sf-rm-list" id="sfRmList"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="section-body sf-layout">
+        <div class="sf-data-panel">
+          <div class="sf-summary" id="sfSummary"></div>
+          <div class="table-wrap sf-table-wrap">
+            <table class="sf-table">
+              <colgroup>
+                <col style="width:72px">
+                <col>
+                <col style="width:72px">
+                <col style="width:210px">
+                <col style="width:210px">
+                <col style="width:90px">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>Č.p.</th>
+                  <th>Název</th>
+                  <th>LC</th>
+                  <th>VT</th>
+                  <th>RM</th>
+                  <th>Stav</th>
+                </tr>
+              </thead>
+              <tbody id="sfRows"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -714,6 +772,7 @@ _sfState: {},
       if (name === 'users' && this.users.length) this.renderUsers();
       else if (name === 'apps' && this.apps.length) this.renderApps();
       else if (name === 'stores' && this.stores.length) this.renderStores();
+      else if (name === 'stores-filter' && this.stores.length) { this.renderSfBadges(); this.renderSfRows(); }
       else if (name === 'logistics' && this.logistics.length) this.renderLogistics();
       else if (name === 'audit' && this.audit.length) this.renderAudit();
       else if (name === 'settings' && this._settings) this.fillSettingsForm(this._settings);
@@ -905,6 +964,7 @@ _sfState: {},
       if (name === 'users') this.loadUsers();
       if (name === 'apps') this.loadApps();
       if (name === 'stores') this.loadStores();
+      if (name === 'stores-filter') this.loadStoresFilter();
       if (name === 'logistics') this.loadLogistics();
       if (name === 'sync') this.loadSync();
       if (name === 'settings') this.loadSettings();
@@ -1928,8 +1988,8 @@ _sfState: {},
             <td><strong>${Ui.escape(s.code)}</strong></td>
             <td>${Ui.escape(s.name)}${s.temporarily_closed ? ' <span class="pill is-orange">Dočasně uzavřena</span>' : ''}</td>
             <td>${Ui.escape(s.lc_code || '–')}</td>
-            <td>${Ui.escape(s.regional_manager || '–')}</td>
             <td>${Ui.escape(s.area_manager || '–')}</td>
+            <td>${Ui.escape(s.regional_manager || '–')}</td>
             <td>${s.active === false ? '<span class="pill is-red">Neaktivní</span>' : '<span class="pill is-green">Aktivní</span>'}</td>
             <td>
               ${this.hasWriteAccess
@@ -1953,6 +2013,194 @@ _sfState: {},
       Ui.call('apiToggleStoreActive', id, { silent: true, busy: 'Ukládám stav filiálky…' })
         .then(() => { Ui.toast('Stav filiálky byl změněn.'); this.loadStores(); })
         .catch((e) => Ui.toast(e.message, 'error'));
+    },
+
+    /* ── Filiálky – filtrování (test) ────────────── */
+
+    _sfFilters: { lc: new Set(), vt: new Set(), rm: new Set() },
+
+    loadStoresFilter() {
+      const cached = this.stores.length > 0;
+      if (cached) { this.renderSfBadges(); this.renderSfRows(); }
+      Ui.call('apiListStores', null, cached ? { silent: true } : { silent: true, busy: 'Načítám filiálky…' })
+        .then((stores) => {
+          this.stores = stores;
+          this.renderSfBadges();
+          this.renderSfRows();
+          this.markUpdated();
+        })
+        .catch((e) => Ui.toast(e.message, 'error'));
+    },
+
+    _sfCs: new Intl.Collator('cs'),
+
+    renderSfBadges() {
+      const stores = this.stores;
+      const { lc, vt, rm } = this._sfFilters;
+      const cs = this._sfCs;
+
+      const allLcs  = [...new Set(stores.map((s) => s.lc_code).filter(Boolean))].sort((a, b) => cs.compare(a, b));
+      const lcMatch = lc.size ? stores.filter((s) => lc.has(s.lc_code)) : stores;
+
+      const allVts     = [...new Set(stores.map((s) => s.area_manager).filter(Boolean))].sort((a, b) => cs.compare(a, b));
+      const inScopeVts = new Set(lcMatch.map((s) => s.area_manager).filter(Boolean));
+      const vtMatch    = vt.size ? lcMatch.filter((s) => vt.has(s.area_manager)) : lcMatch;
+
+      const allRms     = [...new Set(stores.map((s) => s.regional_manager).filter(Boolean))].sort((a, b) => cs.compare(a, b));
+      const inScopeRms = new Set(vtMatch.map((s) => s.regional_manager).filter(Boolean));
+
+      this._sfRenderGroup('sfBadgesLc', allLcs, lc, new Set(allLcs), 'lc');
+      this._sfRenderGroup('sfBadgesVt', allVts, vt, inScopeVts,      'vt');
+      this._sfRenderRmDropdown(allRms, rm, inScopeRms);
+    },
+
+    _sfRenderGroup(id, all, selected, inScope, group) {
+      const el = document.querySelector('#' + id);
+      if (!el) return;
+      el.innerHTML = all.map((val) => {
+        const on  = selected.has(val);
+        const dim = !inScope.has(val);
+        let inner;
+        if (group === 'vt') {
+          const sp = val.indexOf(' ');
+          if (sp > 0) {
+            inner = `<span class="sf-badge-sn">${Ui.escape(val.slice(0, sp))}</span>` +
+                    `<span class="sf-badge-fn">${Ui.escape(val.slice(sp + 1))}</span>`;
+          } else {
+            inner = Ui.escape(val);
+          }
+        } else {
+          inner = Ui.escape(val);
+        }
+        return `<button class="sf-badge${on ? ' is-on' : ''}${dim ? ' is-dim' : ''}" type="button"
+          data-sfg="${group}" data-sfv="${Ui.escape(val)}">${inner}</button>`;
+      }).join('');
+      el.querySelectorAll('.sf-badge').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const g = btn.dataset.sfg;
+          const v = btn.dataset.sfv;
+          if (this._sfFilters[g].has(v)) this._sfFilters[g].delete(v);
+          else this._sfFilters[g].add(v);
+          if (g === 'lc') this._sfFilters.vt = new Set();
+          if (g === 'lc' || g === 'vt') this._sfFilters.rm = new Set();
+          this.renderSfBadges();
+          this.renderSfRows();
+        });
+      });
+    },
+
+    _sfRmDropdownOpen: false,
+
+    _sfRenderRmDropdown(allRms, selected, inScope) {
+      const trigger  = document.querySelector('#sfRmTrigger');
+      const dropdown = document.querySelector('#sfRmDropdown');
+      const listEl   = document.querySelector('#sfRmList');
+      const searchEl = document.querySelector('#sfRmSearch');
+      if (!trigger || !listEl) return;
+
+      const renderList = (filter) => {
+        const q = (filter || '').toLowerCase();
+        const filtered = allRms.filter((v) => !q || v.toLowerCase().includes(q));
+        const hasScope  = inScope.size < allRms.length;
+        const inArr  = filtered.filter((v) =>  inScope.has(v));
+        const outArr = filtered.filter((v) => !inScope.has(v));
+        const mkItem = (val) => {
+          const on  = selected.has(val);
+          const dim = !inScope.has(val);
+          return `<label class="sf-rm-item${on ? ' is-on' : ''}${dim ? ' is-dim' : ''}">` +
+            `<input type="checkbox" data-sfv="${Ui.escape(val)}"${on ? ' checked' : ''}><span>${Ui.escape(val)}</span></label>`;
+        };
+        let html = '';
+        if (hasScope && inArr.length && outArr.length) {
+          html = inArr.map(mkItem).join('') +
+            '<div class="sf-rm-sep"></div>' +
+            outArr.map(mkItem).join('');
+        } else {
+          html = filtered.map(mkItem).join('');
+        }
+        listEl.innerHTML = html;
+        listEl.querySelectorAll('input[type=checkbox]').forEach((cb) => {
+          cb.addEventListener('change', () => {
+            const v = cb.dataset.sfv;
+            if (cb.checked) this._sfFilters.rm.add(v);
+            else this._sfFilters.rm.delete(v);
+            this.renderSfBadges();
+            this.renderSfRows();
+          });
+        });
+      };
+
+      renderList(searchEl ? searchEl.value : '');
+
+      const count = selected.size;
+      trigger.querySelector('#sfRmTriggerLabel').textContent =
+        count === 0 ? 'Všichni RM' : count === 1 ? [...selected][0] : `${count} RM`;
+      trigger.classList.toggle('is-on', count > 0);
+
+
+      /* Portal dropdown to body so overflow:hidden on section doesn't clip it */
+      if (dropdown.parentElement !== document.body) {
+        document.body.appendChild(dropdown);
+      }
+
+      const sfPosition = () => {
+        const r = trigger.getBoundingClientRect();
+        dropdown.style.top  = (r.bottom + 4) + 'px';
+        dropdown.style.right = (window.innerWidth - r.right) + 'px';
+      };
+
+      const sfOpen  = () => { sfPosition(); dropdown.classList.add('sf-rm-open'); };
+      const sfClose = () => { dropdown.classList.remove('sf-rm-open'); };
+
+      if (!trigger._sfBound) {
+        trigger._sfBound = true;
+        trigger.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this._sfRmDropdownOpen = !this._sfRmDropdownOpen;
+          this._sfRmDropdownOpen ? sfOpen() : sfClose();
+          if (this._sfRmDropdownOpen) searchEl.focus({ preventScroll: true });
+        });
+        searchEl.addEventListener('input', () => renderList(searchEl.value));
+        document.addEventListener('click', (e) => {
+          if (!e.target.closest('#sfRmTrigger') && !e.target.closest('#sfRmDropdown')) {
+            this._sfRmDropdownOpen = false;
+            sfClose();
+          }
+        });
+      }
+      this._sfRmDropdownOpen ? sfOpen() : sfClose();
+    },
+
+    renderSfRows() {
+      const { lc, vt, rm } = this._sfFilters;
+      let rows = this.stores;
+      if (lc.size) rows = rows.filter((s) => lc.has(s.lc_code));
+      if (vt.size) rows = rows.filter((s) => vt.has(s.area_manager));
+      if (rm.size) rows = rows.filter((s) => rm.has(s.regional_manager));
+      rows = [...rows].sort((a, b) => String(a.code).localeCompare(String(b.code)));
+
+      const total = this.stores.length;
+      const shown = rows.length;
+      const sfSummary = document.querySelector('#sfSummary');
+      if (sfSummary) {
+        const hasFilter = lc.size || vt.size || rm.size;
+        sfSummary.textContent = hasFilter
+          ? `Zobrazeno ${shown} z ${total} filiálek`
+          : `Celkem ${total} filiálek`;
+        sfSummary.classList.toggle('sf-summary--filtered', hasFilter);
+      }
+
+      document.querySelector('#sfRows').innerHTML = rows.length
+        ? rows.map((s) => `
+          <tr class="${s.active === false ? 'is-muted' : ''}">
+            <td><strong>${Ui.escape(s.code)}</strong></td>
+            <td>${Ui.escape(s.name)}${s.temporarily_closed ? ' <span class="pill is-orange">Dočasně uzavřena</span>' : ''}</td>
+            <td>${Ui.escape(s.lc_code || '–')}</td>
+            <td>${Ui.escape(s.area_manager || '–')}</td>
+            <td>${Ui.escape(s.regional_manager || '–')}</td>
+            <td>${s.active === false ? '<span class="pill is-red">Neaktivní</span>' : '<span class="pill is-green">Aktivní</span>'}</td>
+          </tr>`).join('')
+        : '<tr><td colspan="6">Žádné filiálky neodpovídají filtru.</td></tr>';
     },
 
     /* ── Logistická centra ────────────────────────── */

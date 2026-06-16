@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.7.0 - 16.06.2026 08:56
+- Filialky: testovaci zalozka s badge filtry LC/VT/RM
+- pevna vyska section-bar 58px
+- portal dropdown pro RM
+
 ## v2.6.0 - 16.06.2026 07:27
 - Tabulky: mensi okraje sekci, modra hlavicka s bilym textem, nizsi radky, bily oddelovac sloupcu v hlavicce
 - Filialky: prejmenovani RM, novy sloupec VT (area_manager)
