@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.1 - 16.06.2026 13:26
+- Auto-email od prvniho znaku jmena
+- odstraneno tlacitko z jmena
+
 ## v3.1.0 - 16.06.2026 13:21
 - Auto-email se aktualizuje prubeznie pri psani
 - doplnen scope script.external_request pro Workspace search

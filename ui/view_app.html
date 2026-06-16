@@ -449,10 +449,7 @@
         <div class="uw-divider" id="uwDivider" hidden><span>nebo vyplňte ručně</span></div>
         <label>
           <span>E-mail</span>
-          <div class="uw-email-row">
-            <input name="email" type="email" placeholder="jmeno@firma.cz" required>
-            <button type="button" class="uw-build-email" id="uwBuildEmail" title="Sestavit e-mail z jména a příjmení">⟵ z jména</button>
-          </div>
+          <input name="email" type="email" placeholder="jmeno@firma.cz" required>
         </label>
         <div class="form-row-2">
           <label>
@@ -1503,18 +1500,14 @@ _sfState: {},
         const l = form.elements.lastName.value.trim();
         const cur = form.elements.email.value;
         if (cur === '' || cur === _lastAutoEmail) {
-          _lastAutoEmail = (f && l) ? buildEmail(f, l) : '';
+          const p1 = f ? stripDia(f).toLowerCase().replace(/\s+/g, '') : '';
+          const p2 = l ? stripDia(l).toLowerCase().replace(/\s+/g, '') : '';
+          _lastAutoEmail = p1 ? (p1 + '.' + p2 + '@lidl.cz') : '';
           form.elements.email.value = _lastAutoEmail;
         }
       };
       form.elements.firstName.addEventListener('input', syncEmail);
       form.elements.lastName.addEventListener('input', syncEmail);
-
-      document.querySelector('#uwBuildEmail').addEventListener('click', () => {
-        const f = form.elements.firstName.value.trim();
-        const l = form.elements.lastName.value.trim();
-        if (f && l) form.elements.email.value = buildEmail(f, l);
-      });
 
       const showResults = (users) => {
         if (!users.length) {
