@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.9.9 - 16.06.2026 12:09
+- Badge filtr: vyber VT zvyrazni nadrazene LC
+- vyber RM zvyrazni nadrazene VT a LC
+
 ## v2.9.8 - 16.06.2026 12:01
 - Oprava filtru Docasne uzavrena
 - modal se nezavre pri prvnim otevreni

@@ -2398,17 +2398,29 @@ _sfState: {},
       const allRms     = [...new Set(stores.map((s) => s.regional_manager).filter(Boolean))].sort((a, b) => cs.compare(a, b));
       const inScopeRms = new Set(vtMatch.map((s) => s.regional_manager).filter(Boolean));
 
-      this._sfRenderGroup('sfBadgesLc', allLcs, lc, new Set(allLcs), 'lc');
-      this._sfRenderGroup('sfBadgesVt', allVts, vt, inScopeVts,      'vt');
+      // Parent highlights: selected VT → highlight parent LC; selected RM → highlight parent VT + LC
+      const parentLcs = new Set();
+      const parentVts = new Set();
+      stores.forEach((s) => {
+        if (vt.size && vt.has(s.area_manager) && s.lc_code) parentLcs.add(s.lc_code);
+        if (rm.size && rm.has(s.regional_manager)) {
+          if (s.area_manager) parentVts.add(s.area_manager);
+          if (s.lc_code) parentLcs.add(s.lc_code);
+        }
+      });
+
+      this._sfRenderGroup('sfBadgesLc', allLcs, lc, new Set(allLcs), 'lc', parentLcs);
+      this._sfRenderGroup('sfBadgesVt', allVts, vt, inScopeVts,      'vt', parentVts);
       this._sfRenderRmDropdown(allRms, rm, inScopeRms);
     },
 
-    _sfRenderGroup(id, all, selected, inScope, group) {
+    _sfRenderGroup(id, all, selected, inScope, group, isParent = new Set()) {
       const el = document.querySelector('#' + id);
       if (!el) return;
       el.innerHTML = all.map((val) => {
-        const on  = selected.has(val);
-        const dim = !inScope.has(val);
+        const on     = selected.has(val);
+        const parent = !on && isParent.has(val);
+        const dim    = !inScope.has(val);
         let inner;
         if (group === 'vt') {
           const sp = val.indexOf(' ');
@@ -2421,7 +2433,7 @@ _sfState: {},
         } else {
           inner = Ui.escape(val);
         }
-        return `<button class="sf-badge${on ? ' is-on' : ''}${dim ? ' is-dim' : ''}" type="button"
+        return `<button class="sf-badge${on ? ' is-on' : ''}${parent ? ' is-parent' : ''}${dim ? ' is-dim' : ''}" type="button"
           data-sfg="${group}" data-sfv="${Ui.escape(val)}">${inner}</button>`;
       }).join('');
       el.querySelectorAll('.sf-badge').forEach((btn) => {
