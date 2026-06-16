@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.8.4 - 16.06.2026 09:39
+- Filialky: badge Docasne uzavrena neotevira popup filtru
+- misto scrollbaru vzdy vyhrazeno
+
 ## v2.8.3 - 16.06.2026 09:18
 - Popup razeni/filtru sloupce: ikona krizku pro zavreni v pravem hornim rohu hlavicky
 

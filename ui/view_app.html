@@ -1950,7 +1950,8 @@ _sfState: {},
     loadStores() {
       if (!this._sfTcBound) {
         this._sfTcBound = true;
-        document.querySelector('#sfTcToggle').addEventListener('click', () => {
+        document.querySelector('#sfTcToggle').addEventListener('click', (e) => {
+          e.stopPropagation();
           this._sfFilters.tc = !this._sfFilters.tc;
           this.renderStores();
         });
