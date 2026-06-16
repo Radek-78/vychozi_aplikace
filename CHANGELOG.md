@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.0 - 16.06.2026 13:21
+- Auto-email se aktualizuje prubeznie pri psani
+- doplnen scope script.external_request pro Workspace search
+
 ## v3.0.9 - 16.06.2026 13:14
 - Auto-email jen kdyz je pole prazdne
 - search chyba se zobrazi v dropdownu misto skryti widgetu

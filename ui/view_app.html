@@ -1497,11 +1497,14 @@ _sfState: {},
       const buildEmail = (first, last) =>
         stripDia(first).toLowerCase().replace(/\s+/g, '') + '.' +
         stripDia(last).toLowerCase().replace(/\s+/g, '') + '@lidl.cz';
+      let _lastAutoEmail = '';
       const syncEmail = () => {
         const f = form.elements.firstName.value.trim();
         const l = form.elements.lastName.value.trim();
-        if (!form.elements.email.value.trim()) {
-          form.elements.email.value = (f && l) ? buildEmail(f, l) : '';
+        const cur = form.elements.email.value;
+        if (cur === '' || cur === _lastAutoEmail) {
+          _lastAutoEmail = (f && l) ? buildEmail(f, l) : '';
+          form.elements.email.value = _lastAutoEmail;
         }
       };
       form.elements.firstName.addEventListener('input', syncEmail);
