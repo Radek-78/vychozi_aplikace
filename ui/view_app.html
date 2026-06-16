@@ -542,7 +542,7 @@
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
   </div>
-  <div class="modal-body" id="storeModalBody" style="padding:0">
+  <div class="modal-body" id="storeModalBody" style="padding:0;overflow:hidden">
     <div class="sm-grid">
       <div class="sm-info">
         <div id="smFields"></div>
@@ -2350,7 +2350,7 @@ _sfState: {},
     _smSave() {
       const id = this._smStore && this._smStore.id;
       if (!id) return;
-      Ui.call('apiSaveStoreTempRanges', { id, temp_closed_ranges: this._smRanges }, { busy: 'Ukládám…' })
+      Ui.call('apiSaveStoreTempRanges', { id, temp_closed_ranges: this._smRanges }, { silent: true })
         .then(() => {
           // Aktualizuj lokální kopii
           const s = this.stores.find((x) => x.id === id);

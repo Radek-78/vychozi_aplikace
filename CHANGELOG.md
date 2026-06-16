@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.9.5 - 16.06.2026 10:54
+- Store modal: oprava paddingu
+- ulozeni bez busy overlay
+- badge se aktualizuje okamzite po ulozeni
+
 ## v2.9.4 - 16.06.2026 10:44
 - Sync: dbEnsureSchema_ pred ctenim DB - sync obnovi chybejici list stores automaticky
 
