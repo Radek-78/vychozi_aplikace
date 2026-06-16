@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.6.0 - 16.06.2026 07:27
+- Tabulky: mensi okraje sekci, modra hlavicka s bilym textem, nizsi radky, bily oddelovac sloupcu v hlavicce
+- Filialky: prejmenovani RM, novy sloupec VT (area_manager)
+
 ## v2.5.5 - 15.06.2026 13:12
 - Weather tooltip: bile pozadi s tmavym textem misto modre - lepsi kontrast vuci hero liste
 

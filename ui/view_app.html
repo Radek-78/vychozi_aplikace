@@ -267,7 +267,8 @@
                   <th><button class="th-btn" type="button" data-table="stores" data-col="code">Č.p.<span class="sort-ind" data-sort-ind="stores-code"></span></button></th>
                   <th><button class="th-btn" type="button" data-table="stores" data-col="name">Název<span class="sort-ind" data-sort-ind="stores-name"></span></button></th>
                   <th><button class="th-btn" type="button" data-table="stores" data-col="lc_code">LC<span class="sort-ind" data-sort-ind="stores-lc_code"></span></button></th>
-                  <th><button class="th-btn" type="button" data-table="stores" data-col="regional_manager">Region. manažer<span class="sort-ind" data-sort-ind="stores-regional_manager"></span></button></th>
+                  <th><button class="th-btn" type="button" data-table="stores" data-col="regional_manager">RM<span class="sort-ind" data-sort-ind="stores-regional_manager"></span></button></th>
+                  <th><button class="th-btn" type="button" data-table="stores" data-col="area_manager">VT<span class="sort-ind" data-sort-ind="stores-area_manager"></span></button></th>
                   <th><button class="th-btn" type="button" data-table="stores" data-col="active">Stav<span class="sort-ind" data-sort-ind="stores-active"></span></button></th>
                   <th></th>
                 </tr>
@@ -1928,6 +1929,7 @@ _sfState: {},
             <td>${Ui.escape(s.name)}${s.temporarily_closed ? ' <span class="pill is-orange">Dočasně uzavřena</span>' : ''}</td>
             <td>${Ui.escape(s.lc_code || '–')}</td>
             <td>${Ui.escape(s.regional_manager || '–')}</td>
+            <td>${Ui.escape(s.area_manager || '–')}</td>
             <td>${s.active === false ? '<span class="pill is-red">Neaktivní</span>' : '<span class="pill is-green">Aktivní</span>'}</td>
             <td>
               ${this.hasWriteAccess
