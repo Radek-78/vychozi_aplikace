@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.0.1 - 16.06.2026 12:26
+- Badge Docasne uzavrena zarovnana k pravemu okraji sloupce Nazev
+
 ## v3.0.0 - 16.06.2026 12:24
 - Sync: temporarily_closed se bere z temp_closed_ranges, nikoli z xlsx
 - badge Docasne uzavrena zarovnana vpravo v bunce
