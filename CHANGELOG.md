@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.0.2 - 16.06.2026 12:29
+- Sloupec Nazev: zobrazeni aktivniho rozsahu datumu vlevo od badge Docasne uzavrena
+
 ## v3.0.1 - 16.06.2026 12:26
 - Badge Docasne uzavrena zarovnana k pravemu okraji sloupce Nazev
 

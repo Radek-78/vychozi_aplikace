@@ -752,6 +752,27 @@ _sfState: {},
       return `${y}-${m}-${d}`;
     },
 
+    _tempClosedRangeLabel(store) {
+      const raw = store.temp_closed_ranges;
+      if (!raw) return '';
+      let ranges;
+      try { ranges = JSON.parse(raw); } catch { return ''; }
+      if (!Array.isArray(ranges)) return '';
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      const thisYear = today.getFullYear();
+      const fmt = (iso) => {
+        const d = this._parseLocalDate(iso);
+        const day = d.getDate();
+        const mon = d.getMonth() + 1;
+        const yr  = d.getFullYear();
+        return yr === thisYear ? `${day}. ${mon}.` : `${day}. ${mon}. ${yr}`;
+      };
+      return ranges
+        .filter((r) => today >= this._parseLocalDate(r.from) && today <= this._parseLocalDate(r.to))
+        .map((r) => r.from === r.to ? fmt(r.from) : `${fmt(r.from)} – ${fmt(r.to)}`)
+        .join(', ');
+    },
+
     _isTempClosed(store) {
       const raw = store.temp_closed_ranges;
       if (!raw) return false;
@@ -2055,7 +2076,7 @@ _sfState: {},
             return `
           <tr class="${s.active === false ? 'is-muted' : ''}">
             <td><strong>${Ui.escape(s.code)}</strong></td>
-            <td><span class="store-name-cell">${Ui.escape(s.name)}${tempClosed ? '<span class="pill is-orange">Dočasně uzavřena</span>' : ''}</span></td>
+            <td><span class="store-name-cell">${Ui.escape(s.name)}${tempClosed ? `<span class="store-tc-right"><span class="store-tc-range">${Ui.escape(this._tempClosedRangeLabel(s))}</span><span class="pill is-orange">Dočasně uzavřena</span></span>` : ''}</span></td>
             <td>${Ui.escape(s.lc_code || '–')}</td>
             <td>${Ui.escape(s.area_manager || '–')}</td>
             <td>${Ui.escape(s.regional_manager || '–')}</td>
