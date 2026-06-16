@@ -138,8 +138,7 @@ function syncStores_(ss, settings) {
       }
     } else {
       const xlsxRow = xlsxMap.get(codeKey);
-      const tempClosed = tempCodes.has(codeKey);
-      const patch = buildStorePatch_(xlsxRow, tempClosed, now, existing);
+      const patch = buildStorePatch_(xlsxRow, now, existing);
 
       if (existing.manually_inactive === true) {
         // Ručně deaktivovaná filiálka — sync ji neaktivuje zpět
@@ -171,8 +170,7 @@ function syncStores_(ss, settings) {
 
   // Nové záznamy z xlsx (nezpracované = nebyly v DB)
   xlsxMap.forEach((xlsxRow, code) => {
-    const tempClosed = tempCodes.has(code);
-    newRecords.push(Object.assign(buildStorePatch_(xlsxRow, tempClosed, now), {
+    newRecords.push(Object.assign(buildStorePatch_(xlsxRow, now), {
       id: uuid_(),
       created_at: now,
       created_by: currentEmail_() || 'sync',
@@ -257,9 +255,10 @@ const HOUR_FIELDS_ = [
   'thu_open','thu_close','fri_open','fri_close','sat_open','sat_close','sun_open','sun_close',
 ];
 
-function buildStorePatch_(xlsxRow, temporarilyClosed, now, existing) {
+function buildStorePatch_(xlsxRow, now, existing) {
   const NON_HOUR_FIELDS = ['code','name','lc_code','phone','area_manager','regional_manager','rm_phone'];
-  const patch = { temporarily_closed: temporarilyClosed, active: true, synced_at: now, updated_at: now };
+  // temporarily_closed je computed z temp_closed_ranges — sync ho nepřebírá z xlsx
+  const patch = { temporarily_closed: existing ? isTempClosedNow_(existing) : false, active: true, synced_at: now, updated_at: now };
   NON_HOUR_FIELDS.forEach((f) => { patch[f] = xlsxRow[f] !== undefined ? xlsxRow[f] : ''; });
   // Otevírací doby: přepsat jen pokud xlsx má hodnotu NEBO DB ji dosud nemá
   HOUR_FIELDS_.forEach((f) => {
@@ -274,7 +273,6 @@ const STORE_DIFF_FIELDS = [
   'name','lc_code','phone','area_manager','regional_manager','rm_phone',
   'mon_open','mon_close','tue_open','tue_close','wed_open','wed_close',
   'thu_open','thu_close','fri_open','fri_close','sat_open','sat_close','sun_open','sun_close',
-  'temporarily_closed',
 ];
 
 const STORE_FIELD_LABELS = {
@@ -287,7 +285,6 @@ const STORE_FIELD_LABELS = {
   fri_open: 'Pá otevřeno', fri_close: 'Pá zavřeno',
   sat_open: 'So otevřeno', sat_close: 'So zavřeno',
   sun_open: 'Ne otevřeno', sun_close: 'Ne zavřeno',
-  temporarily_closed: 'Dočasně zavřeno',
 };
 
 function storeDiffers_(existing, patch) {

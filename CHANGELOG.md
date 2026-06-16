@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.0.0 - 16.06.2026 12:24
+- Sync: temporarily_closed se bere z temp_closed_ranges, nikoli z xlsx
+- badge Docasne uzavrena zarovnana vpravo v bunce
+
 ## v2.9.9 - 16.06.2026 12:09
 - Badge filtr: vyber VT zvyrazni nadrazene LC
 - vyber RM zvyrazni nadrazene VT a LC

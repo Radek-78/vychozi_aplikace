@@ -2055,7 +2055,7 @@ _sfState: {},
             return `
           <tr class="${s.active === false ? 'is-muted' : ''}">
             <td><strong>${Ui.escape(s.code)}</strong></td>
-            <td>${Ui.escape(s.name)}${tempClosed ? ' <span class="pill is-orange">Dočasně uzavřena</span>' : ''}</td>
+            <td><span class="store-name-cell">${Ui.escape(s.name)}${tempClosed ? '<span class="pill is-orange">Dočasně uzavřena</span>' : ''}</span></td>
             <td>${Ui.escape(s.lc_code || '–')}</td>
             <td>${Ui.escape(s.area_manager || '–')}</td>
             <td>${Ui.escape(s.regional_manager || '–')}</td>
