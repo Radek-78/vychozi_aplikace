@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.8.1 - 16.06.2026 09:10
+- Filialky: fixni sirka sloupcu tabulky
+- odstraneni zlute oramovani vyhledavaciho pole v seznamu RM
+
 ## v2.8.0 - 16.06.2026 09:06
 - Filtry LC/VT/RM v zalozce Filialky: badge system, kaskadove filtrovani, rozevírací seznam RM s vyhledavanim a tlacitkem pro reset
 - snizeni vysky radku v tabulce
