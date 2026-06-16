@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.0.4 - 16.06.2026 12:43
+- Section bar: sjednoceni leveho odsazeni nadpisu na 16px ve vsech zaloskach
+
 ## v3.0.3 - 16.06.2026 12:38
 - Modal filiálky: kalendar ma vzdy 6 radku
 - mezery mezi kartami s informacemi
