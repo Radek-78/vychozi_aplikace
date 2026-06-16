@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.9.0 - 16.06.2026 10:08
+- Filialky: modal s detailem filialky a kalendarem pro rucni spravou docasneho uzavreni
+- badge docasne uzavrena rizena rozsahy dat misto sync pole
+
 ## v2.8.6 - 16.06.2026 09:44
 - Popup filtru sloupce: ciselne hodnoty razeny numericky, ne abecedne
 

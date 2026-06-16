@@ -535,6 +535,40 @@
   </form>
 </dialog>
 
+<dialog class="modal modal-large" id="storeModal">
+  <div class="modal-header">
+    <h2 class="modal-title" id="storeModalTitle">Detail filiálky</h2>
+    <button class="modal-close" type="button" id="storeModalClose" aria-label="Zavřít">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="modal-body" id="storeModalBody">
+    <div class="sm-grid">
+      <div class="sm-info">
+        <div class="sm-section-title">Základní údaje</div>
+        <div class="sm-fields" id="smFields"></div>
+        <div class="sm-section-title" style="margin-top:16px">Otevírací doby</div>
+        <div class="sm-hours" id="smHours"></div>
+      </div>
+      <div class="sm-calendar-col">
+        <div class="sm-section-title">Dočasné uzavření</div>
+        <div class="sm-cal-hint">Označte dny nebo rozsahy dnů kdy je filiálka dočasně uzavřena.</div>
+        <div class="sm-cal-nav">
+          <button class="sm-cal-prev icon-action" type="button" id="smCalPrev">&#8249;</button>
+          <span class="sm-cal-label" id="smCalLabel"></span>
+          <button class="sm-cal-next icon-action" type="button" id="smCalNext">&#8250;</button>
+        </div>
+        <div class="sm-cal" id="smCal"></div>
+        <div class="sm-ranges" id="smRanges"></div>
+      </div>
+    </div>
+  </div>
+  <footer class="modal-footer">
+    <button class="button" type="button" id="storeModalCancel">Zrušit</button>
+    <button class="button button-primary" type="button" id="storeModalSave">Uložit</button>
+  </footer>
+</dialog>
+
 <script>
   // Český jmenný kalendář — zdroj: standardní ČSÚ seznam; ověřit před nasazením
   const NAME_DAYS = {
@@ -693,6 +727,27 @@ _sfState: {},
       const u = this.boot.user;
       if (!u) return false;
       return u.role === 'SUPERADMIN' || u.permission === 'EDITOR';
+    },
+
+    get hasStoresWrite() {
+      const u = this.boot.user;
+      if (!u) return false;
+      return u.role === 'SUPERADMIN' || u.stores_write === true;
+    },
+
+    _isTempClosed(store) {
+      const raw = store.temp_closed_ranges;
+      if (!raw) return false;
+      let ranges;
+      try { ranges = JSON.parse(raw); } catch { return false; }
+      if (!Array.isArray(ranges) || ranges.length === 0) return false;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return ranges.some((r) => {
+        const from = new Date(r.from); from.setHours(0, 0, 0, 0);
+        const to = new Date(r.to); to.setHours(0, 0, 0, 0);
+        return today >= from && today <= to;
+      });
     },
 
     init() {
@@ -1978,28 +2033,39 @@ _sfState: {},
       const tcBtn = document.querySelector('#sfTcToggle');
       if (tcBtn) tcBtn.classList.toggle('is-on', tc);
       document.querySelector('#storeRows').innerHTML = rows.length
-        ? rows.map((s) => `
+        ? rows.map((s) => {
+            const tempClosed = this._isTempClosed(s);
+            return `
           <tr class="${s.active === false ? 'is-muted' : ''}">
             <td><strong>${Ui.escape(s.code)}</strong></td>
-            <td>${Ui.escape(s.name)}${s.temporarily_closed ? ' <span class="pill is-orange">Dočasně uzavřena</span>' : ''}</td>
+            <td>${Ui.escape(s.name)}${tempClosed ? ' <span class="pill is-orange">Dočasně uzavřena</span>' : ''}</td>
             <td>${Ui.escape(s.lc_code || '–')}</td>
             <td>${Ui.escape(s.area_manager || '–')}</td>
             <td>${Ui.escape(s.regional_manager || '–')}</td>
             <td>${s.active === false ? '<span class="pill is-red">Neaktivní</span>' : '<span class="pill is-green">Aktivní</span>'}</td>
-            <td>
+            <td style="display:flex;gap:4px;align-items:center;justify-content:flex-end">
+              ${this.hasStoresWrite
+                ? `<button class="icon-action" type="button" data-store-edit="${Ui.escape(s.id)}" title="Upravit filiálku">
+                    <svg><use href="#i-pencil"></use></svg>
+                   </button>`
+                : ''}
               ${this.hasWriteAccess
                 ? `<button class="icon-action${s.manually_inactive === true ? '' : (s.active === false ? '' : ' danger')}" type="button"
                     data-store-toggle="${Ui.escape(s.id)}"
                     title="${s.active === false ? 'Aktivovat filiálku' : 'Deaktivovat filiálku'}">
                     <svg><use href="#i-power"></use></svg>
                    </button>`
-                : '—'
+                : (!this.hasStoresWrite ? '—' : '')
               }
             </td>
-          </tr>`).join('')
-        : '<tr><td colspan="6">Žádné filiálky. Spusťte synchronizaci.</td></tr>';
+          </tr>`;
+          }).join('')
+        : '<tr><td colspan="7">Žádné filiálky. Spusťte synchronizaci.</td></tr>';
       document.querySelectorAll('[data-store-toggle]').forEach((btn) => {
         btn.addEventListener('click', () => this.toggleStoreActive(btn.dataset.storeToggle));
+      });
+      document.querySelectorAll('[data-store-edit]').forEach((btn) => {
+        btn.addEventListener('click', () => this.openStoreModal(btn.dataset.storeEdit));
       });
       this.updateSortIndicators('stores');
     },
@@ -2007,6 +2073,233 @@ _sfState: {},
     toggleStoreActive(id) {
       Ui.call('apiToggleStoreActive', id, { silent: true, busy: 'Ukládám stav filiálky…' })
         .then(() => { Ui.toast('Stav filiálky byl změněn.'); this.loadStores(); })
+        .catch((e) => Ui.toast(e.message, 'error'));
+    },
+
+    /* ── Filiálky – modal detail ──────────────────── */
+
+    _smStore: null,
+    _smRanges: [],
+    _smCalYear: 0,
+    _smCalMonth: 0,
+    _smSelStart: null,
+
+    openStoreModal(id) {
+      const store = this.stores.find((s) => s.id === id);
+      if (!store) return;
+      this._smStore = store;
+
+      let ranges = [];
+      try { ranges = JSON.parse(store.temp_closed_ranges || '[]'); } catch { ranges = []; }
+      this._smRanges = ranges.map((r) => ({ from: r.from, to: r.to }));
+      this._smSelStart = null;
+
+      const now = new Date();
+      this._smCalYear = now.getFullYear();
+      this._smCalMonth = now.getMonth();
+
+      document.querySelector('#storeModalTitle').textContent = store.code + ' – ' + store.name;
+
+      this._smRenderFields(store);
+      this._smRenderHours(store);
+      this._smRenderCal();
+      this._smRenderRangeList();
+
+      const modal = document.querySelector('#storeModal');
+      if (!modal._smBound) {
+        modal._smBound = true;
+        document.querySelector('#storeModalClose').addEventListener('click', () => Ui.closeModal(modal));
+        document.querySelector('#storeModalCancel').addEventListener('click', () => Ui.closeModal(modal));
+        document.querySelector('#smCalPrev').addEventListener('click', () => {
+          if (this._smCalMonth === 0) { this._smCalMonth = 11; this._smCalYear--; }
+          else this._smCalMonth--;
+          this._smRenderCal();
+        });
+        document.querySelector('#smCalNext').addEventListener('click', () => {
+          if (this._smCalMonth === 11) { this._smCalMonth = 0; this._smCalYear++; }
+          else this._smCalMonth++;
+          this._smRenderCal();
+        });
+        document.querySelector('#storeModalSave').addEventListener('click', () => this._smSave());
+        modal.addEventListener('click', (e) => { if (e.target === modal) Ui.closeModal(modal); });
+      }
+
+      Ui.openModal(modal);
+    },
+
+    _smRenderFields(s) {
+      const rows = [
+        ['Číslo', s.code],
+        ['Název', s.name],
+        ['LC', s.lc_code || '–'],
+        ['VT', s.area_manager || '–'],
+        ['RM', s.regional_manager || '–'],
+        ['Telefon', s.phone || '–'],
+        ['Tel. RM', s.rm_phone || '–'],
+        ['Stav', s.active === false ? 'Neaktivní' : 'Aktivní'],
+      ];
+      document.querySelector('#smFields').innerHTML = rows.map(([k, v]) =>
+        `<div class="sm-field"><span class="sm-label">${k}</span><span class="sm-value">${Ui.escape(String(v))}</span></div>`
+      ).join('');
+    },
+
+    _smRenderHours(s) {
+      const days = [
+        ['Po', 'mon'], ['Út', 'tue'], ['St', 'wed'], ['Čt', 'thu'],
+        ['Pá', 'fri'], ['So', 'sat'], ['Ne', 'sun'],
+      ];
+      document.querySelector('#smHours').innerHTML = days.map(([label, d]) => {
+        const o = s[d + '_open'] || '', c = s[d + '_close'] || '';
+        const val = o && c ? o + '–' + c : '–';
+        return `<div class="sm-field"><span class="sm-label">${label}</span><span class="sm-value">${Ui.escape(val)}</span></div>`;
+      }).join('');
+    },
+
+    _smRenderCal() {
+      const year = this._smCalYear, month = this._smCalMonth;
+      const MONTHS = ['Leden','Únor','Březen','Duben','Květen','Červen','Červenec','Srpen','Září','Říjen','Listopad','Prosinec'];
+      document.querySelector('#smCalLabel').textContent = MONTHS[month] + ' ' + year;
+
+      const today = new Date(); today.setHours(0,0,0,0);
+      const firstDay = new Date(year, month, 1);
+      // Monday-based week: 0=Mon … 6=Sun
+      let startOffset = firstDay.getDay() - 1; if (startOffset < 0) startOffset = 6;
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      const ranges = this._smRanges;
+      const isInRange = (d) => {
+        const t = d.getTime();
+        return ranges.some((r) => {
+          const f = new Date(r.from); f.setHours(0,0,0,0);
+          const to = new Date(r.to); to.setHours(0,0,0,0);
+          return t >= f.getTime() && t <= to.getTime();
+        });
+      };
+
+      const DAY_HEADS = ['Po','Út','St','Čt','Pá','So','Ne'];
+      let html = '<div class="sm-cal-head">' + DAY_HEADS.map((d) => `<span>${d}</span>`).join('') + '</div>';
+      html += '<div class="sm-cal-grid">';
+      for (let i = 0; i < startOffset; i++) html += '<span></span>';
+      for (let day = 1; day <= daysInMonth; day++) {
+        const d = new Date(year, month, day); d.setHours(0,0,0,0);
+        const iso = d.toISOString().slice(0, 10);
+        const isToday = d.getTime() === today.getTime();
+        const marked = isInRange(d);
+        html += `<button class="sm-cal-day${marked ? ' is-marked' : ''}${isToday ? ' is-today' : ''}" type="button" data-date="${iso}">${day}</button>`;
+      }
+      html += '</div>';
+      document.querySelector('#smCal').innerHTML = html;
+
+      document.querySelectorAll('#smCal .sm-cal-day').forEach((btn) => {
+        btn.addEventListener('click', () => this._smCalDayClick(btn.dataset.date));
+      });
+    },
+
+    _smCalDayClick(iso) {
+      const d = new Date(iso); d.setHours(0,0,0,0);
+
+      // Klik na označený den = odebrat tento den z rozsahů
+      const isMarked = this._smRanges.some((r) => {
+        const f = new Date(r.from); f.setHours(0,0,0,0);
+        const to = new Date(r.to); to.setHours(0,0,0,0);
+        return d >= f && d <= to;
+      });
+      if (isMarked) {
+        this._smRemoveDay(iso);
+        this._smSelStart = null;
+        this._smRenderCal();
+        this._smRenderRangeList();
+        return;
+      }
+
+      if (!this._smSelStart) {
+        this._smSelStart = iso;
+        // Zvýrazni začátek výběru
+        document.querySelectorAll('#smCal .sm-cal-day').forEach((btn) => {
+          btn.classList.toggle('is-selecting', btn.dataset.date === iso);
+        });
+        return;
+      }
+
+      // Druhý klik = konec rozsahu
+      let from = this._smSelStart, to = iso;
+      if (from > to) { const tmp = from; from = to; to = tmp; }
+      this._smRanges.push({ from, to });
+      this._smRanges = this._smMergeRanges(this._smRanges);
+      this._smSelStart = null;
+      this._smRenderCal();
+      this._smRenderRangeList();
+    },
+
+    _smRemoveDay(iso) {
+      const d = new Date(iso); d.setHours(0,0,0,0);
+      const result = [];
+      this._smRanges.forEach((r) => {
+        const f = new Date(r.from); f.setHours(0,0,0,0);
+        const to = new Date(r.to); to.setHours(0,0,0,0);
+        if (d < f || d > to) { result.push(r); return; }
+        // Rozděl rozsah
+        if (d.getTime() > f.getTime()) {
+          const prev = new Date(d); prev.setDate(prev.getDate() - 1);
+          result.push({ from: r.from, to: prev.toISOString().slice(0,10) });
+        }
+        if (d.getTime() < to.getTime()) {
+          const next = new Date(d); next.setDate(next.getDate() + 1);
+          result.push({ from: next.toISOString().slice(0,10), to: r.to });
+        }
+      });
+      this._smRanges = result;
+    },
+
+    _smMergeRanges(ranges) {
+      if (!ranges.length) return [];
+      const sorted = [...ranges].sort((a, b) => a.from < b.from ? -1 : 1);
+      const merged = [{ ...sorted[0] }];
+      for (let i = 1; i < sorted.length; i++) {
+        const last = merged[merged.length - 1];
+        if (sorted[i].from <= last.to) {
+          if (sorted[i].to > last.to) last.to = sorted[i].to;
+        } else {
+          merged.push({ ...sorted[i] });
+        }
+      }
+      return merged;
+    },
+
+    _smRenderRangeList() {
+      const el = document.querySelector('#smRanges');
+      if (!this._smRanges.length) { el.innerHTML = '<div class="sm-no-ranges">Žádné dočasné uzavření</div>'; return; }
+      const fmt = (iso) => {
+        const [y, m, d] = iso.split('-');
+        return d + '. ' + m + '. ' + y;
+      };
+      el.innerHTML = this._smRanges.map((r, i) =>
+        `<div class="sm-range-item">
+          <span>${fmt(r.from)}${r.from !== r.to ? ' – ' + fmt(r.to) : ''}</span>
+          <button class="sm-range-del" type="button" data-range-idx="${i}" title="Odstranit">×</button>
+        </div>`
+      ).join('');
+      el.querySelectorAll('.sm-range-del').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          this._smRanges.splice(Number(btn.dataset.rangeIdx), 1);
+          this._smRenderCal();
+          this._smRenderRangeList();
+        });
+      });
+    },
+
+    _smSave() {
+      const id = this._smStore && this._smStore.id;
+      if (!id) return;
+      Ui.call('apiSaveStoreTempRanges', { id, temp_closed_ranges: this._smRanges }, { busy: 'Ukládám…' })
+        .then(() => {
+          // Aktualizuj lokální kopii
+          const s = this.stores.find((x) => x.id === id);
+          if (s) s.temp_closed_ranges = JSON.stringify(this._smRanges);
+          Ui.closeModal(document.querySelector('#storeModal'));
+          Ui.toast('Dočasné uzavření bylo uloženo.');
+          this.renderStores();
+        })
         .catch((e) => Ui.toast(e.message, 'error'));
     },
 

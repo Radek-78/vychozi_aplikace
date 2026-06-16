@@ -11,7 +11,8 @@ function apiGetCurrentUser() {
       allowed = permSet.allowed_apps || '';
     }
     return Object.assign({}, user, {
-      allowed_apps: allowed
+      allowed_apps: allowed,
+      stores_write: isAllowed_(user, 'stores_write'),
     });
   });
 }
@@ -382,6 +383,26 @@ function apiToggleStoreActive(id) {
     audit_('store_toggle', store.code + ' ' + store.name + ' → ' + (newActive ? 'aktivní' : 'neaktivní (ručně)'));
     return null;
   }, { requireWrite: true });
+}
+
+function apiSaveStoreTempRanges(payload) {
+  return guard_(ROLES.USER, (actor) => {
+    if (!isAllowed_(actor, 'stores_write')) {
+      throw new Error('Nemáte oprávnění k úpravám filiálek.');
+    }
+    const id = payload && payload.id;
+    if (!id) throw new Error('Chybí ID filiálky.');
+    const store = dbGetById_(SHEETS.STORES, id);
+    if (!store) throw new Error('Filiálka nenalezena.');
+    if (!isAllowed_(actor, 'stores_write', store.lc_code)) {
+      throw new Error('Nemáte oprávnění upravovat filiálku v lokaci ' + store.lc_code);
+    }
+    const ranges = payload.temp_closed_ranges;
+    if (!Array.isArray(ranges)) throw new Error('Neplatný formát dat.');
+    dbUpdate_(SHEETS.STORES, id, { temp_closed_ranges: JSON.stringify(ranges) });
+    audit_('store_temp_ranges', store.code + ' ' + store.name + ': uloženo ' + ranges.length + ' rozsahů dočasného uzavření');
+    return null;
+  });
 }
 
 /* ── Logistics ──────────────────────────────────────────────────── */
