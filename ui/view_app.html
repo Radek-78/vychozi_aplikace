@@ -1495,14 +1495,24 @@ _sfState: {},
 
       const stripDia = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '');
       const buildEmail = (first, last) =>
-        (stripDia(first).toLowerCase().replace(/\s+/g, '') + '.' +
-         stripDia(last).toLowerCase().replace(/\s+/g, '') + '@lidl.cz');
+        stripDia(first).toLowerCase().replace(/\s+/g, '') + '.' +
+        stripDia(last).toLowerCase().replace(/\s+/g, '') + '@lidl.cz';
+      const isAutoEmail = (v) => !v || v.endsWith('@lidl.cz');
+
+      const syncEmail = () => {
+        const f = form.elements.firstName.value.trim();
+        const l = form.elements.lastName.value.trim();
+        if (isAutoEmail(form.elements.email.value)) {
+          form.elements.email.value = (f && l) ? buildEmail(f, l) : '';
+        }
+      };
+      form.elements.firstName.addEventListener('input', syncEmail);
+      form.elements.lastName.addEventListener('input', syncEmail);
 
       document.querySelector('#uwBuildEmail').addEventListener('click', () => {
         const f = form.elements.firstName.value.trim();
         const l = form.elements.lastName.value.trim();
         if (f && l) form.elements.email.value = buildEmail(f, l);
-        else Ui.toast('Nejprve vyplňte jméno a příjmení.', 'error');
       });
 
       const showResults = (users) => {
@@ -1535,7 +1545,17 @@ _sfState: {},
         this._uwTimer = setTimeout(() => {
           Ui.call('apiSearchWorkspaceUsers', q, { silent: true })
             .then((users) => { spinner.hidden = true; showResults(users); })
-            .catch((e)   => { spinner.hidden = true; Ui.toast(e.message, 'error'); });
+            .catch((e) => {
+              spinner.hidden = true;
+              // Pokud chybí oprávnění, schovat celý search widget — funkce není dostupná
+              if (e.message && e.message.includes('authorization')) {
+                document.querySelector('#uwSearchWrap').hidden = true;
+                document.querySelector('#uwDivider').hidden = true;
+              } else {
+                results.innerHTML = `<li class="uw-no-results">${Ui.escape(e.message)}</li>`;
+                results.hidden = false;
+              }
+            });
         }, 350);
       });
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.0.6 - 16.06.2026 13:06
+- Email se generuje live pri psani jmena
+- workspace search se ticho skryje pri chybe opravneni
+
 ## v3.0.5 - 16.06.2026 13:00
 - Modal uzivatele: vyhledavani zamestnance v Google Workspace + tlacitko pro sestaveni emailu z jmena
 

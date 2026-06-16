@@ -8,7 +8,7 @@
 const CONFIG = {
   defaultAppName: 'VÄ‚ËťchozÄ‚Â­ aplikace',
   defaultAppSubtitle: '',
-  version: 'v3.0.5',
+  version: 'v3.0.6',
   logoUrl: 'https://drive.google.com/thumbnail?id=18mu_Lq1F_FqqSZcolMjLwG0aaQDPMdyD&sz=w320',
   theme: {
     blue: '#0050aa',
