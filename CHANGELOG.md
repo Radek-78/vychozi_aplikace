@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.0.9 - 16.06.2026 13:14
+- Auto-email jen kdyz je pole prazdne
+- search chyba se zobrazi v dropdownu misto skryti widgetu
+
 ## v3.0.8 - 16.06.2026 13:09
 - Workspace search: People API pres UrlFetchApp REST misto advanced service - funguje bez admin prav
 

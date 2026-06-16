@@ -1497,12 +1497,10 @@ _sfState: {},
       const buildEmail = (first, last) =>
         stripDia(first).toLowerCase().replace(/\s+/g, '') + '.' +
         stripDia(last).toLowerCase().replace(/\s+/g, '') + '@lidl.cz';
-      const isAutoEmail = (v) => !v || v.endsWith('@lidl.cz');
-
       const syncEmail = () => {
         const f = form.elements.firstName.value.trim();
         const l = form.elements.lastName.value.trim();
-        if (isAutoEmail(form.elements.email.value)) {
+        if (!form.elements.email.value.trim()) {
           form.elements.email.value = (f && l) ? buildEmail(f, l) : '';
         }
       };
@@ -1547,14 +1545,11 @@ _sfState: {},
             .then((users) => { spinner.hidden = true; showResults(users); })
             .catch((e) => {
               spinner.hidden = true;
-              // Pokud chybí oprávnění, schovat celý search widget — funkce není dostupná
-              if (e.message && /authorization|permission|Insufficient|oprávnění/i.test(e.message)) {
-                document.querySelector('#uwSearchWrap').hidden = true;
-                document.querySelector('#uwDivider').hidden = true;
-              } else {
-                results.innerHTML = `<li class="uw-no-results">${Ui.escape(e.message)}</li>`;
-                results.hidden = false;
-              }
+              const msg = /authorization|permission|Insufficient|scope/i.test(e.message)
+                ? 'Vyhledávání vyžaduje nové oprávnění — otevřete aplikaci znovu pro opětovnou autorizaci.'
+                : e.message;
+              results.innerHTML = `<li class="uw-no-results">${Ui.escape(msg)}</li>`;
+              results.hidden = false;
             });
         }, 350);
       });
