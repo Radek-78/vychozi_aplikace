@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.8.2 - 16.06.2026 09:15
+- Filialky: filtr docasne uzavrene filialky v hlavicce sloupce Nazev
+
 ## v2.8.1 - 16.06.2026 09:10
 - Filialky: fixni sirka sloupcu tabulky
 - odstraneni zlute oramovani vyhledavaciho pole v seznamu RM

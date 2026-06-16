@@ -299,7 +299,12 @@
               <thead>
                 <tr>
                   <th><button class="th-btn" type="button" data-table="stores" data-col="code">Č.p.<span class="sort-ind" data-sort-ind="stores-code"></span></button></th>
-                  <th><button class="th-btn" type="button" data-table="stores" data-col="name">Název<span class="sort-ind" data-sort-ind="stores-name"></span></button></th>
+                  <th>
+                    <div style="display:flex;align-items:center;gap:6px">
+                      <button class="th-btn" type="button" data-table="stores" data-col="name">Název<span class="sort-ind" data-sort-ind="stores-name"></span></button>
+                      <button class="sf-tc-toggle" type="button" id="sfTcToggle" title="Zobrazit jen dočasně uzavřené">Dočasně uzavřena</button>
+                    </div>
+                  </th>
                   <th><button class="th-btn" type="button" data-table="stores" data-col="lc_code">LC<span class="sort-ind" data-sort-ind="stores-lc_code"></span></button></th>
                   <th><button class="th-btn" type="button" data-table="stores" data-col="area_manager">VT<span class="sort-ind" data-sort-ind="stores-area_manager"></span></button></th>
                   <th><button class="th-btn" type="button" data-table="stores" data-col="regional_manager">RM<span class="sort-ind" data-sort-ind="stores-regional_manager"></span></button></th>
@@ -1943,6 +1948,13 @@ _sfState: {},
     /* ── Filiálky ─────────────────────────────────── */
 
     loadStores() {
+      if (!this._sfTcBound) {
+        this._sfTcBound = true;
+        document.querySelector('#sfTcToggle').addEventListener('click', () => {
+          this._sfFilters.tc = !this._sfFilters.tc;
+          this.renderStores();
+        });
+      }
       const cached = this.stores.length > 0;
       if (cached) { this.renderSfBadges(); this.renderStores(); }
       Ui.call('apiListStores', null, cached ? { silent: true } : { silent: true, busy: 'Načítám filiálky…' })
@@ -1956,11 +1968,14 @@ _sfState: {},
     },
 
     renderStores() {
-      const { lc, vt, rm } = this._sfFilters;
+      const { lc, vt, rm, tc } = this._sfFilters;
       let rows = this.sortFilter('stores', this.stores);
       if (lc.size) rows = rows.filter((s) => lc.has(s.lc_code));
       if (vt.size) rows = rows.filter((s) => vt.has(s.area_manager));
       if (rm.size) rows = rows.filter((s) => rm.has(s.regional_manager));
+      if (tc) rows = rows.filter((s) => s.temporarily_closed);
+      const tcBtn = document.querySelector('#sfTcToggle');
+      if (tcBtn) tcBtn.classList.toggle('is-on', tc);
       document.querySelector('#storeRows').innerHTML = rows.length
         ? rows.map((s) => `
           <tr class="${s.active === false ? 'is-muted' : ''}">
@@ -1996,7 +2011,7 @@ _sfState: {},
 
     /* ── Filiálky – filtrování ────────────────────── */
 
-    _sfFilters: { lc: new Set(), vt: new Set(), rm: new Set() },
+    _sfFilters: { lc: new Set(), vt: new Set(), rm: new Set(), tc: false },
 
     _sfCs: new Intl.Collator('cs'),
 
