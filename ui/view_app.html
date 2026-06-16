@@ -436,9 +436,23 @@
     <div class="modal-body">
       <div class="form form-plain">
         <input name="id" type="hidden">
+        <div class="uw-search-wrap" id="uwSearchWrap">
+          <label><span>Hledat zaměstnance v Google Workspace</span></label>
+          <div class="uw-search-row">
+            <input type="text" id="uwSearchInput" class="uw-search-input" placeholder="Jméno nebo e-mail…" autocomplete="off">
+            <span class="uw-search-spinner" id="uwSearchSpinner" hidden>
+              <svg class="uw-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+            </span>
+          </div>
+          <ul class="uw-search-results" id="uwSearchResults" hidden></ul>
+        </div>
+        <div class="uw-divider" id="uwDivider" hidden><span>nebo vyplňte ručně</span></div>
         <label>
           <span>E-mail</span>
-          <input name="email" type="email" placeholder="jmeno@firma.cz" required>
+          <div class="uw-email-row">
+            <input name="email" type="email" placeholder="jmeno@firma.cz" required>
+            <button type="button" class="uw-build-email" id="uwBuildEmail" title="Sestavit e-mail z jména a příjmení">⟵ z jména</button>
+          </div>
         </label>
         <div class="form-row-2">
           <label>
@@ -1453,8 +1467,79 @@ _sfState: {},
 
       this.renderUserAppsChecklist(user);
 
+      // Search widget — zobrazit jen při vytváření nového uživatele
+      const isNew = !user;
+      document.querySelector('#uwSearchWrap').hidden = !isNew;
+      document.querySelector('#uwDivider').hidden = !isNew;
+      const searchInput = document.querySelector('#uwSearchInput');
+      if (searchInput) searchInput.value = '';
+      const resultsList = document.querySelector('#uwSearchResults');
+      if (resultsList) { resultsList.hidden = true; resultsList.innerHTML = ''; }
+
+      if (isNew && !this._uwBound) {
+        this._uwBound = true;
+        this._uwInitSearch();
+      }
+
       Ui.setText('#userModalTitle', user ? 'Upravit uživatele' : 'Přidat uživatele');
       Ui.openModal(document.querySelector('#userModal'));
+    },
+
+    _uwTimer: null,
+
+    _uwInitSearch() {
+      const input   = document.querySelector('#uwSearchInput');
+      const spinner = document.querySelector('#uwSearchSpinner');
+      const results = document.querySelector('#uwSearchResults');
+      const form    = document.querySelector('#userForm');
+
+      const stripDia = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '');
+      const buildEmail = (first, last) =>
+        (stripDia(first).toLowerCase().replace(/\s+/g, '') + '.' +
+         stripDia(last).toLowerCase().replace(/\s+/g, '') + '@lidl.cz');
+
+      document.querySelector('#uwBuildEmail').addEventListener('click', () => {
+        const f = form.elements.firstName.value.trim();
+        const l = form.elements.lastName.value.trim();
+        if (f && l) form.elements.email.value = buildEmail(f, l);
+        else Ui.toast('Nejprve vyplňte jméno a příjmení.', 'error');
+      });
+
+      const showResults = (users) => {
+        if (!users.length) {
+          results.innerHTML = '<li class="uw-no-results">Žádné výsledky</li>';
+        } else {
+          results.innerHTML = users.map((u, i) =>
+            `<li class="uw-result-item" data-idx="${i}">${Ui.escape(u.firstName)} ${Ui.escape(u.lastName)} <span class="uw-result-email">${Ui.escape(u.email)}</span></li>`
+          ).join('');
+          results.querySelectorAll('.uw-result-item').forEach((li) => {
+            li.addEventListener('mousedown', (e) => {
+              e.preventDefault();
+              const u = users[Number(li.dataset.idx)];
+              form.elements.firstName.value = u.firstName;
+              form.elements.lastName.value  = u.lastName;
+              form.elements.email.value     = u.email;
+              results.hidden = true;
+              input.value = '';
+            });
+          });
+        }
+        results.hidden = false;
+      };
+
+      input.addEventListener('input', () => {
+        clearTimeout(this._uwTimer);
+        const q = input.value.trim();
+        if (q.length < 2) { results.hidden = true; return; }
+        spinner.hidden = false;
+        this._uwTimer = setTimeout(() => {
+          Ui.call('apiSearchWorkspaceUsers', q, { silent: true })
+            .then((users) => { spinner.hidden = true; showResults(users); })
+            .catch((e)   => { spinner.hidden = true; Ui.toast(e.message, 'error'); });
+        }, 350);
+      });
+
+      input.addEventListener('blur', () => setTimeout(() => { results.hidden = true; }, 150));
     },
 
     renderUserAppsChecklist(user) {

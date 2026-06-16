@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.0.5 - 16.06.2026 13:00
+- Modal uzivatele: vyhledavani zamestnance v Google Workspace + tlacitko pro sestaveni emailu z jmena
+
 ## v3.0.4 - 16.06.2026 12:43
 - Section bar: sjednoceni leveho odsazeni nadpisu na 16px ve vsech zaloskach
 

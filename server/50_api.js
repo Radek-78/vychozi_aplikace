@@ -395,6 +395,31 @@ function apiToggleStoreActive(id) {
   }, { requireWrite: true });
 }
 
+function apiSearchWorkspaceUsers(query) {
+  return guard_(ROLES.ADMIN, () => {
+    if (!query || String(query).trim().length < 2) return [];
+    var q = String(query).trim();
+    try {
+      var result = AdminDirectory.Users.list({
+        domain: Session.getActiveUser().getEmail().split('@')[1],
+        query: q,
+        maxResults: 20,
+        orderBy: 'familyName',
+        fields: 'users(primaryEmail,name)',
+      });
+      return (result.users || []).map(function(u) {
+        return {
+          email: u.primaryEmail || '',
+          firstName: (u.name && u.name.givenName) || '',
+          lastName: (u.name && u.name.familyName) || '',
+        };
+      });
+    } catch (e) {
+      throw new Error('Nepodařilo se načíst uživatele z Google Workspace: ' + e.message);
+    }
+  });
+}
+
 function apiSaveStoreTempRanges(payload) {
   return guard_(ROLES.USER, (actor) => {
     if (!isAllowed_(actor, 'stores_write')) {
