@@ -2489,7 +2489,8 @@ _sfState: {},
         <div class="col-menu-head">
           <span>Sloupec: <strong>${Ui.escape(col)}</strong></span>
           <span style="display:flex;align-items:center;gap:8px">
-            ${st.sorts.length > 0 || st.filters[col] ? `<span>${st.sorts.length > 0 ? '↕ řazení' : ''}${st.sorts.length > 0 && st.filters[col] ? ' · ' : ''}${st.filters[col] ? '⊟ filtr' : ''}</span>` : ''}
+            ${st.sorts.length > 0 ? `<span>↕ řazení</span>` : ''}
+            ${st.filters[col] ? `<button class="col-menu-clear-filter" type="button" title="Vymazat filtr tohoto sloupce">⊟ filtr ×</button>` : ''}
             <button class="col-menu-close" type="button" title="Zavřít"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
           </span>
         </div>
@@ -2583,6 +2584,15 @@ _sfState: {},
       });
 
       menu.querySelector('.col-menu-close').addEventListener('click', () => this.closeColMenu());
+      const clearFilterBtn = menu.querySelector('.col-menu-clear-filter');
+      if (clearFilterBtn) {
+        clearFilterBtn.addEventListener('click', () => {
+          st.filters[col] = null;
+          this.closeColMenu();
+          applyFn();
+          this.updateSortIndicators(tableKey);
+        });
+      }
 
       this._sfMenu = { el: menu, tableKey, col };
       setTimeout(() => {

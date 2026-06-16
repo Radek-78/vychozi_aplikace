@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.8.5 - 16.06.2026 09:41
+- Popup filtru sloupce: tlacitko pro okamzite smazani aktivniho filtru v hlavicce okna
+
 ## v2.8.4 - 16.06.2026 09:39
 - Filialky: badge Docasne uzavrena neotevira popup filtru
 - misto scrollbaru vzdy vyhrazeno
