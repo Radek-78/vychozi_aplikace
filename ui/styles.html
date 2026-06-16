@@ -1757,7 +1757,7 @@
   th,
   td {
     border-bottom: 1px solid var(--line-soft);
-    padding: 7px 12px;
+    padding: 4px 12px;
     text-align: left;
   }
 
@@ -3692,12 +3692,9 @@
     padding-top: 8px;
   }
 
-  /* ── Store filter – scrollable layout ─────────── */
+  /* ── Store filter bar ─────────────────────────── */
 
-  [data-page-section="stores-filter"] { overflow: hidden; }
-
-  /* Section-bar with filter groups */
-  [data-page-section="stores-filter"] .section-bar.sf-bar {
+  .section-bar.sf-bar {
     padding: 0 16px;
     gap: 10px;
     overflow: hidden;
@@ -3709,30 +3706,6 @@
     white-space: nowrap;
     margin-right: 4px;
   }
-
-  [data-page-section="stores-filter"] .section-body.sf-layout {
-    flex: 1;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-    gap: 0;
-  }
-
-  .sf-data-panel {
-    flex: 1;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .sf-table-wrap {
-    flex: 1;
-    overflow-y: auto;
-    max-height: none !important;
-  }
-
-  .sf-table { table-layout: fixed; }
 
   /* ── Filter groups ─────────────────────────────── */
 
@@ -3877,6 +3850,23 @@
 
   .sf-rm-trigger:hover { border-color: var(--lidl-blue); color: var(--lidl-blue); box-shadow: 0 0 0 3px rgba(0,83,179,0.1); }
   .sf-rm-trigger.is-on { background: var(--lidl-blue); border-color: var(--lidl-blue); color: #fff; box-shadow: 0 2px 6px rgba(0,83,179,0.3); }
+
+  .sf-rm-clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .sf-rm-clear:hover { background: #fee2e2; color: #b91c1c; }
 
   .sf-rm-dropdown {
     position: fixed;

@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.8.0 - 16.06.2026 09:06
+- Filtry LC/VT/RM v zalozce Filialky: badge system, kaskadove filtrovani, rozevírací seznam RM s vyhledavanim a tlacitkem pro reset
+- snizeni vysky radku v tabulce
+
 ## v2.7.0 - 16.06.2026 08:56
 - Filialky: testovaci zalozka s badge filtry LC/VT/RM
 - pevna vyska section-bar 58px
