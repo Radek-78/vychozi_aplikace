@@ -3,6 +3,16 @@
  * Každý endpoint je obalený guard_() — vrací { ok, data } / { ok, error }.
  */
 
+function isTempClosedNow_(store) {
+  var raw = store.temp_closed_ranges;
+  if (!raw) return false;
+  var ranges;
+  try { ranges = JSON.parse(String(raw)); } catch(e) { return false; }
+  if (!Array.isArray(ranges) || ranges.length === 0) return false;
+  var today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd');
+  return ranges.some(function(r) { return r.from <= today && today <= r.to; });
+}
+
 function apiGetCurrentUser() {
   return guard_(ROLES.USER, (user) => {
     let allowed = String(user.allowed_apps || '').trim();
@@ -98,7 +108,7 @@ function apiGetHome() {
       warnings: warnings,
       lastSyncAt: s.lastSyncAt || null,
       storesActive: stores.filter((st) => st.active === true).length,
-      storesTempClosed: stores.filter((st) => st.active === true && st.temporarily_closed === true).length,
+      storesTempClosed: stores.filter((st) => st.active === true && isTempClosedNow_(st)).length,
       logisticsActive: logistics.filter((lc) => lc.active === true).length,
       lastChange: isAdmin ? (dbGetAll_(SHEETS.AUDIT).slice(-1)[0] || null) : null,
     };

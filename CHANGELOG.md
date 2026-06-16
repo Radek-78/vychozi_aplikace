@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.9.7 - 16.06.2026 11:13
+- isTempClosedNow_ helper na serveru
+- spinner v modal okne ma logo Lidl
+
 ## v2.9.6 - 16.06.2026 11:03
 - Store modal: mezery mezi kartami, padding footeru, pravy okraj kalendare, saving overlay uvnitr dialogu
 
