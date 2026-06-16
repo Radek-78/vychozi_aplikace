@@ -542,6 +542,12 @@
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
   </div>
+  <div class="sm-saving-overlay" id="smSavingOverlay" hidden>
+    <div class="sm-saving-box">
+      <span class="sp-ring"><svg class="sp-ring-svg" viewBox="0 0 72 72"><circle class="sp-ring-track" cx="36" cy="36" r="30"></circle><circle class="sp-ring-arc" cx="36" cy="36" r="30"></circle></svg></span>
+      <span class="sm-saving-label">Ukládám…</span>
+    </div>
+  </div>
   <div class="modal-body" id="storeModalBody" style="padding:0;overflow:hidden">
     <div class="sm-grid">
       <div class="sm-info">
@@ -2350,16 +2356,21 @@ _sfState: {},
     _smSave() {
       const id = this._smStore && this._smStore.id;
       if (!id) return;
+      const overlay = document.querySelector('#smSavingOverlay');
+      if (overlay) overlay.hidden = false;
       Ui.call('apiSaveStoreTempRanges', { id, temp_closed_ranges: this._smRanges }, { silent: true })
         .then(() => {
-          // Aktualizuj lokální kopii
           const s = this.stores.find((x) => x.id === id);
           if (s) s.temp_closed_ranges = JSON.stringify(this._smRanges);
+          if (overlay) overlay.hidden = true;
           Ui.closeModal(document.querySelector('#storeModal'));
           Ui.toast('Dočasné uzavření bylo uloženo.');
           this.renderStores();
         })
-        .catch((e) => Ui.toast(e.message, 'error'));
+        .catch((e) => {
+          if (overlay) overlay.hidden = true;
+          Ui.toast(e.message, 'error');
+        });
     },
 
     /* ── Filiálky – filtrování ────────────────────── */

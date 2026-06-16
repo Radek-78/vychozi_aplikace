@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.9.6 - 16.06.2026 11:03
+- Store modal: mezery mezi kartami, padding footeru, pravy okraj kalendare, saving overlay uvnitr dialogu
+
 ## v2.9.5 - 16.06.2026 10:54
 - Store modal: oprava paddingu
 - ulozeni bez busy overlay
