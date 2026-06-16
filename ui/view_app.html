@@ -2487,7 +2487,10 @@ _sfState: {},
       menu.innerHTML = `
         <div class="col-menu-head">
           <span>Sloupec: <strong>${Ui.escape(col)}</strong></span>
-          ${st.sorts.length > 0 || st.filters[col] ? `<span>${st.sorts.length > 0 ? '↕ řazení' : ''}${st.sorts.length > 0 && st.filters[col] ? ' · ' : ''}${st.filters[col] ? '⊟ filtr' : ''}</span>` : ''}
+          <span style="display:flex;align-items:center;gap:8px">
+            ${st.sorts.length > 0 || st.filters[col] ? `<span>${st.sorts.length > 0 ? '↕ řazení' : ''}${st.sorts.length > 0 && st.filters[col] ? ' · ' : ''}${st.filters[col] ? '⊟ filtr' : ''}</span>` : ''}
+            <button class="col-menu-close" type="button" title="Zavřít"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          </span>
         </div>
         <div class="col-menu-sort-row">
           <button class="col-menu-sort-btn${curDir === 'asc' ? ' is-active' : ''}" type="button" data-action="sort-primary" data-dir="asc">
@@ -2577,6 +2580,8 @@ _sfState: {},
         applyFn();
         this.updateSortIndicators(tableKey);
       });
+
+      menu.querySelector('.col-menu-close').addEventListener('click', () => this.closeColMenu());
 
       this._sfMenu = { el: menu, tableKey, col };
       setTimeout(() => {
