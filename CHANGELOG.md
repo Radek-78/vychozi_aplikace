@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.9.8 - 16.06.2026 12:01
+- Oprava filtru Docasne uzavrena
+- modal se nezavre pri prvnim otevreni
+- logo spinneru se nacte z APP_BOOTSTRAP
+
 ## v2.9.7 - 16.06.2026 11:13
 - isTempClosedNow_ helper na serveru
 - spinner v modal okne ma logo Lidl

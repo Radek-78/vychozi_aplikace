@@ -2046,7 +2046,7 @@ _sfState: {},
       if (lc.size) rows = rows.filter((s) => lc.has(s.lc_code));
       if (vt.size) rows = rows.filter((s) => vt.has(s.area_manager));
       if (rm.size) rows = rows.filter((s) => rm.has(s.regional_manager));
-      if (tc) rows = rows.filter((s) => s.temporarily_closed);
+      if (tc) rows = rows.filter((s) => this._isTempClosed(s));
       const tcBtn = document.querySelector('#sfTcToggle');
       if (tcBtn) tcBtn.classList.toggle('is-on', tc);
       document.querySelector('#storeRows').innerHTML = rows.length
@@ -2142,9 +2142,13 @@ _sfState: {},
           this._smRenderCal();
         });
         document.querySelector('#storeModalSave').addEventListener('click', () => this._smSave());
-        modal.addEventListener('click', (e) => { if (e.target === modal) Ui.closeModal(modal); });
+        modal.addEventListener('click', (e) => { if (e.target === modal && !modal._justOpened) Ui.closeModal(modal); });
+        const logoImg = document.querySelector('#smSavingOverlay .sp-ring-logo');
+        if (logoImg) logoImg.src = (window.APP_BOOTSTRAP || {}).logoUrl || '';
       }
 
+      modal._justOpened = true;
+      setTimeout(() => { modal._justOpened = false; }, 0);
       Ui.openModal(modal);
     },
 
