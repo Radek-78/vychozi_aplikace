@@ -294,7 +294,7 @@
                 <col style="width:160px">
                 <col style="width:160px">
                 <col style="width:90px">
-                <col style="width:50px">
+                <col style="width:80px">
               </colgroup>
               <thead>
                 <tr>
@@ -542,17 +542,16 @@
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
   </div>
-  <div class="modal-body" id="storeModalBody">
+  <div class="modal-body" id="storeModalBody" style="padding:0">
     <div class="sm-grid">
       <div class="sm-info">
-        <div class="sm-section-title">Základní údaje</div>
-        <div class="sm-fields" id="smFields"></div>
-        <div class="sm-section-title" style="margin-top:16px">Otevírací doby</div>
+        <div id="smFields"></div>
+        <div class="sm-section-title">Otevírací doby</div>
         <div class="sm-hours" id="smHours"></div>
       </div>
       <div class="sm-calendar-col">
         <div class="sm-section-title">Dočasné uzavření</div>
-        <div class="sm-cal-hint">Označte dny nebo rozsahy dnů kdy je filiálka dočasně uzavřena.</div>
+        <div class="sm-cal-hint">Klikněte na den pro začátek rozsahu, druhým klikem rozsah ukončíte. Klik na označený den ho odebere.</div>
         <div class="sm-cal-nav">
           <button class="sm-cal-prev icon-action" type="button" id="smCalPrev">&#8249;</button>
           <span class="sm-cal-label" id="smCalLabel"></span>
@@ -735,6 +734,18 @@ _sfState: {},
       return u.role === 'SUPERADMIN' || u.stores_write === true;
     },
 
+    _parseLocalDate(iso) {
+      const [y, m, d] = iso.split('-').map(Number);
+      return new Date(y, m - 1, d);
+    },
+
+    _toIsoDate(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    },
+
     _isTempClosed(store) {
       const raw = store.temp_closed_ranges;
       if (!raw) return false;
@@ -744,8 +755,8 @@ _sfState: {},
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       return ranges.some((r) => {
-        const from = new Date(r.from); from.setHours(0, 0, 0, 0);
-        const to = new Date(r.to); to.setHours(0, 0, 0, 0);
+        const from = this._parseLocalDate(r.from);
+        const to = this._parseLocalDate(r.to);
         return today >= from && today <= to;
       });
     },
@@ -2132,30 +2143,74 @@ _sfState: {},
     },
 
     _smRenderFields(s) {
-      const rows = [
-        ['Číslo', s.code],
-        ['Název', s.name],
-        ['LC', s.lc_code || '–'],
-        ['VT', s.area_manager || '–'],
-        ['RM', s.regional_manager || '–'],
-        ['Telefon', s.phone || '–'],
-        ['Tel. RM', s.rm_phone || '–'],
-        ['Stav', s.active === false ? 'Neaktivní' : 'Aktivní'],
-      ];
-      document.querySelector('#smFields').innerHTML = rows.map(([k, v]) =>
-        `<div class="sm-field"><span class="sm-label">${k}</span><span class="sm-value">${Ui.escape(String(v))}</span></div>`
-      ).join('');
+      const ico = {
+        store:  `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+        lc:     `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>`,
+        person: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+        phone:  `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.56 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l1.37-1.37a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
+        status: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+      };
+      const statusHtml = s.active === false
+        ? `<span class="pill is-red">Neaktivní</span>`
+        : `<span class="pill is-green">Aktivní</span>`;
+      document.querySelector('#smFields').innerHTML = `
+        <div class="sm-card">
+          <div class="sm-card-icon sm-card-icon--store">${ico.store}</div>
+          <div class="sm-card-body">
+            <div class="sm-field-row">
+              <div class="sm-field"><span class="sm-label">Číslo prodejny</span><span class="sm-value sm-value--bold">${Ui.escape(s.code)}</span></div>
+              <div class="sm-field sm-field--wide"><span class="sm-label">Název</span><span class="sm-value">${Ui.escape(s.name)}</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="sm-card">
+          <div class="sm-card-icon sm-card-icon--lc">${ico.lc}</div>
+          <div class="sm-card-body">
+            <div class="sm-field-row">
+              <div class="sm-field"><span class="sm-label">LC</span><span class="sm-value sm-value--bold">${Ui.escape(s.lc_code || '–')}</span></div>
+              <div class="sm-field"><span class="sm-label">Telefon prodejny</span><span class="sm-value">${Ui.escape(s.phone || '–')}</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="sm-card">
+          <div class="sm-card-icon sm-card-icon--vt">${ico.person}</div>
+          <div class="sm-card-body">
+            <div class="sm-field-row">
+              <div class="sm-field sm-field--wide"><span class="sm-label">VT</span><span class="sm-value">${Ui.escape(s.area_manager || '–')}</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="sm-card">
+          <div class="sm-card-icon sm-card-icon--rm">${ico.person}</div>
+          <div class="sm-card-body">
+            <div class="sm-field-row">
+              <div class="sm-field sm-field--wide"><span class="sm-label">RM</span><span class="sm-value">${Ui.escape(s.regional_manager || '–')}</span></div>
+              <div class="sm-field"><span class="sm-label">Telefon RM</span><span class="sm-value">${Ui.escape(s.rm_phone || '–')}</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="sm-card">
+          <div class="sm-card-icon sm-card-icon--status">${ico.status}</div>
+          <div class="sm-card-body">
+            <div class="sm-field-row">
+              <div class="sm-field"><span class="sm-label">Stav filiálky</span><span class="sm-value">${statusHtml}</span></div>
+            </div>
+          </div>
+        </div>`;
     },
 
     _smRenderHours(s) {
       const days = [
-        ['Po', 'mon'], ['Út', 'tue'], ['St', 'wed'], ['Čt', 'thu'],
-        ['Pá', 'fri'], ['So', 'sat'], ['Ne', 'sun'],
+        ['Po', 'mon', false], ['Út', 'tue', false], ['St', 'wed', false],
+        ['Čt', 'thu', false], ['Pá', 'fri', false], ['So', 'sat', true], ['Ne', 'sun', true],
       ];
-      document.querySelector('#smHours').innerHTML = days.map(([label, d]) => {
+      document.querySelector('#smHours').innerHTML = days.map(([label, d, weekend]) => {
         const o = s[d + '_open'] || '', c = s[d + '_close'] || '';
         const val = o && c ? o + '–' + c : '–';
-        return `<div class="sm-field"><span class="sm-label">${label}</span><span class="sm-value">${Ui.escape(val)}</span></div>`;
+        return `<div class="sm-hour-item${weekend ? ' sm-hour-item--weekend' : ''}">
+          <span class="sm-hour-day">${label}</span>
+          <span class="sm-hour-val">${Ui.escape(val)}</span>
+        </div>`;
       }).join('');
     },
 
@@ -2174,8 +2229,8 @@ _sfState: {},
       const isInRange = (d) => {
         const t = d.getTime();
         return ranges.some((r) => {
-          const f = new Date(r.from); f.setHours(0,0,0,0);
-          const to = new Date(r.to); to.setHours(0,0,0,0);
+          const f = this._parseLocalDate(r.from);
+          const to = this._parseLocalDate(r.to);
           return t >= f.getTime() && t <= to.getTime();
         });
       };
@@ -2185,8 +2240,8 @@ _sfState: {},
       html += '<div class="sm-cal-grid">';
       for (let i = 0; i < startOffset; i++) html += '<span></span>';
       for (let day = 1; day <= daysInMonth; day++) {
-        const d = new Date(year, month, day); d.setHours(0,0,0,0);
-        const iso = d.toISOString().slice(0, 10);
+        const d = new Date(year, month, day);
+        const iso = this._toIsoDate(d);
         const isToday = d.getTime() === today.getTime();
         const marked = isInRange(d);
         html += `<button class="sm-cal-day${marked ? ' is-marked' : ''}${isToday ? ' is-today' : ''}" type="button" data-date="${iso}">${day}</button>`;
@@ -2200,12 +2255,12 @@ _sfState: {},
     },
 
     _smCalDayClick(iso) {
-      const d = new Date(iso); d.setHours(0,0,0,0);
+      const d = this._parseLocalDate(iso);
 
       // Klik na označený den = odebrat tento den z rozsahů
       const isMarked = this._smRanges.some((r) => {
-        const f = new Date(r.from); f.setHours(0,0,0,0);
-        const to = new Date(r.to); to.setHours(0,0,0,0);
+        const f = this._parseLocalDate(r.from);
+        const to = this._parseLocalDate(r.to);
         return d >= f && d <= to;
       });
       if (isMarked) {
@@ -2236,20 +2291,20 @@ _sfState: {},
     },
 
     _smRemoveDay(iso) {
-      const d = new Date(iso); d.setHours(0,0,0,0);
+      const d = this._parseLocalDate(iso);
       const result = [];
       this._smRanges.forEach((r) => {
-        const f = new Date(r.from); f.setHours(0,0,0,0);
-        const to = new Date(r.to); to.setHours(0,0,0,0);
+        const f = this._parseLocalDate(r.from);
+        const to = this._parseLocalDate(r.to);
         if (d < f || d > to) { result.push(r); return; }
         // Rozděl rozsah
         if (d.getTime() > f.getTime()) {
           const prev = new Date(d); prev.setDate(prev.getDate() - 1);
-          result.push({ from: r.from, to: prev.toISOString().slice(0,10) });
+          result.push({ from: r.from, to: this._toIsoDate(prev) });
         }
         if (d.getTime() < to.getTime()) {
           const next = new Date(d); next.setDate(next.getDate() + 1);
-          result.push({ from: next.toISOString().slice(0,10), to: r.to });
+          result.push({ from: this._toIsoDate(next), to: r.to });
         }
       });
       this._smRanges = result;

@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.9.2 - 16.06.2026 10:31
+- Filialky: oprava timezone v kalendari
+- sync nezamazava oteviraci doby z DB
+- sirka sloupce Akce
+- redesign store modalu s kartami a ikonami
+
 ## v2.9.1 - 16.06.2026 10:19
 - Filialky: oprava poradi sloupce temp_closed_ranges v DB schematu
 - oprava JS chyby v openStoreModal

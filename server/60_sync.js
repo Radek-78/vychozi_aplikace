@@ -137,7 +137,7 @@ function syncStores_(ss, settings) {
     } else {
       const xlsxRow = xlsxMap.get(codeKey);
       const tempClosed = tempCodes.has(codeKey);
-      const patch = buildStorePatch_(xlsxRow, tempClosed, now);
+      const patch = buildStorePatch_(xlsxRow, tempClosed, now, existing);
 
       if (existing.manually_inactive === true) {
         // Ručně deaktivovaná filiálka — sync ji neaktivuje zpět
@@ -250,14 +250,21 @@ function syncLogistics_(ss, settings) {
 
 /* ── Pomocné funkce ───────────────────────────────────────────── */
 
-function buildStorePatch_(xlsxRow, temporarilyClosed, now) {
-  const FIELDS = [
-    'code','name','lc_code','phone','area_manager','regional_manager','rm_phone',
-    'mon_open','mon_close','tue_open','tue_close','wed_open','wed_close',
-    'thu_open','thu_close','fri_open','fri_close','sat_open','sat_close','sun_open','sun_close',
-  ];
+const HOUR_FIELDS_ = [
+  'mon_open','mon_close','tue_open','tue_close','wed_open','wed_close',
+  'thu_open','thu_close','fri_open','fri_close','sat_open','sat_close','sun_open','sun_close',
+];
+
+function buildStorePatch_(xlsxRow, temporarilyClosed, now, existing) {
+  const NON_HOUR_FIELDS = ['code','name','lc_code','phone','area_manager','regional_manager','rm_phone'];
   const patch = { temporarily_closed: temporarilyClosed, active: true, synced_at: now, updated_at: now };
-  FIELDS.forEach((f) => { patch[f] = xlsxRow[f] !== undefined ? xlsxRow[f] : ''; });
+  NON_HOUR_FIELDS.forEach((f) => { patch[f] = xlsxRow[f] !== undefined ? xlsxRow[f] : ''; });
+  // Otevírací doby: přepsat jen pokud xlsx má hodnotu NEBO DB ji dosud nemá
+  HOUR_FIELDS_.forEach((f) => {
+    const xlsxVal = xlsxRow[f] !== undefined ? xlsxRow[f] : '';
+    const dbVal = existing ? (existing[f] || '') : '';
+    patch[f] = xlsxVal || dbVal;
+  });
   return patch;
 }
 
