@@ -4,6 +4,7 @@
  * Nejnovejsi verze prvni.
  */
 const CHANGELOG = [
+  { version: 'v3.1.12', date: '9.7.2026', message: 'Design: mrizka modulu na Domu doplnuje volne \'ghost\' sloty (min. 4) pro administratory - klik otevre dialog Pridat aplikaci' },
   { version: 'v3.1.11', date: '9.7.2026', message: 'Design: vraceny puvodni styl cisel v hero statistikach (zruseno zvetseni z v3.1.10)' },
   { version: 'v3.1.10', date: '9.7.2026', message: 'Design: vyraznejsi cisla ve statistikach hero banneru (vetsi font, tucnejsi); prazdny stav modulu ma jemny tecovany ramecek misto holeho textu' },
   { version: 'v3.1.9', date: '9.7.2026', message: 'Pridana TOOLS_authorizeAutoSync - bezpecna (jen cte) funkce pro vynuceni autorizace noveho scope script.scriptapp, nutne pred zapnutim automaticke synchronizace' },

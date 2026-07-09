@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.12 - 09.07.2026 13:25
+- Design: mrizka modulu na Domu doplnuje volne 'ghost' sloty (min. 4) pro administratory - klik otevre dialog Pridat aplikaci
+
 ## v3.1.11 - 09.07.2026 13:20
 - Design: vraceny puvodni styl cisel v hero statistikach (zruseno zvetseni z v3.1.10)
 

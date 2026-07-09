@@ -3693,6 +3693,36 @@
   }
   .modules-empty svg { height: 32px; opacity: 0.3; width: 32px; }
 
+  .mc-ghost {
+    align-items: center;
+    background: transparent;
+    border: 1.5px dashed var(--line);
+    border-radius: var(--radius);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    min-height: 170px;
+    transition: background-color 0.15s, border-color 0.15s;
+  }
+
+  .mc-ghost:hover {
+    background: var(--page);
+    border-color: var(--lidl-blue);
+  }
+
+  .mc-ghost-inner {
+    align-items: center;
+    color: var(--muted);
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+    gap: 6px;
+    text-align: center;
+    transition: color 0.15s;
+  }
+
+  .mc-ghost:hover .mc-ghost-inner { color: var(--lidl-blue); }
+
   .app-status-badge {
     border-radius: 10px;
     font-size: 11px;

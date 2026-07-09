@@ -1920,12 +1920,17 @@ _sfState: {},
         .catch(() => {});
     },
 
+    /** Kolik "duchů" (volných slotů pro budoucí aplikace) se má doplnit do mřížky. */
+    GHOST_MIN_MODULES: 4,
+
     renderModules() {
       const grid = document.querySelector('#moduleGrid');
       const empty = document.querySelector('#modulesEmpty');
       const active = this.apps || [];
-      if (!active.length) {
-        grid.querySelectorAll('.module-card').forEach((c) => c.remove());
+      grid.querySelectorAll('.module-card, .mc-ghost').forEach((c) => c.remove());
+
+      const ghostCount = this.isAdmin ? Math.max(0, this.GHOST_MIN_MODULES - active.length) : 0;
+      if (!active.length && !ghostCount) {
         if (empty) empty.classList.remove('is-hidden');
         return;
       }
@@ -1934,7 +1939,6 @@ _sfState: {},
       const STATUS_CLASS = { available: 'mc--available', coming: 'mc--coming', inactive: 'mc--inactive' };
       const STATUS_BADGE = { available: 'Dostupná', coming: 'V přípravě', inactive: 'Nedostupná' };
       const STATUS_ICON = { coming: '#i-clock', inactive: '#i-lock' };
-      grid.querySelectorAll('.module-card').forEach((c) => c.remove());
       active.forEach((app) => {
         const colorCls = COLOR_CLASS[app.color] || '';
         const statusCls = STATUS_CLASS[app.status] || 'mc--coming';
@@ -1963,6 +1967,18 @@ _sfState: {},
           </div>`;
         grid.appendChild(art);
       });
+
+      for (let i = 0; i < ghostCount; i++) {
+        const ghost = document.createElement('article');
+        ghost.className = 'mc-ghost';
+        ghost.innerHTML = `
+          <div class="mc-ghost-inner">
+            <svg width="20" height="20" viewBox="0 0 24 24"><use href="#i-plus"></use></svg>
+            <span>Přidat aplikaci</span>
+          </div>`;
+        ghost.addEventListener('click', () => this.openAppModal(null));
+        grid.appendChild(ghost);
+      }
     },
 
     openAppModal(appIdOrObj) {
