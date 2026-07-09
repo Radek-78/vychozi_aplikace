@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.13 - 09.07.2026 13:34
+- Design: widget Dnesni den (datum, tyden, svatek jako oddelene chipy misto jednoho radku)
+- novy panel na Domu s mini kalendarem docasne uzavrenych filialek - klik na den zobrazi seznam
+
 ## v3.1.12 - 09.07.2026 13:25
 - Design: mrizka modulu na Domu doplnuje volne 'ghost' sloty (min. 4) pro administratory - klik otevre dialog Pridat aplikaci
 

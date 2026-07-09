@@ -4,6 +4,7 @@
  * Nejnovejsi verze prvni.
  */
 const CHANGELOG = [
+  { version: 'v3.1.13', date: '9.7.2026', message: 'Design: widget Dnesni den (datum, tyden, svatek jako oddelene chipy misto jednoho radku); novy panel na Domu s mini kalendarem docasne uzavrenych filialek - klik na den zobrazi seznam' },
   { version: 'v3.1.12', date: '9.7.2026', message: 'Design: mrizka modulu na Domu doplnuje volne \'ghost\' sloty (min. 4) pro administratory - klik otevre dialog Pridat aplikaci' },
   { version: 'v3.1.11', date: '9.7.2026', message: 'Design: vraceny puvodni styl cisel v hero statistikach (zruseno zvetseni z v3.1.10)' },
   { version: 'v3.1.10', date: '9.7.2026', message: 'Design: vyraznejsi cisla ve statistikach hero banneru (vetsi font, tucnejsi); prazdny stav modulu ma jemny tecovany ramecek misto holeho textu' },
