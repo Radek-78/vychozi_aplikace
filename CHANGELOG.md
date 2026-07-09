@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.11 - 09.07.2026 13:20
+- Design: vraceny puvodni styl cisel v hero statistikach (zruseno zvetseni z v3.1.10)
+
 ## v3.1.10 - 09.07.2026 13:07
 - Design: vyraznejsi cisla ve statistikach hero banneru (vetsi font, tucnejsi)
 - prazdny stav modulu ma jemny tecovany ramecek misto holeho textu
