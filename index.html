@@ -126,31 +126,8 @@
       <?!= include('ui/view_app'); ?>
     <? } else if (app.page === 'subapp') { ?>
       <?!= include('ui/view_subapp'); ?>
-    <? } else if (app.page === 'wizard') { ?>
-      <?!= include('ui/view_wizard'); ?>
     <? } else { ?>
-      <div class="gate">
-        <div class="gate-card">
-          <header class="gate-header">
-            <img src="<?= app.logoUrl ?>" alt="Logo">
-            <div class="gate-header-text">
-              <p class="kicker">Přístup</p>
-              <h1><?= app.appName ?></h1>
-            </div>
-          </header>
-          <div class="gate-body">
-            <div class="gate-warning">Nemáte přístup do této aplikace.</div>
-            <div class="info-row">
-              <span class="status-icon"><svg><use href="#i-user"></use></svg></span>
-              <div>
-                <span>Přihlášený účet</span>
-                <strong><?= app.userEmail || 'E-mail se nepodařilo zjistit' ?></strong>
-              </div>
-            </div>
-            <p class="gate-note">Pokud byste přístup mít měli, kontaktujte správce aplikace, aby vás přidal mezi uživatele.</p>
-          </div>
-        </div>
-      </div>
+      <?!= include('ui/view_wizard'); ?>
     <? } ?>
 
     <div class="loader <?= app.page === 'app' ? 'is-visible' : '' ?>" id="appLoader" role="status" aria-live="assertive">

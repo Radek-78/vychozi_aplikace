@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.1.5 - 09.07.2026 11:29
+- Uklid: odstranen mrtvy kod (LC sync, storeDiffers_, renderStats, wizard debug, buildEmail, nedosazitelna gate vetev, DEBUG blok v syncu)
+- opravena diakritika v server/00_config.js (mojibake)
+- opraveny vokativy Barbora a Jaroslav
+- odstranena natvrdo zadana URL Drive slozky ve wizardu
+
 ## v3.1.4 - 09.07.2026 11:24
 - Changelog: modal Historie zmen se nyni generuje automaticky z CHANGELOG.md pri kazdem release (server/changelog.js uz needituj rucne)
 

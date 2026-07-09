@@ -29,12 +29,6 @@ const STORES_COL_MAP = {
   'Neděle zavřeno':   'sun_close',
 };
 
-const LOGISTICS_COL_MAP = {
-  'Číslo LC': 'code',
-  'Název LC': 'name',
-  'Zkratka':  'abbreviation',
-};
-
 /* ── Veřejné API ──────────────────────────────────────────────── */
 
 function apiRunSync() {
@@ -102,24 +96,15 @@ function syncStores_(ss, settings) {
 
   // Mapa: code → data (hlavní list je autoritativní zdroj dat)
   const xlsxMap = new Map(mainRows.map((r) => [r.code, r]));
-  const tempCodes = new Set(tempRows.map((r) => r.code));
 
   // Filiálky jen na listu "Dočasné zavření" (nejsou v hlavním listu)
   tempRows.forEach((r) => { if (!xlsxMap.has(r.code)) xlsxMap.set(r.code, r); });
 
   const currentRecords = dbGetAll_(SHEETS.STORES);
 
-  // DEBUG – odstraň po diagnostice
-  const _dbSample = currentRecords.slice(0, 3).map((r) => ({ code: r.code, typeOf: typeof r.code, active: r.active }));
-  const _xlsxKeys = Array.from(xlsxMap.keys()).slice(0, 3);
-  Logger.log('DB sample: ' + JSON.stringify(_dbSample));
-  Logger.log('xlsx keys sample: ' + JSON.stringify(_xlsxKeys));
-  Logger.log('match test: ' + (currentRecords.length ? xlsxMap.has(String(currentRecords[0].code)) : 'n/a'));
-
   const CHANGES_LIMIT = 50;
   const stats = { added: 0, updated: 0, deactivated: 0, reactivated: 0, unchanged: 0, errors: [],
-                  changes: { added: [], updated: [], deactivated: [], reactivated: [] },
-                  _debug: { dbSample: _dbSample, xlsxKeys: _xlsxKeys } };
+                  changes: { added: [], updated: [], deactivated: [], reactivated: [] } };
   const now = nowIso_();
   const newRecords = [];
 
@@ -185,69 +170,6 @@ function syncStores_(ss, settings) {
   return stats;
 }
 
-function syncLogistics_(ss, settings) {
-  const sheetName = settings.syncLogisticsSheet || 'LC';
-  const sheet = ss.getSheetByName(sheetName);
-  if (!sheet) {
-    return { added: 0, updated: 0, deactivated: 0, reactivated: 0, unchanged: 0,
-             errors: ['List "' + sheetName + '" nebyl v souboru nalezen.'] };
-  }
-
-  const xlsxRows = parseSheetRows_(sheet, LOGISTICS_COL_MAP);
-  const xlsxMap = new Map(xlsxRows.map((r) => [r.abbreviation.toUpperCase(), r]));
-
-  const currentRecords = dbGetAll_(SHEETS.LOGISTICS);
-  const stats = { added: 0, updated: 0, deactivated: 0, reactivated: 0, unchanged: 0, errors: [] };
-  const now = nowIso_();
-  const newRecords = [];
-
-  currentRecords.forEach((existing) => {
-    const key = String(existing.abbreviation || '').toUpperCase();
-    if (!xlsxMap.has(key)) {
-      if (existing.active === true) {
-        newRecords.push(Object.assign({}, existing, { active: false, updated_at: now }));
-        stats.deactivated++;
-      } else {
-        newRecords.push(existing);
-        stats.unchanged++;
-      }
-    } else {
-      const xlsxRow = xlsxMap.get(key);
-      const patch = { code: String(xlsxRow.code || '').trim(), name: String(xlsxRow.name || '').trim(),
-                      abbreviation: key, active: true, synced_at: now, updated_at: now };
-      const changed = String(existing.code) !== patch.code || existing.name !== patch.name;
-      const wasInactive = existing.active !== true;
-      if (changed || wasInactive) {
-        newRecords.push(Object.assign({}, existing, patch));
-        if (wasInactive) stats.reactivated++;
-        else stats.updated++;
-      } else {
-        newRecords.push(existing);
-        stats.unchanged++;
-      }
-      xlsxMap.delete(key);
-    }
-  });
-
-  xlsxMap.forEach((xlsxRow, key) => {
-    newRecords.push({
-      id: uuid_(),
-      code: String(xlsxRow.code || '').trim(),
-      name: String(xlsxRow.name || '').trim(),
-      abbreviation: key,
-      active: true,
-      synced_at: now,
-      created_at: now,
-      created_by: currentEmail_() || 'sync',
-      updated_at: now,
-    });
-    stats.added++;
-  });
-
-  dbBatchReplace_(SHEETS.LOGISTICS, newRecords);
-  return stats;
-}
-
 /* ── Pomocné funkce ───────────────────────────────────────────── */
 
 const HOUR_FIELDS_ = [
@@ -286,10 +208,6 @@ const STORE_FIELD_LABELS = {
   sat_open: 'So otevřeno', sat_close: 'So zavřeno',
   sun_open: 'Ne otevřeno', sun_close: 'Ne zavřeno',
 };
-
-function storeDiffers_(existing, patch) {
-  return STORE_DIFF_FIELDS.some((f) => String(existing[f] || '') !== String(patch[f] || ''));
-}
 
 function storeChangedFields_(existing, patch) {
   const result = [];

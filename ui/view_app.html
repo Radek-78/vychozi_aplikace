@@ -372,10 +372,6 @@
                   <input name="syncTempClosedPrefix" type="text" placeholder="Dočasné zavření">
                 </label>
               </div>
-              <label>
-                <span>Název listu — logistická centra</span>
-                <input name="syncLogisticsSheet" type="text" placeholder="LC">
-              </label>
               <div class="form-actions">
                 <button class="button button-secondary write-only" type="submit" id="saveSyncSettingsButton"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-check"></use></svg>Uložit konfiguraci</button>
               </div>
@@ -687,7 +683,7 @@ _sfState: {},
         'Adam':'Adame','Aleš':'Aleši','Alexandr':'Alexandře',
         'Bohumil':'Bohumile','David':'Davide','Daniel':'Danieli',
         'Filip':'Filipe','František':'Františku',
-        'Jakub':'Jakube','Jan':'Jane','Jaroslav':'Jaroslav',
+        'Jakub':'Jakube','Jan':'Jane','Jaroslav':'Jaroslave',
         'Jiří':'Jiří','Josef':'Josefe','Karel':'Karle',
         'Ladislav':'Ladislave','Lukáš':'Lukáši','Marek':'Marku',
         'Martin':'Martine','Michal':'Michale','Milan':'Milane',
@@ -698,7 +694,7 @@ _sfState: {},
         'Vojtěch':'Vojtěchu','Zdeněk':'Zdeňku','Patrik':'Patriku',
         'Dominik':'Dominiku','Luboš':'Luboši','Radoslav':'Radoslave',
         'Alena':'Aleno','Andrea':'Andreo','Anna':'Anno',
-        'Barbora':'Barbaro','Dana':'Dano','Denisa':'Deniso',
+        'Barbora':'Barboro','Dana':'Dano','Denisa':'Deniso',
         'Eva':'Evo','Hana':'Hano','Helena':'Heleno',
         'Ivana':'Ivano','Jana':'Jano','Julie':'Julie',
         'Karolína':'Karolíno','Kateřina':'Kateřino','Klára':'Kláro',
@@ -1383,18 +1379,6 @@ _sfState: {},
         .catch(() => Ui.openModal(document.querySelector('#changelogModal')));
     },
 
-    renderStats(stats) {
-      document.querySelector('#statusGrid').innerHTML = stats.map((item) => `
-        <div class="status-card" data-tone="${Ui.escape(item.tone || 'neutral')}">
-          <span class="status-icon"><svg width="18" height="18" viewBox="0 0 24 24"><use href="#i-${Ui.escape(item.icon || 'info')}"></use></svg></span>
-          <div>
-            <span>${Ui.escape(item.label)}</span>
-            <strong>${Ui.escape(item.label === 'Role' ? this.roleLabel(item.value) : item.value)}</strong>
-          </div>
-        </div>
-      `).join('');
-    },
-
     loadUsers() {
       const cached = this.users.length > 0;
       if (cached) this.renderUsers();
@@ -1491,9 +1475,6 @@ _sfState: {},
       const form    = document.querySelector('#userForm');
 
       const stripDia = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '');
-      const buildEmail = (first, last) =>
-        stripDia(first).toLowerCase().replace(/\s+/g, '') + '.' +
-        stripDia(last).toLowerCase().replace(/\s+/g, '') + '@lidl.cz';
       let _lastAutoEmail = '';
       const syncEmail = () => {
         const f = form.elements.firstName.value.trim();
@@ -2754,7 +2735,6 @@ _sfState: {},
       form.elements.syncFolderUrl.value = s.syncFolderUrl || '';
       form.elements.syncStoresSheet.value = s.syncStoresSheet || '';
       form.elements.syncTempClosedPrefix.value = s.syncTempClosedPrefix || '';
-      form.elements.syncLogisticsSheet.value = s.syncLogisticsSheet || '';
       if (s.lastSyncAt || s.lastSyncResult) {
         this.renderSyncResult(s.lastSyncAt, s.lastSyncResult, false);
       } else {
@@ -2770,7 +2750,6 @@ _sfState: {},
         syncFolderUrl: form.elements.syncFolderUrl.value,
         syncStoresSheet: form.elements.syncStoresSheet.value,
         syncTempClosedPrefix: form.elements.syncTempClosedPrefix.value,
-        syncLogisticsSheet: form.elements.syncLogisticsSheet.value,
       }, { silent: true, busy: 'Ukládám konfiguraci…' })
         .then(() => { Ui.setButtonLoading(button, false); Ui.toast('Konfigurace uložena.'); })
         .catch((e) => { Ui.setButtonLoading(button, false); Ui.toast(e.message, 'error'); });
@@ -2897,17 +2876,11 @@ _sfState: {},
           </div>
           <div class="sync-result-body">
             ${result.fileName ? `<p style="font-size:12px;color:var(--muted);margin:0">Soubor: <strong>${esc(result.fileName)}</strong></p>` : ''}
-            ${result.stores && result.stores._debug ? `<details style="font-size:11px;font-family:monospace;background:#f5f5f5;padding:8px;border-radius:4px;margin-bottom:8px"><summary style="cursor:pointer;color:var(--muted)">DEBUG — porovnání kódů</summary><pre style="margin:6px 0 0;white-space:pre-wrap">${esc(JSON.stringify(result.stores._debug, null, 2))}</pre></details>` : ''}
             <div class="sync-result-row">
               <span>Filiálky</span>
               <div class="sync-pills">${statPills(result.stores)}</div>
               ${errList(result.stores)}
               ${changeDetail(result.stores)}
-            </div>
-            <div class="sync-result-row">
-              <span>Logistická centra</span>
-              <div class="sync-pills">${statPills(result.logistics)}</div>
-              ${errList(result.logistics)}
             </div>
           </div>
         </div>`;

@@ -4,6 +4,7 @@
  * Nejnovejsi verze prvni.
  */
 const CHANGELOG = [
+  { version: 'v3.1.5', date: '9.7.2026', message: 'Uklid: odstranen mrtvy kod (LC sync, storeDiffers_, renderStats, wizard debug, buildEmail, nedosazitelna gate vetev, DEBUG blok v syncu); opravena diakritika v server/00_config.js (mojibake); opraveny vokativy Barbora a Jaroslav; odstranena natvrdo zadana URL Drive slozky ve wizardu' },
   { version: 'v3.1.4', date: '9.7.2026', message: 'Changelog: modal Historie zmen se nyni generuje automaticky z CHANGELOG.md pri kazdem release (server/changelog.js uz needituj rucne)' },
   { version: 'v3.1.3', date: '9.7.2026', message: 'Splashscreen: verze a datum vydani presunuty ke spodnimu okraji obrazovky, mensi pismo' },
   { version: 'v3.1.2', date: '9.7.2026', message: 'Bezpecnost: opravena kontrola opravneni pro zapis filialek a logistickych center (isAllowed_ nyni spravne overuje stores_write/logistics_write vc. lokace); zabezpeceny TOOLS_* nastroje proti spusteni jinym uzivatelem nez vlastnikem; smazan nechraneny debug endpoint apiDebugStores; wizardCheckFolderAccess odmita dotazy po dokoncene inicializaci; oprava chyby s nedefinovanou promennou ve wizardu; splashscreen nyni zobrazuje cislo verze a datum vydani' },

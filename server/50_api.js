@@ -51,7 +51,6 @@ function apiGetBootstrap() {
         syncFolderUrl: s.syncFolderUrl || '',
         syncStoresSheet: s.syncStoresSheet || 'VTBZL_export',
         syncTempClosedPrefix: s.syncTempClosedPrefix || 'Dočasné zavření',
-        syncLogisticsSheet: s.syncLogisticsSheet || 'LC',
         lastSyncAt: s.lastSyncAt || null,
         lastSyncResult: s.lastSyncResult ? JSON.parse(s.lastSyncResult) : null,
       };
@@ -467,7 +466,6 @@ function apiGetSyncSettings() {
       syncFolderUrl: s.syncFolderUrl || '',
       syncStoresSheet: s.syncStoresSheet || 'VTBZL_export',
       syncTempClosedPrefix: s.syncTempClosedPrefix || 'Dočasné zavření',
-      syncLogisticsSheet: s.syncLogisticsSheet || 'LC',
       lastSyncAt: s.lastSyncAt || null,
       lastSyncResult: s.lastSyncResult ? JSON.parse(s.lastSyncResult) : null,
     };
@@ -479,7 +477,6 @@ function apiSaveSyncSettings(payload) {
     settingsSet_('syncFolderUrl', String((payload && payload.syncFolderUrl) || '').trim());
     settingsSet_('syncStoresSheet', String((payload && payload.syncStoresSheet) || 'VTBZL_export').trim());
     settingsSet_('syncTempClosedPrefix', String((payload && payload.syncTempClosedPrefix) || 'Dočasné zavření').trim());
-    settingsSet_('syncLogisticsSheet', String((payload && payload.syncLogisticsSheet) || 'LC').trim());
     audit_('sync_settings_update', 'Aktualizace konfigurace synchronizace.');
     return null;
   });

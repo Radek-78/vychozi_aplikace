@@ -60,8 +60,8 @@
             <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> URL složky pro synchronizaci (volitelné)</span>
             <span id="wizFolderStatus" class="folder-status"></span>
           </span>
-          <input id="wizSyncFolderUrl" type="url" placeholder="https://drive.google.com/drive/folders/..." value="https://drive.google.com/drive/folders/1DX1VFWt5fAztALgMdVGJvLwQEjm-t83B">
-          <small class="form-hint">Složku spravuje T.Kuda — budoucí superadmin musí mít složku nasdílenu. Lze nastavit i později.</small>
+          <input id="wizSyncFolderUrl" type="url" placeholder="https://drive.google.com/drive/folders/...">
+          <small class="form-hint">Budoucí superadmin musí mít složku nasdílenu. Lze nastavit i později.</small>
         </label>
       </section>
 
@@ -324,20 +324,6 @@
       };
       input.addEventListener('input', restore, { once: true });
       setTimeout(restore, 3000);
-    },
-
-    runDebug() {
-      const dbg = document.querySelector('#wizDebug');
-      dbg.classList.remove('is-hidden');
-      dbg.textContent = 'Bootstrap email: "' + (this.info.email || '') + '" | volám server…';
-      google.script.run
-        .withSuccessHandler((res) => {
-          dbg.textContent = 'Bootstrap: "' + (this.info.email || '') + '" | active: "' + res.data.active + '" | effective: "' + res.data.effective + '"';
-        })
-        .withFailureHandler((err) => {
-          dbg.textContent = 'Bootstrap: "' + (this.info.email || '') + '" | chyba serveru: ' + err.message;
-        })
-        .wizardDebugSession();
     },
   };
 </script>
