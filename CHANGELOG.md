@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.15 - 09.07.2026 14:12
+- Design: widget Dnesni den (datum, tyden, svatek jako oddelene chipy) - opetovne pridano samostatne po incidentu v3.1.13, minikalendar zatim vynechan
+
 ## v3.1.14 - 09.07.2026 14:03
 - Revert: docasne vraceny widget Dnesni den a minikalendar docasnych zavreni na stav v3.1.12 (v3.1.13 zpusobil, ze se aplikace vubec nenacetla - prescina bude prozkoumana pred dalsim pokusem)
 

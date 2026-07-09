@@ -46,13 +46,14 @@
         <div class="hero-main-layout">
           <div class="hero-left">
             <p class="home-hero-greeting" id="heroGreeting"></p>
-            <div class="hero-meta-subtitle">
-              <span class="hero-meta-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;opacity:0.75;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <div class="today-widget">
+              <span class="today-chip">
+                <svg width="12" height="12" viewBox="0 0 24 24"><use href="#i-calendar"></use></svg>
                 <span id="heroDate"></span>
               </span>
-              <span class="hero-meta-separator">•</span>
-              <span class="hero-meta-item">
+              <span class="today-chip today-chip--week" id="heroWeekChip"></span>
+              <span class="today-chip today-chip--nameday">
+                <svg width="12" height="12" viewBox="0 0 24 24"><use href="#i-star"></use></svg>
                 <span>Svátek: <strong id="nameDayText">—</strong></span>
               </span>
             </div>
@@ -921,7 +922,8 @@ _sfState: {},
       const iso = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
       iso.setUTCDate(iso.getUTCDate() + 4 - (iso.getUTCDay() || 7));
       const week = Math.ceil(((iso - Date.UTC(iso.getUTCFullYear(), 0, 1)) / 86400000 + 1) / 7);
-      Ui.setText('#heroDate', days[d.getDay()] + ', ' + d.getDate() + '. ' + months[d.getMonth()] + ' ' + d.getFullYear() + ' · ' + week + '. týden');
+      Ui.setText('#heroDate', days[d.getDay()] + ', ' + d.getDate() + '. ' + months[d.getMonth()] + ' ' + d.getFullYear());
+      Ui.setText('#heroWeekChip', week + '. týden');
     },
 
     bindEvents() {

@@ -709,36 +709,41 @@
     color: rgba(255, 240, 0, 0.85);
   }
 
-  .hero-meta-subtitle {
+  .today-widget {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 8px;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 12px;
-    margin-top: 2px;
+    margin-top: 4px;
   }
 
-  .hero-meta-item {
-    display: flex;
+  .today-chip {
     align-items: center;
-    gap: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 20px;
+    color: rgba(255, 255, 255, 0.85);
+    display: inline-flex;
+    font-size: 12px;
+    gap: 6px;
+    padding: 4px 10px;
   }
 
-  .hero-meta-item svg {
+  .today-chip svg {
+    color: rgba(255, 255, 255, 0.7);
     flex-shrink: 0;
-    color: rgba(255, 255, 255, 0.75);
   }
 
-  .hero-meta-item strong {
+  .today-chip strong {
     color: #fff;
-    font-weight: 600;
+    font-weight: 700;
   }
 
-  .hero-meta-separator {
-    color: rgba(255, 255, 255, 0.25);
-    font-size: 11px;
-    user-select: none;
+  .today-chip--week {
+    background: rgba(255, 240, 0, 0.14);
+    border-color: rgba(255, 240, 0, 0.3);
+    color: var(--lidl-yellow);
+    font-weight: 700;
   }
 
   .hero-right {
