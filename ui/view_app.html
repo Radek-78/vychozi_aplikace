@@ -1379,9 +1379,9 @@ _sfState: {},
           <div class="wt-main">${d.icon} <span class="wt-temp">${d.temp}°C</span></div>
           <div class="wt-desc">${Ui.escape(d.label)}</div>
           <div class="wt-details">
-            <span>🌡️ Pocit ${d.feels}°C</span>
-            <span>💧 ${d.humidity}%</span>
-            <span>💨 ${d.wind} km/h</span>
+            <span>\uD83C\uDF21\uFE0F Pocit ${d.feels}°C</span>
+            <span>\uD83D\uDCA7 ${d.humidity}%</span>
+            <span>\uD83D\uDCA8 ${d.wind} km/h</span>
           </div>`;
         document.body.appendChild(tip);
         const r = chip.getBoundingClientRect();
@@ -1406,18 +1406,18 @@ _sfState: {},
 
     _wmoDesc(code) {
       const map = {
-        0: { label: 'Jasno', icon: '☀️' },
-        1: { label: 'Převážně jasno', icon: '🌤️' },
+        0: { label: 'Jasno', icon: '☀\uFE0F' },
+        1: { label: 'Převážně jasno', icon: '\uD83C\uDF24\uFE0F' },
         2: { label: 'Polojasno', icon: '⛅' },
-        3: { label: 'Zataženo', icon: '☁️' },
-        45: { label: 'Mlha', icon: '🌫️' }, 48: { label: 'Námraza', icon: '🌫️' },
-        51: { label: 'Slabé mrholení', icon: '🌦️' }, 53: { label: 'Mrholení', icon: '🌦️' }, 55: { label: 'Silné mrholení', icon: '🌧️' },
-        61: { label: 'Slabý déšť', icon: '🌧️' }, 63: { label: 'Déšť', icon: '🌧️' }, 65: { label: 'Silný déšť', icon: '🌧️' },
-        71: { label: 'Slabé sněžení', icon: '🌨️' }, 73: { label: 'Sněžení', icon: '❄️' }, 75: { label: 'Silné sněžení', icon: '❄️' },
-        80: { label: 'Přeháňky', icon: '🌦️' }, 81: { label: 'Přeháňky', icon: '🌧️' }, 82: { label: 'Silné přeháňky', icon: '⛈️' },
-        95: { label: 'Bouřka', icon: '⛈️' }, 96: { label: 'Bouřka s krupobitím', icon: '⛈️' }, 99: { label: 'Silná bouřka', icon: '⛈️' },
+        3: { label: 'Zataženo', icon: '☁\uFE0F' },
+        45: { label: 'Mlha', icon: '\uD83C\uDF2B\uFE0F' }, 48: { label: 'Námraza', icon: '\uD83C\uDF2B\uFE0F' },
+        51: { label: 'Slabé mrholení', icon: '\uD83C\uDF26\uFE0F' }, 53: { label: 'Mrholení', icon: '\uD83C\uDF26\uFE0F' }, 55: { label: 'Silné mrholení', icon: '\uD83C\uDF27\uFE0F' },
+        61: { label: 'Slabý déšť', icon: '\uD83C\uDF27\uFE0F' }, 63: { label: 'Déšť', icon: '\uD83C\uDF27\uFE0F' }, 65: { label: 'Silný déšť', icon: '\uD83C\uDF27\uFE0F' },
+        71: { label: 'Slabé sněžení', icon: '\uD83C\uDF28\uFE0F' }, 73: { label: 'Sněžení', icon: '❄\uFE0F' }, 75: { label: 'Silné sněžení', icon: '❄\uFE0F' },
+        80: { label: 'Přeháňky', icon: '\uD83C\uDF26\uFE0F' }, 81: { label: 'Přeháňky', icon: '\uD83C\uDF27\uFE0F' }, 82: { label: 'Silné přeháňky', icon: '⛈\uFE0F' },
+        95: { label: 'Bouřka', icon: '⛈\uFE0F' }, 96: { label: 'Bouřka s krupobitím', icon: '⛈\uFE0F' }, 99: { label: 'Silná bouřka', icon: '⛈\uFE0F' },
       };
-      return map[code] || { label: 'Proměnlivě', icon: '🌡️' };
+      return map[code] || { label: 'Proměnlivě', icon: '\uD83C\uDF21\uFE0F' };
     },
 
     initVisit() {

@@ -4,6 +4,7 @@
  * Nejnovejsi verze prvni.
  */
 const CHANGELOG = [
+  { version: 'v3.1.17', date: '9.7.2026', message: 'Oprava nacitani: emoji ikony pocasi prepsany na unicode escape sekvence (podezreni na rozdeleni znaku pri servirovani stranky GAS) - minikalendar docasnych zavreni ponechan' },
   { version: 'v3.1.16', date: '9.7.2026', message: 'Design: pridan mini kalendar docasne uzavrenych filialek na Domu (druhy krok po incidentu v3.1.13, samostatne od widgetu Dnesni den)' },
   { version: 'v3.1.15', date: '9.7.2026', message: 'Design: widget Dnesni den (datum, tyden, svatek jako oddelene chipy) - opetovne pridano samostatne po incidentu v3.1.13, minikalendar zatim vynechan' },
   { version: 'v3.1.14', date: '9.7.2026', message: 'Revert: docasne vraceny widget Dnesni den a minikalendar docasnych zavreni na stav v3.1.12 (v3.1.13 zpusobil, ze se aplikace vubec nenacetla - prescina bude prozkoumana pred dalsim pokusem)' },

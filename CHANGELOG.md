@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.17 - 09.07.2026 14:31
+- Oprava nacitani: emoji ikony pocasi prepsany na unicode escape sekvence (podezreni na rozdeleni znaku pri servirovani stranky GAS) - minikalendar docasnych zavreni ponechan
+
 ## v3.1.16 - 09.07.2026 14:16
 - Design: pridan mini kalendar docasne uzavrenych filialek na Domu (druhy krok po incidentu v3.1.13, samostatne od widgetu Dnesni den)
 
