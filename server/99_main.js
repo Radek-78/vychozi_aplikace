@@ -35,6 +35,7 @@ function doGet(e) {
     appSubtitle: settings.appSubtitle || CONFIG.defaultAppSubtitle,
     logoUrl: CONFIG.logoUrl,
     version: CONFIG.version,
+    releaseDate: CONFIG.releaseDate,
     user: null,
     subApp: subApp,
     execUrl: ScriptApp.getService().getUrl(),

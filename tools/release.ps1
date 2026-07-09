@@ -4,7 +4,7 @@
 
 .DESCRIPTION
   Provede cely release v jednom kroku:
-    1. zmeni cislo verze v server/00_config.js,
+    1. zmeni cislo verze a datum vydani v server/00_config.js (zobrazuje se i na splashscreenu),
     2. zapise zaznam s datem a casem do CHANGELOG.md,
     3. nahraje soubory do Apps Scriptu (clasp push),
     4. provede git commit, tag verze a push na GitHub.
@@ -27,13 +27,15 @@ if ($Version -notmatch '^v\d+\.\d+\.\d+$') {
   throw "Verze musi mit tvar vX.Y.Z (napriklad v2.1.0)."
 }
 
-# 1) Cislo verze ve footeru (CONFIG.version)
+# 1) Cislo verze a datum vydani (CONFIG.version / CONFIG.releaseDate) - zobrazuje se na splashscreenu
 $configPath = Join-Path $root 'server\00_config.js'
 $config = Get-Content $configPath -Raw
 if ($config -match [regex]::Escape("version: '$Version'")) {
   throw "Verze $Version uz je v konfiguraci nastavena - zvol vyssi cislo."
 }
+$releaseDate = Get-Date -Format 'd.M.yyyy'
 $config = $config -replace "version: 'v[^']*'", "version: '$Version'"
+$config = $config -replace "releaseDate: '[^']*'", "releaseDate: '$releaseDate'"
 Set-Content $configPath $config -NoNewline -Encoding UTF8
 
 # 2) Zaznam v changelogu s datem a casem

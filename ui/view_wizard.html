@@ -280,7 +280,7 @@
         })
         .catch((error) => {
           clearInterval(this._progressTimer);
-          steps.forEach((el) => { el.classList.remove('is-active'); el.classList.remove('is-done'); });
+          timerSteps.forEach((el) => { el.classList.remove('is-active'); el.classList.remove('is-done'); });
           this.goTo(3, 'back');
           Ui.toast(error.message, 'error');
         });

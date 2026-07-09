@@ -118,50 +118,39 @@ function isAllowed_(user, permissionKey, resourceLcCode) {
   const permSet = getRolePermissions_(user.role);
   const key = String(permissionKey).trim();
 
-  // 1. KROK: Kontrola systémových oprávnění z matice
-  if (key === 'USER') {
-    return true; // Přihlášený uživatel
-  }
-  if (key === 'ADMIN') {
+  // Celoplošná oprávnění — bez vazby na konkrétní lokaci
+  if (key === 'USER') return true;
+  if (key === 'ADMIN' || key === 'users_manage') {
     return permSet.users_manage === true || String(permSet.users_manage) === 'true';
   }
-  if (key === 'SUPERADMIN') {
+  if (key === 'SUPERADMIN' || key === 'settings_manage') {
     return permSet.settings_manage === true || String(permSet.settings_manage) === 'true';
   }
 
-  // Kontrola konkrétních oprávnění
+  // Oprávnění vázaná na datový rozsah (filiálky/LC) — nejdřív základní právo z matice role
+  let baseAllowed;
   if (key === 'stores_read') {
-    return permSet.stores_read === true || String(permSet.stores_read) === 'true';
-  }
-  if (key === 'stores_write') {
+    baseAllowed = permSet.stores_read === true || String(permSet.stores_read) === 'true';
+  } else if (key === 'stores_write') {
     const baseWrite = permSet.stores_write === true || String(permSet.stores_write) === 'true';
-    return baseWrite && user.permission === 'EDITOR';
-  }
-  if (key === 'logistics_read') {
-    return permSet.logistics_read === true || String(permSet.logistics_read) === 'true';
-  }
-  if (key === 'logistics_write') {
+    baseAllowed = baseWrite && user.permission === 'EDITOR';
+  } else if (key === 'logistics_read') {
+    baseAllowed = permSet.logistics_read === true || String(permSet.logistics_read) === 'true';
+  } else if (key === 'logistics_write') {
     const baseWrite = permSet.logistics_write === true || String(permSet.logistics_write) === 'true';
-    return baseWrite && user.permission === 'EDITOR';
+    baseAllowed = baseWrite && user.permission === 'EDITOR';
+  } else {
+    return false; // neznámý klíč oprávnění
   }
-  if (key === 'users_manage') {
-    return permSet.users_manage === true || String(permSet.users_manage) === 'true';
-  }
-  if (key === 'settings_manage') {
-    return permSet.settings_manage === true || String(permSet.settings_manage) === 'true';
-  }
+  if (!baseAllowed) return false;
 
-  // 2. KROK: Kontrola lokace (Row-Level Security)
+  // Kontrola lokace (Row-Level Security) — jen když je zadán konkrétní záznam
+  if (!resourceLcCode) return true;
   const userLoc = String(user.location || 'HQ').trim().toUpperCase();
-  if (userLoc === 'HQ' || userLoc === 'CENTRÁLA') {
+  if (userLoc === 'HQ' || userLoc === 'CENTRÁLA' || userLoc === 'CENTRAL') {
     return true; // Uživatel z centrály vidí vše
   }
-
-  if (resourceLcCode) {
-    return userLoc === String(resourceLcCode).trim().toUpperCase();
-  }
-
-  return true;
+  return userLoc === String(resourceLcCode).trim().toUpperCase();
 }
 
 /**

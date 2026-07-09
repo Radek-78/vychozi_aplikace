@@ -73,6 +73,11 @@ Silná kritéria úspěchu umožňují samostatnou práci. Slabá kritéria („
 - Zeptej se sám sebe: „Schválil by to zkušený programátor?"
 - Spusť testy, zkontroluj logy, předveď správnost.
 
+**Formát odevzdání — vždy uveď:**
+- Co bylo změněno (soubory + stručný důvod)
+- Co změněno nebylo a proč
+- Případná rizika nebo known issues
+
 ---
 
 ## 5. Styl komunikace
@@ -148,21 +153,62 @@ Silná kritéria úspěchu umožňují samostatnou práci. Slabá kritéria („
 
 ---
 
-**Tato pravidla fungují, pokud:** v diffech je méně zbytečných změn, méně přepsání kvůli přílišné složitosti a upřesňující otázky přicházejí před implementací, ne po chybách.
+## 12. Zahájení nového projektu
+**Nejdřív kontext, pak kód.**
+
+Před prvním úkolem v neznámém projektu vždy:
+1. Přečti lokální `CLAUDE.md` (pokud existuje) — má přednost před globálními pravidly.
+2. Projdi strukturu složek a klíčové soubory (entry pointy, konfigurace, hlavní moduly).
+3. Identifikuj tech stack, konvence pojmenování a styl kódu.
+4. Pokud existuje `tasks/lessons.md`, přečti ho.
+5. Shrň co jsi zjistil — jednou větou tech stack, jednou větou hlavní konvence.
+
+Nezačínaj implementovat, dokud nemáš tento kontext. Pokud projekt nemá žádnou dokumentaci, zeptej se na minimální kontext před zahájením.
+
 ---
 
-## 12. Projektová specifika (Výchozí aplikace 2.0)
+## 13. Správa kontextu a dlouhé session
+**Kontext okna je omezený — hospodař s ním vědomě.**
 
-**Release postup — vždy přes skript, nikdy ručně.**
+- Pokud se blíží limit kontextu, upozorni **dříve** než začne degradovat kvalita odpovědí.
+- Na začátku dlouhé nebo vícedenní session stručně shrň, co bylo v předchozí části dohodnuto — nepoléhej na implicitní paměť.
+- Při ztrátě kontextu raději přiznej nejistotu a zeptej se, než aby sis doplňoval fakta z domněnek.
 
-Každé vydání změn (do Apps Scriptu i na GitHub) se provádí výhradně:
+---
 
-```powershell
-.\tools\release.ps1 -Version vX.Y.Z -Message "Popis změny; další položka"
+## 14. Stupnice nejistoty — kdy blokovat, kdy pokračovat
+**Ne každá nejistota vyžaduje otázku. Rozlišuj závažnost.**
+
+| Situace | Akce |
+|---|---|
+| Změna může poškodit data nebo rozbít jiné části | **Zastav se, zeptej se** |
+| Více interpretací zadání se stejnou váhou | **Předlož možnosti, počkej na volbu** |
+| Estetické / stylistické rozhodnutí | **Pokračuj, zmiň volbu** |
+| Triviální syntaktická volba | **Rozhodni tiše** |
+
+Cíl: minimalizovat zbytečné dotazy, ale nikdy tiše riskovat destruktivní akci.
+
+---
+
+## 15. Ukládání ověřených postupů
+**Dobré řešení použij znovu. Nezačínaj od nuly.**
+
+Po každém úspěšně dokončeném netriviálním úkolu se zeptej:
+„Má smysl tento postup uložit jako obecný vzor pro budoucí projekty?"
+
+Pokud uživatel řekne ano (nebo zavolá `/user:save-pattern`), zapiš vzor do `~/.claude/patterns.md`:
+
+```
+## [název postupu]
+**Kontext:** kdy a kde použít
+**Postup:** konkrétní kroky
+**Ověřeno:** [datum, název projektu]
 ```
 
-Skript zvedne verzi v `server/00_config.js` (footer), zapíše datum a čas do `CHANGELOG.md`, provede `clasp push` a `git commit` + tag + push (https://github.com/Radek-78/vychozi_aplikace).
+- Neukládej triviální věci (jednořádkové opravy, překlepy).
+- Ukládej postupy, které by příště ušetřily 10+ minut přemýšlení.
+- Na začátku nového projektu projdi `~/.claude/patterns.md` — může být relevantní.
 
-- Číslo verze v `server/00_config.js` ani `CHANGELOG.md` neměň ručně mimo release.
-- Během vývoje je `npx clasp push` na test deployment v pořádku — release se dělá až u hotové změny.
-- Nové tabulky DB = rozšíření `DB_SCHEMA` v `server/20_db.js` (schéma doplní `dbEnsureSchema_`, nic se nemaže).
+---
+
+**Tato pravidla fungují, pokud:** v diffech je méně zbytečných změn, méně přepsání kvůli přílišné složitosti a upřesňující otázky přicházejí před implementací, ne po chybách.

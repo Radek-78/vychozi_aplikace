@@ -44,9 +44,10 @@ function wizardInfo_() {
   };
 }
 
-/** Ověří, zda má aktuální uživatel přístup ke složce zadané URL. */
+/** Ověří, zda má aktuální uživatel přístup ke složce zadané URL. Jen před inicializací. */
 function wizardCheckFolderAccess(url) {
   try {
+    if (isSetupDone_()) return ok_({ ok: false, message: 'Aplikace už je inicializována.' });
     const folderId = extractFolderIdFromUrl_(url || '');
     if (!folderId) return ok_({ ok: false, message: 'Nepodařilo se rozpoznat ID složky z URL.' });
     const folder = DriveApp.getFolderById(folderId);

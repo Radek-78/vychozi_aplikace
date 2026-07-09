@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.1.2 - 09.07.2026 11:12
+- Bezpecnost: opravena kontrola opravneni pro zapis filialek a logistickych center (isAllowed_ nyni spravne overuje stores_write/logistics_write vc. lokace)
+- zabezpeceny TOOLS_* nastroje proti spusteni jinym uzivatelem nez vlastnikem
+- smazan nechraneny debug endpoint apiDebugStores
+- wizardCheckFolderAccess odmita dotazy po dokoncene inicializaci
+- oprava chyby s nedefinovanou promennou ve wizardu
+- splashscreen nyni zobrazuje cislo verze a datum vydani
+
 ## v3.1.1 - 16.06.2026 13:26
 - Auto-email od prvniho znaku jmena
 - odstraneno tlacitko z jmena

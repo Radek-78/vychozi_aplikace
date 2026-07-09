@@ -1,10 +1,19 @@
 /**
  * Jednorázové nástroje pro vlastníka — spouštějí se ručně z editoru
- * Apps Script (Spustit ▸ vybraná funkce). Nejsou volány z aplikace.
+ * Apps Script (Spustit ▸ vybraná funkce). Nejsou volány z aplikace,
+ * ale jako funkce bez koncového "_" jsou technicky volatelné i přes
+ * google.script.run — proto každá ověřuje, že ji spouští vlastník skriptu.
  */
+function assertToolsOwner_() {
+  const activeEmail = currentEmail_();
+  if (!activeEmail || activeEmail !== Session.getEffectiveUser().getEmail()) {
+    throw new Error('Tento nástroj smí spustit pouze vlastník skriptu.');
+  }
+}
 
 /** Vypíše, kde v Drive skript leží a kam by se vytvořila databáze. */
 function TOOLS_kdeJeSkript() {
+  assertToolsOwner_();
   const folder = scriptFolder_();
   console.log(folder
     ? 'Skript leží ve složce: ' + folder.getName() + ' (' + folder.getUrl() + ')'
@@ -18,6 +27,7 @@ function TOOLS_kdeJeSkript() {
  * v Drive UI hlásí chybu. Před spuštěním vlož ID složky (z její URL).
  */
 function TOOLS_presunSkriptDoSlozky() {
+  assertToolsOwner_();
   const FOLDER_ID = 'SEM_VLOZ_ID_SLOZKY';
   if (FOLDER_ID === 'SEM_VLOZ_ID_SLOZKY') {
     throw new Error('Nejdřív do konstanty FOLDER_ID vlož ID cílové složky.');
@@ -33,12 +43,14 @@ function TOOLS_presunSkriptDoSlozky() {
  * v Drive zůstává — případné smazání proveď ručně.
  */
 function TOOLS_resetInicializace() {
+  assertToolsOwner_();
   PropertiesService.getScriptProperties().deleteAllProperties();
   console.log('Inicializace zrušena. Další otevření aplikace spustí průvodce.');
 }
 
 /** Smaže celou server-side cache (CacheService). Použij po přímých úpravách v DB sheetu. */
 function TOOLS_clearCache() {
+  assertToolsOwner_();
   CacheService.getScriptCache().removeAll(
     Object.values(SHEETS).map((t) => 'tbl:' + t).concat(['tbl:_settings'])
   );
@@ -47,6 +59,7 @@ function TOOLS_clearCache() {
 
 /** Rychlý test DB vrstvy: vlož, načti, uprav a smaž testovací záznam v _settings. */
 function TOOLS_testDb() {
+  assertToolsOwner_();
   const key = '_test_' + uuid_();
   settingsSet_(key, 'hodnota1');
   let value = settingsAll_()[key];
