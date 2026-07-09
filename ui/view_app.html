@@ -360,7 +360,12 @@
             <form class="form" id="syncSettingsForm">
               <label>
                 <span>URL složky v Google Drive</span>
-                <input name="syncFolderUrl" type="text" placeholder="https://drive.google.com/drive/folders/...">
+                <div class="input-with-action">
+                  <input name="syncFolderUrl" type="text" placeholder="https://drive.google.com/drive/folders/...">
+                  <button class="icon-action input-action-btn" type="button" id="openSyncFolderBtn" title="Otevřít složku v Drive" aria-label="Otevřít složku v Drive">
+                    <svg width="14" height="14" viewBox="0 0 24 24"><use href="#i-folder"></use></svg>
+                  </button>
+                </div>
               </label>
               <div class="form-row-2">
                 <label>
@@ -997,6 +1002,11 @@ _sfState: {},
         e.preventDefault(); this.saveSyncSettings(e.submitter);
       });
       document.querySelector('#runSyncButton').addEventListener('click', () => this.runSync());
+      document.querySelector('#openSyncFolderBtn').addEventListener('click', () => {
+        const url = document.querySelector('#syncSettingsForm').elements.syncFolderUrl.value.trim();
+        if (!url) { Ui.toast('Nejprve zadejte URL složky.', 'error'); return; }
+        window.open(url, '_blank', 'noopener');
+      });
 
       document.querySelectorAll('[data-go-section]').forEach((btn) => {
         btn.addEventListener('click', () => this.showSection(btn.dataset.goSection));

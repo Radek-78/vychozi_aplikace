@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.7 - 09.07.2026 12:01
+- Synchronizace: podpora i souboru Google Sheets ve slozce (drive nejen .xlsx)
+- ikona slozky vedle URL pole otevre slozku v Drive
+
 ## v3.1.6 - 09.07.2026 11:50
 - Vykon: kontrola schematu (dbEnsureApps_) cachovana per-beh i pres CacheService misto behu pri kazde kontrole opravneni
 - apiSaveApp posouva poradi ostatnich aplikaci jednim davkovym zapisem misto N jednotlivych
