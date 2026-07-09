@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.4 - 09.07.2026 11:24
+- Changelog: modal Historie zmen se nyni generuje automaticky z CHANGELOG.md pri kazdem release (server/changelog.js uz needituj rucne)
+
 ## v3.1.3 - 09.07.2026 11:17
 - Splashscreen: verze a datum vydani presunuty ke spodnimu okraji obrazovky, mensi pismo
 

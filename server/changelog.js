@@ -1,21 +1,65 @@
 /**
- * Historie verzí aplikace — zobrazuje se v modalu po kliknutí na číslo verze.
- * Nejnovější verze první.
+ * Historie verzi aplikace -- zobrazuje se v modalu po kliknuti na cislo verze.
+ * Generovano automaticky skriptem tools/release.ps1 z CHANGELOG.md -- needituj rucne.
+ * Nejnovejsi verze prvni.
  */
 const CHANGELOG = [
-  { version: 'v2.1.26', date: '10.6.2026', message: 'Wizard: sync krok skrytý při prázdné URL; odstraněn výchozí podtitul.' },
-  { version: 'v2.1.25', date: '10.6.2026', message: 'Wizard: Dokončuji vždy poslední krok, sync krok jen při potvrzeném přístupu ke složce.' },
-  { version: 'v2.1.24', date: '10.6.2026', message: 'Wizard: krok načítání filiálek v progress panelu.' },
-  { version: 'v2.1.23', date: '10.6.2026', message: 'Wizard: oprava pořadí volání — tlačítko Pokračovat aktivní až po načtení emailu.' },
-  { version: 'v2.1.21', date: '10.6.2026', message: 'Wizard: automatická kontrola přístupu ke složce, první sync po inicializaci; Home: varování o chybějící konfiguraci.' },
-  { version: 'v2.1.20', date: '10.6.2026', message: 'Wizard: předvyplněná URL sync složky.' },
-  { version: 'v2.1.16', date: '10.6.2026', message: 'DB: oprava čtení časových hodnot (Date → H:mm string).' },
-  { version: 'v2.1.13', date: '10.6.2026', message: 'Sync: oprava formátu časových buněk z xlsx.' },
-  { version: 'v2.1.11', date: '10.6.2026', message: 'Sync: odstraněna synchronizace LC z xlsx — LC se zakládají ručně.' },
-  { version: 'v2.1.9',  date: '10.6.2026', message: 'Sync: konverze .xlsx na dočasný Google Sheet před čtením.' },
-  { version: 'v2.1.7',  date: '10.6.2026', message: 'Síť filiálek a log. center: CRUD, synchronizace z xlsx.' },
+  { version: 'v3.1.4', date: '9.7.2026', message: 'Changelog: modal Historie zmen se nyni generuje automaticky z CHANGELOG.md pri kazdem release (server/changelog.js uz needituj rucne)' },
+  { version: 'v3.1.3', date: '9.7.2026', message: 'Splashscreen: verze a datum vydani presunuty ke spodnimu okraji obrazovky, mensi pismo' },
+  { version: 'v3.1.2', date: '9.7.2026', message: 'Bezpecnost: opravena kontrola opravneni pro zapis filialek a logistickych center (isAllowed_ nyni spravne overuje stores_write/logistics_write vc. lokace); zabezpeceny TOOLS_* nastroje proti spusteni jinym uzivatelem nez vlastnikem; smazan nechraneny debug endpoint apiDebugStores; wizardCheckFolderAccess odmita dotazy po dokoncene inicializaci; oprava chyby s nedefinovanou promennou ve wizardu; splashscreen nyni zobrazuje cislo verze a datum vydani' },
+  { version: 'v3.1.1', date: '16.6.2026', message: 'Auto-email od prvniho znaku jmena; odstraneno tlacitko z jmena' },
+  { version: 'v3.1.0', date: '16.6.2026', message: 'Auto-email se aktualizuje prubeznie pri psani; doplnen scope script.external_request pro Workspace search' },
+  { version: 'v3.0.9', date: '16.6.2026', message: 'Auto-email jen kdyz je pole prazdne; search chyba se zobrazi v dropdownu misto skryti widgetu' },
+  { version: 'v3.0.8', date: '16.6.2026', message: 'Workspace search: People API pres UrlFetchApp REST misto advanced service - funguje bez admin prav' },
+  { version: 'v3.0.7', date: '16.6.2026', message: 'Workspace search: AdminDirectory nahrazen People API (directory.readonly) - funguje bez admin prav' },
+  { version: 'v3.0.6', date: '16.6.2026', message: 'Email se generuje live pri psani jmena; workspace search se ticho skryje pri chybe opravneni' },
+  { version: 'v3.0.5', date: '16.6.2026', message: 'Modal uzivatele: vyhledavani zamestnance v Google Workspace + tlacitko pro sestaveni emailu z jmena' },
+  { version: 'v3.0.4', date: '16.6.2026', message: 'Section bar: sjednoceni leveho odsazeni nadpisu na 16px ve vsech zaloskach' },
+  { version: 'v3.0.3', date: '16.6.2026', message: 'Modal filiálky: kalendar ma vzdy 6 radku; mezery mezi kartami s informacemi' },
+  { version: 'v3.0.2', date: '16.6.2026', message: 'Sloupec Nazev: zobrazeni aktivniho rozsahu datumu vlevo od badge Docasne uzavrena' },
+  { version: 'v3.0.1', date: '16.6.2026', message: 'Badge Docasne uzavrena zarovnana k pravemu okraji sloupce Nazev' },
+  { version: 'v3.0.0', date: '16.6.2026', message: 'Sync: temporarily_closed se bere z temp_closed_ranges, nikoli z xlsx; badge Docasne uzavrena zarovnana vpravo v bunce' },
+  { version: 'v2.9.9', date: '16.6.2026', message: 'Badge filtr: vyber VT zvyrazni nadrazene LC; vyber RM zvyrazni nadrazene VT a LC' },
+  { version: 'v2.9.8', date: '16.6.2026', message: 'Oprava filtru Docasne uzavrena; modal se nezavre pri prvnim otevreni; logo spinneru se nacte z APP_BOOTSTRAP' },
+  { version: 'v2.9.7', date: '16.6.2026', message: 'isTempClosedNow_ helper na serveru; spinner v modal okne ma logo Lidl' },
+  { version: 'v2.9.6', date: '16.6.2026', message: 'Store modal: mezery mezi kartami, padding footeru, pravy okraj kalendare, saving overlay uvnitr dialogu' },
+  { version: 'v2.9.5', date: '16.6.2026', message: 'Store modal: oprava paddingu; ulozeni bez busy overlay; badge se aktualizuje okamzite po ulozeni' },
+  { version: 'v2.9.4', date: '16.6.2026', message: 'Sync: dbEnsureSchema_ pred ctenim DB - sync obnovi chybejici list stores automaticky' },
+  { version: 'v2.9.3', date: '16.6.2026', message: 'Store modal: sirsi okno (860px); telefon prodejny na radku s cislem a nazvem filialky' },
+  { version: 'v2.9.2', date: '16.6.2026', message: 'Filialky: oprava timezone v kalendari; sync nezamazava oteviraci doby z DB; sirka sloupce Akce; redesign store modalu s kartami a ikonami' },
+  { version: 'v2.9.1', date: '16.6.2026', message: 'Filialky: oprava poradi sloupce temp_closed_ranges v DB schematu; oprava JS chyby v openStoreModal; hlavicka Akce v poslednim sloupci; tlacitka ve spolecnem sloupci' },
+  { version: 'v2.9.0', date: '16.6.2026', message: 'Filialky: modal s detailem filialky a kalendarem pro rucni spravou docasneho uzavreni; badge docasne uzavrena rizena rozsahy dat misto sync pole' },
+  { version: 'v2.8.6', date: '16.6.2026', message: 'Popup filtru sloupce: ciselne hodnoty razeny numericky, ne abecedne' },
+  { version: 'v2.8.5', date: '16.6.2026', message: 'Popup filtru sloupce: tlacitko pro okamzite smazani aktivniho filtru v hlavicce okna' },
+  { version: 'v2.8.4', date: '16.6.2026', message: 'Filialky: badge Docasne uzavrena neotevira popup filtru; misto scrollbaru vzdy vyhrazeno' },
+  { version: 'v2.8.3', date: '16.6.2026', message: 'Popup razeni/filtru sloupce: ikona krizku pro zavreni v pravem hornim rohu hlavicky' },
+  { version: 'v2.8.2', date: '16.6.2026', message: 'Filialky: filtr docasne uzavrene filialky v hlavicce sloupce Nazev' },
+  { version: 'v2.8.1', date: '16.6.2026', message: 'Filialky: fixni sirka sloupcu tabulky; odstraneni zlute oramovani vyhledavaciho pole v seznamu RM' },
+  { version: 'v2.8.0', date: '16.6.2026', message: 'Filtry LC/VT/RM v zalozce Filialky: badge system, kaskadove filtrovani, rozevírací seznam RM s vyhledavanim a tlacitkem pro reset; snizeni vysky radku v tabulce' },
+  { version: 'v2.7.0', date: '16.6.2026', message: 'Filialky: testovaci zalozka s badge filtry LC/VT/RM; pevna vyska section-bar 58px; portal dropdown pro RM' },
+  { version: 'v2.6.0', date: '16.6.2026', message: 'Tabulky: mensi okraje sekci, modra hlavicka s bilym textem, nizsi radky, bily oddelovac sloupcu v hlavicce; Filialky: prejmenovani RM, novy sloupec VT (area_manager)' },
+  { version: 'v2.5.5', date: '15.6.2026', message: 'Weather tooltip: bile pozadi s tmavym textem misto modre - lepsi kontrast vuci hero liste' },
+  { version: 'v2.5.4', date: '15.6.2026', message: 'Tlacitko Vymazat cache v Nastaveni; po primych upravach v DB sheetu se zmeny projevi okamzite' },
+  { version: 'v2.5.3', date: '15.6.2026', message: 'Poradi aplikaci: vlozeni na konkretni pozici posune ostatni aplikace o 1 nahoru' },
+  { version: 'v2.5.2', date: '15.6.2026', message: 'Odstraneni modre uvodni obrazovky pri mazani a ukladani aplikaci - vsechna Ui.call volani maji silent:true' },
+  { version: 'v2.5.1', date: '15.6.2026', message: 'Oprava zavreni modal okna pri oznacovani textu - modal se zavre jen kdyz mousedown i click probehl na pozadi' },
+  { version: 'v2.5.0', date: '15.6.2026', message: 'Moduly v priprave: ikona hodin misto ikony aplikace, srafovani na barvene lište, pulzovani, vyraznejsi badge' },
+  { version: 'v2.4.9', date: '15.6.2026', message: 'Spinner: odstranena druha cara, zpomaleni na 2s, pruzny efekt (rychle vyskoci, drzi se, rychle sklapne)' },
+  { version: 'v2.4.8', date: '15.6.2026', message: 'Vylepseny spinner: dychajici oblouk + protismerny tenky oblouk + glow efekt' },
+  { version: 'v2.4.7', date: '15.6.2026', message: 'Oprava spinneru pri synchronizaci - pozadi zustava dashboard misto modre obrazovky' },
+  { version: 'v2.4.6', date: '15.6.2026', message: 'Spinner pri synchronizaci; vetsi modal okno pro prehled zmen filialek (modal-large)' },
+  { version: 'v2.4.5', date: '15.6.2026', message: 'Tlacitka (zvonecek, sync, obnovit) presunuta do radku pocasi zarovnana vpravo; sync upozorneni otevre modal se seznamem zmen pro vsechny uzivatele; po zavreni modalu zvonecek zmizi' },
+  { version: 'v2.4.4', date: '15.6.2026', message: 'Spinner na tlacitku syncu na dashboardu; ikona upozorneni po dokonceni syncu se zmenami; oprava falesnych zmen hodin (normalizace formatu h:mm)' },
+  { version: 'v2.4.3', date: '15.6.2026', message: 'Tlacitko sync filialek na dashboardu (admin only); po dokonceni zobrazi toast se souhrnem zmen a obnovi home data' },
+  { version: 'v2.4.2', date: '15.6.2026', message: 'Oprava porovnani kodov filialek pri synchronizaci (typovy nesoulad string/number); Detail zmen ve vysledku syncu; Docasny debug vystup pro diagnostiku' },
+  { version: 'v2.4.1', date: '12.6.2026', message: 'Optimalizace layoutu modalniho okna pro upravu aplikaci bez nutnosti scrollovani' },
+  { version: 'v2.4.0', date: '12.6.2026', message: 'Uzivatelska opravneni k subaplikacim (allowed_apps override); Checklist subaplikaci v detailu uzivatele' },
+  { version: 'v2.3.1', date: '12.6.2026', message: 'Oprava chyby pri prvotnim nacteni role_permissions a robustnejsi klientsky init' },
+  { version: 'v2.3.0', date: '12.6.2026', message: 'Vizualni matice roli a opravneni v administraci; Subaplikace routovani a opravneni' },
+  { version: 'v2.2.0', date: '12.6.2026', message: 'Implementace RBAC; opravneni Ctenar/Editor; lokalni datove zabezpeceni LC/HQ' },
 ];
 
 function apiGetChangelog() {
   return guard_(ROLES.USER, () => CHANGELOG);
 }
+
