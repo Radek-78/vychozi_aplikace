@@ -87,6 +87,30 @@
         <p class="modules-empty is-hidden" id="modulesEmpty">Zatím žádné aplikace. Přidejte je v sekci <strong>Administrace → Aplikace</strong>.</p>
       </div>
 
+      <section class="panel cal-widget-panel">
+        <div class="panel-header"><div><h2>Dočasně uzavřené filiálky</h2></div></div>
+        <div class="cal-widget-body">
+          <div class="cal-widget-cal">
+            <div class="cal-widget-nav">
+              <button class="icon-action" type="button" id="calWidgetPrev" aria-label="Předchozí měsíc">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <span class="cal-widget-label" id="calWidgetLabel"></span>
+              <button class="icon-action" type="button" id="calWidgetNext" aria-label="Další měsíc">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+            <div class="cal-widget-head">
+              <span>Po</span><span>Út</span><span>St</span><span>Čt</span><span>Pá</span><span>So</span><span>Ne</span>
+            </div>
+            <div class="cal-widget-grid" id="calWidgetGrid"></div>
+          </div>
+          <div class="cal-widget-side" id="calWidgetList">
+            <p class="cal-widget-empty">Klikni na den s uzavřenými filiálkami pro detail.</p>
+          </div>
+        </div>
+      </section>
+
     </section>
 
     <section class="page is-hidden" data-page-section="users">
@@ -1105,6 +1129,7 @@ _sfState: {},
       this.renderNameDay();
       this.loadWeather();
       this.loadModules();
+      this.loadClosuresCalendar();
     },
 
     renderHome(data) {
@@ -1202,6 +1227,89 @@ _sfState: {},
       const key = d.getDate() + '.' + (d.getMonth() + 1);
       const name = NAME_DAYS[key] || '';
       Ui.setText('#nameDayText', name || '—');
+    },
+
+    /* ── Kalendář dočasných zavření (Domů) ────────── */
+
+    _calYear: 0,
+    _calMonth: 0,
+    _calBound: false,
+
+    loadClosuresCalendar() {
+      const now = new Date();
+      if (!this._calYear) { this._calYear = now.getFullYear(); this._calMonth = now.getMonth(); }
+      if (!this._calBound) {
+        this._calBound = true;
+        document.querySelector('#calWidgetPrev').addEventListener('click', () => {
+          if (this._calMonth === 0) { this._calMonth = 11; this._calYear--; } else { this._calMonth--; }
+          this.renderClosuresCalendar();
+        });
+        document.querySelector('#calWidgetNext').addEventListener('click', () => {
+          if (this._calMonth === 11) { this._calMonth = 0; this._calYear++; } else { this._calMonth++; }
+          this.renderClosuresCalendar();
+        });
+      }
+      if (this.stores.length) { this.renderClosuresCalendar(); return; }
+      Ui.call('apiListStores', null, { silent: true })
+        .then((stores) => { this.stores = stores || []; this.renderClosuresCalendar(); })
+        .catch(() => {});
+    },
+
+    _closuresForDate(d) {
+      return (this.stores || []).filter((s) => {
+        if (s.active === false) return false;
+        const raw = s.temp_closed_ranges;
+        if (!raw) return false;
+        let ranges;
+        try { ranges = JSON.parse(raw); } catch { return false; }
+        if (!Array.isArray(ranges)) return false;
+        return ranges.some((r) => {
+          const from = this._parseLocalDate(r.from);
+          const to = this._parseLocalDate(r.to);
+          return d >= from && d <= to;
+        });
+      });
+    },
+
+    renderClosuresCalendar() {
+      const year = this._calYear, month = this._calMonth;
+      const MONTHS = ['Leden','Únor','Březen','Duben','Květen','Červen','Červenec','Srpen','Září','Říjen','Listopad','Prosinec'];
+      Ui.setText('#calWidgetLabel', MONTHS[month] + ' ' + year);
+
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      const firstDay = new Date(year, month, 1);
+      let startOffset = firstDay.getDay() - 1; if (startOffset < 0) startOffset = 6;
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      let html = '';
+      for (let i = 0; i < startOffset; i++) html += '<span></span>';
+      for (let day = 1; day <= daysInMonth; day++) {
+        const d = new Date(year, month, day);
+        const closed = this._closuresForDate(d);
+        const isToday = d.getTime() === today.getTime();
+        const cls = closed.length ? ' has-closures' : '';
+        html += `<button class="cal-widget-day${cls}${isToday ? ' is-today' : ''}" type="button" data-date="${this._toIsoDate(d)}">${day}${closed.length ? '<i></i>' : ''}</button>`;
+      }
+      const trailing = 42 - startOffset - daysInMonth;
+      for (let i = 0; i < trailing; i++) html += '<span></span>';
+      document.querySelector('#calWidgetGrid').innerHTML = html;
+
+      document.querySelectorAll('#calWidgetGrid .cal-widget-day').forEach((btn) => {
+        btn.addEventListener('click', () => this._showClosuresForDay(btn.dataset.date));
+      });
+    },
+
+    _showClosuresForDay(iso) {
+      const d = this._parseLocalDate(iso);
+      const closed = this._closuresForDate(d);
+      const list = document.querySelector('#calWidgetList');
+      const fmt = d.getDate() + '. ' + (d.getMonth() + 1) + '. ' + d.getFullYear();
+      if (!closed.length) {
+        list.innerHTML = `<div class="cal-widget-list-title">${fmt}</div><p class="cal-widget-empty">Žádné uzavřené filiálky.</p>`;
+        return;
+      }
+      list.innerHTML = `<div class="cal-widget-list-title">${fmt} — ${closed.length} uzavřeno</div>` +
+        closed.map((s) => `<div class="cal-widget-list-item"><strong>${Ui.escape(s.code)}</strong> ${Ui.escape(s.name)}</div>`).join('');
     },
 
     loadWeather() {

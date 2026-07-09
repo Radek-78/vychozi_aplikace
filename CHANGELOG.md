@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.16 - 09.07.2026 14:16
+- Design: pridan mini kalendar docasne uzavrenych filialek na Domu (druhy krok po incidentu v3.1.13, samostatne od widgetu Dnesni den)
+
 ## v3.1.15 - 09.07.2026 14:12
 - Design: widget Dnesni den (datum, tyden, svatek jako oddelene chipy) - opetovne pridano samostatne po incidentu v3.1.13, minikalendar zatim vynechan
 
