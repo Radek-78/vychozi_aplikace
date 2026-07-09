@@ -4,6 +4,7 @@
  * Nejnovejsi verze prvni.
  */
 const CHANGELOG = [
+  { version: 'v3.1.19', date: '9.7.2026', message: 'Design: sjednoceny styl chipu v hero banneru - chipy Dnesni den prevzaly tvar a pismo chipu pocasi (zaobleni 6px misto pilulky)' },
   { version: 'v3.1.18', date: '9.7.2026', message: 'Revert na stav v3.1.15: minikalendar docasnych zavreni odstranen (opakovane rozbiji nacitani aplikace, pricina zatim nenalezena - emoji teorie vyloucena), widget Dnesni den ponechan' },
   { version: 'v3.1.17', date: '9.7.2026', message: 'Oprava nacitani: emoji ikony pocasi prepsany na unicode escape sekvence (podezreni na rozdeleni znaku pri servirovani stranky GAS) - minikalendar docasnych zavreni ponechan' },
   { version: 'v3.1.16', date: '9.7.2026', message: 'Design: pridan mini kalendar docasne uzavrenych filialek na Domu (druhy krok po incidentu v3.1.13, samostatne od widgetu Dnesni den)' },

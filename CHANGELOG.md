@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.19 - 09.07.2026 15:01
+- Design: sjednoceny styl chipu v hero banneru - chipy Dnesni den prevzaly tvar a pismo chipu pocasi (zaobleni 6px misto pilulky)
+
 ## v3.1.18 - 09.07.2026 14:36
 - Revert na stav v3.1.15: minikalendar docasnych zavreni odstranen (opakovane rozbiji nacitani aplikace, pricina zatim nenalezena - emoji teorie vyloucena), widget Dnesni den ponechan
 
