@@ -4,6 +4,7 @@
  * Nejnovejsi verze prvni.
  */
 const CHANGELOG = [
+  { version: 'v3.1.9', date: '9.7.2026', message: 'Pridana TOOLS_authorizeAutoSync - bezpecna (jen cte) funkce pro vynuceni autorizace noveho scope script.scriptapp, nutne pred zapnutim automaticke synchronizace' },
   { version: 'v3.1.8', date: '9.7.2026', message: 'Synchronizace: automaticka kontrola slozky jednou denne (nastavitelna hodina) - pri zmene souboru (jine ID nebo novejsi uprava) spusti sync automaticky; pridan OAuth scope script.scriptapp pro sprava triggeru' },
   { version: 'v3.1.7', date: '9.7.2026', message: 'Synchronizace: podpora i souboru Google Sheets ve slozce (drive nejen .xlsx); ikona slozky vedle URL pole otevre slozku v Drive' },
   { version: 'v3.1.6', date: '9.7.2026', message: 'Vykon: kontrola schematu (dbEnsureApps_) cachovana per-beh i pres CacheService misto behu pri kazde kontrole opravneni; apiSaveApp posouva poradi ostatnich aplikaci jednim davkovym zapisem misto N jednotlivych; audit log (bootstrap/home/apiGetAudit) cte jen poslednich N radku primo ze sheetu misto cele tabulky' },

@@ -72,3 +72,16 @@ function TOOLS_testDb() {
   sheet.deleteRow(keys.findIndex((row) => row[0] === key) + 2);
   console.log('DB vrstva funguje (insert, read, update, delete).');
 }
+
+/**
+ * Vynutí žádost o autorizaci OAuth scope script.scriptapp (přidán ve v3.1.8
+ * pro automatickou synchronizaci). Nemění žádná data — jen čte seznam
+ * triggerů, čímž GAS donutí zobrazit dialog s novým oprávněním. Spusť
+ * jednou ručně z editoru; teprve pak lze v UI zapnout přepínač
+ * "Automatická synchronizace" (bez toho hlásí chybějící autorizaci).
+ */
+function TOOLS_authorizeAutoSync() {
+  assertToolsOwner_();
+  const count = ScriptApp.getProjectTriggers().length;
+  console.log('Autorizace scriptapp OK. Aktuální počet triggerů v projektu: ' + count);
+}

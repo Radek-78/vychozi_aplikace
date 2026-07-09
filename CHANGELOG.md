@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.9 - 09.07.2026 12:31
+- Pridana TOOLS_authorizeAutoSync - bezpecna (jen cte) funkce pro vynuceni autorizace noveho scope script.scriptapp, nutne pred zapnutim automaticke synchronizace
+
 ## v3.1.8 - 09.07.2026 12:24
 - Synchronizace: automaticka kontrola slozky jednou denne (nastavitelna hodina) - pri zmene souboru (jine ID nebo novejsi uprava) spusti sync automaticky
 - pridan OAuth scope script.scriptapp pro sprava triggeru
