@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.10 - 09.07.2026 13:07
+- Design: vyraznejsi cisla ve statistikach hero banneru (vetsi font, tucnejsi)
+- prazdny stav modulu ma jemny tecovany ramecek misto holeho textu
+
 ## v3.1.9 - 09.07.2026 12:31
 - Pridana TOOLS_authorizeAutoSync - bezpecna (jen cte) funkce pro vynuceni autorizace noveho scope script.scriptapp, nutne pred zapnutim automaticke synchronizace
 
