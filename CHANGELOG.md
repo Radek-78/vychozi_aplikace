@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.1.6 - 09.07.2026 11:50
+- Vykon: kontrola schematu (dbEnsureApps_) cachovana per-beh i pres CacheService misto behu pri kazde kontrole opravneni
+- apiSaveApp posouva poradi ostatnich aplikaci jednim davkovym zapisem misto N jednotlivych
+- audit log (bootstrap/home/apiGetAudit) cte jen poslednich N radku primo ze sheetu misto cele tabulky
+
 ## v3.1.5 - 09.07.2026 11:29
 - Uklid: odstranen mrtvy kod (LC sync, storeDiffers_, renderStats, wizard debug, buildEmail, nedosazitelna gate vetev, DEBUG blok v syncu)
 - opravena diakritika v server/00_config.js (mojibake)

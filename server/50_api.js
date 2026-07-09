@@ -45,7 +45,7 @@ function apiGetBootstrap() {
       data.users = dbGetAll_(SHEETS.USERS);
       data.stores = dbGetAll_(SHEETS.STORES);
       data.logistics = dbGetAll_(SHEETS.LOGISTICS);
-      data.audit = dbGetAll_(SHEETS.AUDIT).slice(-100).reverse();
+      data.audit = dbReadTail_(SHEETS.AUDIT, 100).reverse();
       data.settings = s;
       data.syncSettings = {
         syncFolderUrl: s.syncFolderUrl || '',
@@ -109,7 +109,7 @@ function apiGetHome() {
       storesActive: stores.filter((st) => st.active === true).length,
       storesTempClosed: stores.filter((st) => st.active === true && isTempClosedNow_(st)).length,
       logisticsActive: logistics.filter((lc) => lc.active === true).length,
-      lastChange: isAdmin ? (dbGetAll_(SHEETS.AUDIT).slice(-1)[0] || null) : null,
+      lastChange: isAdmin ? (dbReadTail_(SHEETS.AUDIT, 1)[0] || null) : null,
     };
   });
 }
@@ -484,12 +484,31 @@ function apiSaveSyncSettings(payload) {
 
 /* ── Apps ───────────────────────────────────────────────────────── */
 
-/** Doplní list apps včetně nově přidaných sloupců (levná kontrola posledního záhlaví). */
+/**
+ * Doplní list apps včetně nově přidaných sloupců (levná kontrola posledního záhlaví).
+ *
+ * isAllowed_ volá tuto funkci (přes getRolePermissions_) při každé kontrole oprávnění,
+ * takže jeden request může jinak spustit kontrolu schématu 2-3×. dbSchemaEnsuredThisRun_
+ * to omezí na jednou za běh skriptu, CacheService pak i napříč requesty.
+ */
+let dbSchemaEnsuredThisRun_ = false;
+const SCHEMA_CHECK_CACHE_KEY_ = 'schema:checked';
+const SCHEMA_CHECK_TTL_ = 1800; // sekund
+
 function dbEnsureApps_() {
+  if (dbSchemaEnsuredThisRun_) return;
+
+  try {
+    if (CacheService.getScriptCache().get(SCHEMA_CHECK_CACHE_KEY_)) {
+      dbSchemaEnsuredThisRun_ = true;
+      return;
+    }
+  } catch (e) { /* cache je jen optimalizace */ }
+
   const ss = dbSpreadsheet_();
   const sheetsToCheck = [SHEETS.APPS, SHEETS.USERS, SHEETS.ROLE_PERMISSIONS];
   let needsMigration = false;
-  
+
   for (const name of sheetsToCheck) {
     const sheet = ss.getSheetByName(name);
     const headers = DB_SCHEMA[name];
@@ -498,11 +517,14 @@ function dbEnsureApps_() {
       break;
     }
   }
-  
+
   if (needsMigration) {
     dbEnsureSchema_(ss);
     sheetsToCheck.forEach(name => dbCacheInvalidate_(name));
   }
+
+  dbSchemaEnsuredThisRun_ = true;
+  try { CacheService.getScriptCache().put(SCHEMA_CHECK_CACHE_KEY_, '1', SCHEMA_CHECK_TTL_); } catch (e) { /* cache je jen optimalizace */ }
 }
 
 /** Převede text na slug do URL: malá písmena bez diakritiky, pomlčky. */
@@ -555,13 +577,24 @@ function apiSaveApp(payload) {
       ? dbUpdate_(SHEETS.APPS, existing.id, data)
       : dbInsert_(SHEETS.APPS, data);
 
-    // Posun ostatních aplikací pokud bylo zadáno konkrétní pořadí
+    // Posun ostatních aplikací pokud bylo zadáno konkrétní pořadí — jedním dávkovým zápisem
+    // místo N jednotlivých dbUpdate_ (každý čte a zamyká celý list zvlášť).
     const targetOrder = data.order;
     if (targetOrder > 0) {
-      apps
-        .filter((a) => a.active !== false && (!existing || a.id !== existing.id))
-        .filter((a) => (Number(a.order) || 0) >= targetOrder)
-        .forEach((a) => dbUpdate_(SHEETS.APPS, a.id, { order: (Number(a.order) || 0) + 1 }));
+      const shiftIds = new Set(
+        apps
+          .filter((a) => a.active !== false && (!existing || a.id !== existing.id))
+          .filter((a) => (Number(a.order) || 0) >= targetOrder)
+          .map((a) => a.id)
+      );
+      if (shiftIds.size > 0) {
+        const now = nowIso_();
+        const freshApps = dbGetAll_(SHEETS.APPS); // po dbInsert_/dbUpdate_ výše, včetně právě uloženého záznamu
+        const updated = freshApps.map((a) =>
+          shiftIds.has(a.id) ? Object.assign({}, a, { order: (Number(a.order) || 0) + 1, updated_at: now }) : a
+        );
+        dbBatchReplace_(SHEETS.APPS, updated);
+      }
     }
 
     audit_('app_' + (existing ? 'update' : 'create'), name);
@@ -580,7 +613,7 @@ function apiDeleteApp(id) {
 }
 
 function apiGetAudit() {
-  return guard_(ROLES.ADMIN, () => dbGetAll_(SHEETS.AUDIT).slice(-100).reverse());
+  return guard_(ROLES.ADMIN, () => dbReadTail_(SHEETS.AUDIT, 100).reverse());
 }
 
 /* ── Role Permissions ───────────────────────────────────────────── */

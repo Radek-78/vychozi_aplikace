@@ -108,6 +108,14 @@ function dbGetAll_(table) {
   return rows;
 }
 
+function dbRowsToRecords_(headers, values) {
+  return values.map((row) => {
+    const record = {};
+    headers.forEach((header, i) => { record[header] = dbDeserialize_(row[i]); });
+    return record;
+  });
+}
+
 /** Skutečné čtení tabulky ze spreadsheetu (bez cache). */
 function dbReadAll_(table) {
   const sheet = dbSheet_(table);
@@ -115,11 +123,22 @@ function dbReadAll_(table) {
   const lastRow = sheet.getLastRow();
   if (lastRow < 2) return [];
   const values = sheet.getRange(2, 1, lastRow - 1, headers.length).getValues();
-  return values.map((row) => {
-    const record = {};
-    headers.forEach((header, i) => { record[header] = dbDeserialize_(row[i]); });
-    return record;
-  });
+  return dbRowsToRecords_(headers, values);
+}
+
+/**
+ * Vrátí posledních n záznamů tabulky přímým čtením konce listu (bez cache).
+ * Pro rostoucí logy (audit) — vyhne se čtení a cachování celé tabulky jen kvůli
+ * pár posledním řádkům.
+ */
+function dbReadTail_(table, n) {
+  const sheet = dbSheet_(table);
+  const headers = DB_SCHEMA[table];
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) return [];
+  const startRow = Math.max(2, lastRow - n + 1);
+  const values = sheet.getRange(startRow, 1, lastRow - startRow + 1, headers.length).getValues();
+  return dbRowsToRecords_(headers, values);
 }
 
 function dbDeserialize_(val) {
