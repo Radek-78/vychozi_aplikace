@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.14 - 09.07.2026 14:03
+- Revert: docasne vraceny widget Dnesni den a minikalendar docasnych zavreni na stav v3.1.12 (v3.1.13 zpusobil, ze se aplikace vubec nenacetla - prescina bude prozkoumana pred dalsim pokusem)
+
 ## v3.1.13 - 09.07.2026 13:34
 - Design: widget Dnesni den (datum, tyden, svatek jako oddelene chipy misto jednoho radku)
 - novy panel na Domu s mini kalendarem docasne uzavrenych filialek - klik na den zobrazi seznam
