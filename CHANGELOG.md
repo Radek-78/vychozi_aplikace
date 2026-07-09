@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.18 - 09.07.2026 14:36
+- Revert na stav v3.1.15: minikalendar docasnych zavreni odstranen (opakovane rozbiji nacitani aplikace, pricina zatim nenalezena - emoji teorie vyloucena), widget Dnesni den ponechan
+
 ## v3.1.17 - 09.07.2026 14:31
 - Oprava nacitani: emoji ikony pocasi prepsany na unicode escape sekvence (podezreni na rozdeleni znaku pri servirovani stranky GAS) - minikalendar docasnych zavreni ponechan
 
