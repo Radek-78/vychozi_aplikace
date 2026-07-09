@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.3 - 09.07.2026 11:17
+- Splashscreen: verze a datum vydani presunuty ke spodnimu okraji obrazovky, mensi pismo
+
 ## v3.1.2 - 09.07.2026 11:12
 - Bezpecnost: opravena kontrola opravneni pro zapis filialek a logistickych center (isAllowed_ nyni spravne overuje stores_write/logistics_write vc. lokace)
 - zabezpeceny TOOLS_* nastroje proti spusteni jinym uzivatelem nez vlastnikem
