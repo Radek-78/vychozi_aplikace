@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.8 - 09.07.2026 12:24
+- Synchronizace: automaticka kontrola slozky jednou denne (nastavitelna hodina) - pri zmene souboru (jine ID nebo novejsi uprava) spusti sync automaticky
+- pridan OAuth scope script.scriptapp pro sprava triggeru
+
 ## v3.1.7 - 09.07.2026 12:01
 - Synchronizace: podpora i souboru Google Sheets ve slozce (drive nejen .xlsx)
 - ikona slozky vedle URL pole otevre slozku v Drive

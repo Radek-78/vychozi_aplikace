@@ -51,6 +51,8 @@ function apiGetBootstrap() {
         syncFolderUrl: s.syncFolderUrl || '',
         syncStoresSheet: s.syncStoresSheet || 'VTBZL_export',
         syncTempClosedPrefix: s.syncTempClosedPrefix || 'Dočasné zavření',
+        autoSyncEnabled: s.autoSyncEnabled === true || s.autoSyncEnabled === 'true',
+        autoSyncHour: s.autoSyncHour !== undefined && s.autoSyncHour !== '' ? Number(s.autoSyncHour) : 3,
         lastSyncAt: s.lastSyncAt || null,
         lastSyncResult: s.lastSyncResult ? JSON.parse(s.lastSyncResult) : null,
       };
@@ -466,10 +468,22 @@ function apiGetSyncSettings() {
       syncFolderUrl: s.syncFolderUrl || '',
       syncStoresSheet: s.syncStoresSheet || 'VTBZL_export',
       syncTempClosedPrefix: s.syncTempClosedPrefix || 'Dočasné zavření',
+      autoSyncEnabled: s.autoSyncEnabled === true || s.autoSyncEnabled === 'true',
+      autoSyncHour: s.autoSyncHour !== undefined && s.autoSyncHour !== '' ? Number(s.autoSyncHour) : 3,
       lastSyncAt: s.lastSyncAt || null,
       lastSyncResult: s.lastSyncResult ? JSON.parse(s.lastSyncResult) : null,
     };
   });
+}
+
+/** Smaže případné existující triggery automatické synchronizace a založí nový, je-li zapnutá. */
+function applyAutoSyncTrigger_(enabled, hour) {
+  ScriptApp.getProjectTriggers().forEach((t) => {
+    if (t.getHandlerFunction() === 'autoSyncCheck_') ScriptApp.deleteTrigger(t);
+  });
+  if (enabled) {
+    ScriptApp.newTrigger('autoSyncCheck_').timeBased().everyDays(1).atHour(hour).create();
+  }
 }
 
 function apiSaveSyncSettings(payload) {
@@ -477,7 +491,15 @@ function apiSaveSyncSettings(payload) {
     settingsSet_('syncFolderUrl', String((payload && payload.syncFolderUrl) || '').trim());
     settingsSet_('syncStoresSheet', String((payload && payload.syncStoresSheet) || 'VTBZL_export').trim());
     settingsSet_('syncTempClosedPrefix', String((payload && payload.syncTempClosedPrefix) || 'Dočasné zavření').trim());
-    audit_('sync_settings_update', 'Aktualizace konfigurace synchronizace.');
+
+    const autoSyncEnabled = !!(payload && payload.autoSyncEnabled);
+    const autoSyncHour = Math.min(23, Math.max(0, parseInt(payload && payload.autoSyncHour, 10) || 0));
+    applyAutoSyncTrigger_(autoSyncEnabled, autoSyncHour);
+    settingsSet_('autoSyncEnabled', autoSyncEnabled);
+    settingsSet_('autoSyncHour', autoSyncHour);
+
+    audit_('sync_settings_update', 'Aktualizace konfigurace synchronizace.'
+      + (autoSyncEnabled ? ' Auto. sync zapnuta, kontrola cca v ' + autoSyncHour + ':00.' : ' Auto. sync vypnuta.'));
     return null;
   });
 }

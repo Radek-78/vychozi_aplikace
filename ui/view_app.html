@@ -377,6 +377,29 @@
                   <input name="syncTempClosedPrefix" type="text" placeholder="Dočasné zavření">
                 </label>
               </div>
+              <div class="form-row-2">
+                <label>
+                  <span>Automatická synchronizace</span>
+                  <select name="autoSyncEnabled">
+                    <option value="false">Vypnuto</option>
+                    <option value="true">Zapnuto</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Čas kontroly</span>
+                  <select name="autoSyncHour">
+                    <option value="0">0:00</option><option value="1">1:00</option><option value="2">2:00</option>
+                    <option value="3">3:00</option><option value="4">4:00</option><option value="5">5:00</option>
+                    <option value="6">6:00</option><option value="7">7:00</option><option value="8">8:00</option>
+                    <option value="9">9:00</option><option value="10">10:00</option><option value="11">11:00</option>
+                    <option value="12">12:00</option><option value="13">13:00</option><option value="14">14:00</option>
+                    <option value="15">15:00</option><option value="16">16:00</option><option value="17">17:00</option>
+                    <option value="18">18:00</option><option value="19">19:00</option><option value="20">20:00</option>
+                    <option value="21">21:00</option><option value="22">22:00</option><option value="23">23:00</option>
+                  </select>
+                </label>
+              </div>
+              <small class="form-hint">Jednou denně ve zvolenou hodinu se zkontroluje, zda se soubor ve složce změnil (jiný soubor nebo novější úprava) — pokud ano, synchronizace proběhne automaticky.</small>
               <div class="form-actions">
                 <button class="button button-secondary write-only" type="submit" id="saveSyncSettingsButton"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-check"></use></svg>Uložit konfiguraci</button>
               </div>
@@ -2745,6 +2768,8 @@ _sfState: {},
       form.elements.syncFolderUrl.value = s.syncFolderUrl || '';
       form.elements.syncStoresSheet.value = s.syncStoresSheet || '';
       form.elements.syncTempClosedPrefix.value = s.syncTempClosedPrefix || '';
+      form.elements.autoSyncEnabled.value = s.autoSyncEnabled ? 'true' : 'false';
+      form.elements.autoSyncHour.value = String(s.autoSyncHour ?? 3);
       if (s.lastSyncAt || s.lastSyncResult) {
         this.renderSyncResult(s.lastSyncAt, s.lastSyncResult, false);
       } else {
@@ -2760,6 +2785,8 @@ _sfState: {},
         syncFolderUrl: form.elements.syncFolderUrl.value,
         syncStoresSheet: form.elements.syncStoresSheet.value,
         syncTempClosedPrefix: form.elements.syncTempClosedPrefix.value,
+        autoSyncEnabled: form.elements.autoSyncEnabled.value === 'true',
+        autoSyncHour: parseInt(form.elements.autoSyncHour.value, 10),
       }, { silent: true, busy: 'Ukládám konfiguraci…' })
         .then(() => { Ui.setButtonLoading(button, false); Ui.toast('Konfigurace uložena.'); })
         .catch((e) => { Ui.setButtonLoading(button, false); Ui.toast(e.message, 'error'); });

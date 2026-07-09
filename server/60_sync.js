@@ -34,43 +34,7 @@ const STORES_COL_MAP = {
 
 function apiRunSync() {
   return guard_(ROLES.ADMIN, () => {
-    const settings = settingsAll_();
-    const folderUrl = settings.syncFolderUrl || '';
-    if (!folderUrl) throw new Error('Není nastavena URL složky. Vyplňte ji v sekci Synchronizace.');
-
-    const folderId = extractFolderIdFromUrl_(folderUrl);
-    if (!folderId) throw new Error('Z URL složky se nepodařilo rozpoznat ID. Použijte URL ve tvaru https://drive.google.com/drive/folders/...');
-
-    const xlsxFile = findSyncFileInFolder_(folderId);
-    if (!xlsxFile) throw new Error('Ve složce nebyl nalezen žádný soubor .xlsx ani Google Sheets.');
-
-    let ss;
-    let tempSheetId = null;
-    try {
-      const scriptFolder = scriptFolder_();
-      const copyMeta = { name: '__sync_tmp__', mimeType: 'application/vnd.google-apps.spreadsheet' };
-      if (scriptFolder) copyMeta.parents = [scriptFolder.getId()];
-      const copy = Drive.Files.copy(copyMeta, xlsxFile.getId());
-      tempSheetId = copy.id;
-      ss = SpreadsheetApp.openById(tempSheetId);
-    } catch (e) {
-      throw new Error('Nepodařilo se převést soubor "' + xlsxFile.getName() + '" na Google Sheet: ' + e.message);
-    }
-
-    let result;
-    try {
-      result = {
-        fileName: xlsxFile.getName(),
-        stores: syncStores_(ss, settings),
-      };
-    } finally {
-      if (tempSheetId) {
-        try { Drive.Files.remove(tempSheetId); } catch (_) {}
-      }
-    }
-
-    settingsSet_('lastSyncAt', nowIso_());
-    settingsSet_('lastSyncResult', JSON.stringify(result));
+    const result = runSyncCore_(settingsAll_());
     audit_('sync_run',
       'Soubor: ' + result.fileName +
       ' | Filiálky: +' + result.stores.added + ' u' + result.stores.updated + ' d' + result.stores.deactivated
@@ -79,7 +43,82 @@ function apiRunSync() {
   });
 }
 
+/**
+ * Cíl časovaného triggeru (viz apiSaveSyncSettings) — jednou denně zkontroluje,
+ * zda se ve složce od poslední kontroly změnil soubor (jiné ID nebo novější úprava),
+ * a pokud ano, spustí stejnou synchronizaci jako ruční tlačítko.
+ */
+function autoSyncCheck_() {
+  try {
+    const settings = settingsAll_();
+    if (settings.autoSyncEnabled !== true && settings.autoSyncEnabled !== 'true') return;
+
+    const folderUrl = settings.syncFolderUrl || '';
+    if (!folderUrl) return;
+    const folderId = extractFolderIdFromUrl_(folderUrl);
+    if (!folderId) return;
+
+    const file = findSyncFileInFolder_(folderId);
+    if (!file) return;
+
+    const signature = file.getId() + ':' + file.getLastUpdated().getTime();
+    if (signature === settings.syncLastFileSignature) return; // soubor beze změny
+
+    const result = runSyncCore_(settings);
+    audit_('sync_run_auto',
+      'Soubor: ' + result.fileName +
+      ' | Filiálky: +' + result.stores.added + ' u' + result.stores.updated + ' d' + result.stores.deactivated
+    );
+  } catch (e) {
+    console.error('Automatická synchronizace selhala: ' + e);
+    audit_('sync_run_auto_error', String(e && e.message ? e.message : e));
+    throw e; // necháme GAS poslat vlastníkovi e-mail o selhání triggeru
+  }
+}
+
 /* ── Interní funkce ───────────────────────────────────────────── */
+
+/** Jádro synchronizace sdílené ruční (apiRunSync) i automatickou (autoSyncCheck_) cestou. */
+function runSyncCore_(settings) {
+  const folderUrl = settings.syncFolderUrl || '';
+  if (!folderUrl) throw new Error('Není nastavena URL složky. Vyplňte ji v sekci Synchronizace.');
+
+  const folderId = extractFolderIdFromUrl_(folderUrl);
+  if (!folderId) throw new Error('Z URL složky se nepodařilo rozpoznat ID. Použijte URL ve tvaru https://drive.google.com/drive/folders/...');
+
+  const xlsxFile = findSyncFileInFolder_(folderId);
+  if (!xlsxFile) throw new Error('Ve složce nebyl nalezen žádný soubor .xlsx ani Google Sheets.');
+
+  let ss;
+  let tempSheetId = null;
+  try {
+    const scriptFolder = scriptFolder_();
+    const copyMeta = { name: '__sync_tmp__', mimeType: 'application/vnd.google-apps.spreadsheet' };
+    if (scriptFolder) copyMeta.parents = [scriptFolder.getId()];
+    const copy = Drive.Files.copy(copyMeta, xlsxFile.getId());
+    tempSheetId = copy.id;
+    ss = SpreadsheetApp.openById(tempSheetId);
+  } catch (e) {
+    throw new Error('Nepodařilo se převést soubor "' + xlsxFile.getName() + '" na Google Sheet: ' + e.message);
+  }
+
+  let result;
+  try {
+    result = {
+      fileName: xlsxFile.getName(),
+      stores: syncStores_(ss, settings),
+    };
+  } finally {
+    if (tempSheetId) {
+      try { Drive.Files.remove(tempSheetId); } catch (_) {}
+    }
+  }
+
+  settingsSet_('lastSyncAt', nowIso_());
+  settingsSet_('lastSyncResult', JSON.stringify(result));
+  settingsSet_('syncLastFileSignature', xlsxFile.getId() + ':' + xlsxFile.getLastUpdated().getTime());
+  return result;
+}
 
 function syncStores_(ss, settings) {
   dbEnsureSchema_(dbSpreadsheet_());
