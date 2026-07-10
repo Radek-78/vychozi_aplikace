@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.27 - 10.07.2026 13:29
+- Uzivatele a LC: po kliknuti na Ulozit se dialog hned zavre a je videt spinner s popisem prubehu (stejna oprava jako u Aplikaci)
+- pri chybe se dialog znovu otevre s rozepsanymi hodnotami
+
 ## v3.1.26 - 10.07.2026 13:19
 - Aplikace: po kliknuti na Ulozit se dialog hned zavre a je videt spinner s popisem prubehu (drive dialog prekryval overlay)
 - pri chybe se dialog znovu otevre s rozepsanymi hodnotami

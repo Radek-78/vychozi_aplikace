@@ -1651,7 +1651,6 @@ _sfState: {},
 
     saveUser(button) {
       const form = document.querySelector('#userForm');
-      Ui.setButtonLoading(button, true);
 
       let allowedAppsStr = 'default';
       const defaultCheckbox = document.querySelector('#useRoleAppsDefault');
@@ -1666,7 +1665,7 @@ _sfState: {},
         }
       }
 
-      Ui.call('apiSaveUser', {
+      const payload = {
         id: form.elements.id.value || null,
         email: form.elements.email.value,
         firstName: form.elements.firstName.value,
@@ -1676,16 +1675,17 @@ _sfState: {},
         permission: form.elements.permission.value,
         location: form.elements.location.value,
         allowed_apps: allowedAppsStr,
-      }, { silent: true, busy: 'Ukládám uživatele…' })
+      };
+      // Dialog se zavře hned — spinner (busy overlay) by jinak zůstal schovaný pod ním.
+      Ui.closeModal(document.querySelector('#userModal'));
+      Ui.call('apiSaveUser', payload, { silent: true, busy: 'Ukládám uživatele…' })
         .then(() => {
-          Ui.setButtonLoading(button, false);
-          Ui.closeModal(document.querySelector('#userModal'));
           Ui.toast('Uživatel byl uložen.');
           this.loadUsers();
         })
         .catch((error) => {
-          Ui.setButtonLoading(button, false);
           Ui.toast(error.message, 'error');
+          this.openUserModal(Object.assign({}, payload, { id: payload.id || '' })); // vrátí dialog s rozepsanými hodnotami
         });
     },
 
@@ -2773,21 +2773,24 @@ _sfState: {},
 
     saveLogistic(button) {
       const form = document.querySelector('#logisticForm');
-      Ui.setButtonLoading(button, true);
-      Ui.call('apiSaveLogistic', {
+      const payload = {
         id: form.elements.id.value || null,
         code: form.elements.code.value,
         name: form.elements.name.value,
         abbreviation: form.elements.abbreviation.value,
         active: form.elements.active.value === 'true',
-      }, { silent: true, busy: 'Ukládám logistické centrum…' })
+      };
+      // Dialog se zavře hned — spinner (busy overlay) by jinak zůstal schovaný pod ním.
+      Ui.closeModal(document.querySelector('#logisticModal'));
+      Ui.call('apiSaveLogistic', payload, { silent: true, busy: 'Ukládám logistické centrum…' })
         .then(() => {
-          Ui.setButtonLoading(button, false);
-          Ui.closeModal(document.querySelector('#logisticModal'));
           Ui.toast('Logistické centrum bylo uloženo.');
           this.loadLogistics();
         })
-        .catch((e) => { Ui.setButtonLoading(button, false); Ui.toast(e.message, 'error'); });
+        .catch((e) => {
+          Ui.toast(e.message, 'error');
+          this.openLogisticModal(Object.assign({}, payload, { id: payload.id || '' })); // vrátí dialog s rozepsanými hodnotami
+        });
     },
 
     /* ── Synchronizace ────────────────────────────── */
