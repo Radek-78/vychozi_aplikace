@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.26 - 10.07.2026 13:19
+- Aplikace: po kliknuti na Ulozit se dialog hned zavre a je videt spinner s popisem prubehu (drive dialog prekryval overlay)
+- pri chybe se dialog znovu otevre s rozepsanymi hodnotami
+
 ## v3.1.25 - 10.07.2026 13:11
 - Design: polozka Aplikace v postrannim panelu ma vlastni ikonu (mrizka 2x2) misto duplicitni ikony Domu
 

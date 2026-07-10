@@ -2168,13 +2168,16 @@ _sfState: {},
       dialog.querySelector('#saveAppBtn').addEventListener('click', () => {
         const form = dialog.querySelector('#appForm');
         if (!form.reportValidity()) return;
-        const saveBtn = dialog.querySelector('#saveAppBtn');
-        Ui.setButtonLoading(saveBtn, true);
         const fd = new FormData(form);
         const payload = { id: fd.get('id') || undefined, name: fd.get('name'), description: fd.get('description'), slug: fd.get('slug'), icon: fd.get('icon'), color: fd.get('color'), status: fd.get('status'), order: parseInt(fd.get('order')) || 0 };
+        // Dialog se zavře hned — spinner (busy overlay) by jinak zůstal schovaný pod ním.
+        close();
         Ui.call('apiSaveApp', payload, { silent: true, busy: 'Ukládám aplikaci…' })
-          .then(() => { close(); this.loadApps(); })
-          .catch((err) => { Ui.setButtonLoading(saveBtn, false); Ui.toast(err.message, 'error'); });
+          .then(() => { Ui.toast('Aplikace byla uložena.'); this.loadApps(); })
+          .catch((err) => {
+            Ui.toast(err.message, 'error');
+            this.openAppModal(payload); // vrátí dialog s rozepsanými hodnotami
+          });
       });
       Ui.openModal(dialog);
     },

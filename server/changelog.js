@@ -4,6 +4,7 @@
  * Nejnovejsi verze prvni.
  */
 const CHANGELOG = [
+  { version: 'v3.1.26', date: '10.7.2026', message: 'Aplikace: po kliknuti na Ulozit se dialog hned zavre a je videt spinner s popisem prubehu (drive dialog prekryval overlay); pri chybe se dialog znovu otevre s rozepsanymi hodnotami' },
   { version: 'v3.1.25', date: '10.7.2026', message: 'Design: polozka Aplikace v postrannim panelu ma vlastni ikonu (mrizka 2x2) misto duplicitni ikony Domu' },
   { version: 'v3.1.24', date: '10.7.2026', message: 'Auto sync: ulozeni konfigurace nyni overi ze trigger skutecne existuje (pri selhani ukaze chybu misto ticheho uspechu); toast hlasi stav triggeru; pridan TOOLS_zkontrolujAutoSync pro zalozeni triggeru primo z editoru' },
   { version: 'v3.1.23', date: '10.7.2026', message: 'Synchronizace: historie zobrazuje jen poslednich 10 behu (server jich dal uklada 20)' },
