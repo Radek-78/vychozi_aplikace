@@ -55,6 +55,7 @@ function apiGetBootstrap() {
         autoSyncHour: s.autoSyncHour !== undefined && s.autoSyncHour !== '' ? Number(s.autoSyncHour) : 3,
         lastSyncAt: s.lastSyncAt || null,
         lastSyncResult: s.lastSyncResult ? JSON.parse(s.lastSyncResult) : null,
+        syncHistory: s.syncHistory ? JSON.parse(s.syncHistory) : [],
       };
       dbEnsureRolePermissions_();
       data.rolePermissions = dbGetAll_(SHEETS.ROLE_PERMISSIONS);
@@ -472,6 +473,7 @@ function apiGetSyncSettings() {
       autoSyncHour: s.autoSyncHour !== undefined && s.autoSyncHour !== '' ? Number(s.autoSyncHour) : 3,
       lastSyncAt: s.lastSyncAt || null,
       lastSyncResult: s.lastSyncResult ? JSON.parse(s.lastSyncResult) : null,
+      syncHistory: s.syncHistory ? JSON.parse(s.syncHistory) : [],
     };
   });
 }

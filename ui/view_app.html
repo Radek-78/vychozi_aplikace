@@ -355,61 +355,79 @@
         </div>
       </div>
       <div class="section-body">
-        <section class="panel">
-          <div class="panel-header"><div><h2>Konfigurace</h2></div></div>
-          <div class="panel-body">
-            <form class="form" id="syncSettingsForm">
-              <label>
-                <span>URL složky v Google Drive</span>
-                <div class="input-with-action">
-                  <input name="syncFolderUrl" type="text" placeholder="https://drive.google.com/drive/folders/...">
-                  <button class="icon-action input-action-btn" type="button" id="openSyncFolderBtn" title="Otevřít složku v Drive" aria-label="Otevřít složku v Drive">
-                    <svg width="14" height="14" viewBox="0 0 24 24"><use href="#i-folder"></use></svg>
-                  </button>
+        <div class="sync-layout">
+          <section class="panel">
+            <div class="panel-header"><div><h2>Konfigurace</h2></div></div>
+            <div class="panel-body">
+              <form class="form" id="syncSettingsForm">
+                <label>
+                  <span>URL složky v Google Drive</span>
+                  <div class="input-with-action">
+                    <input name="syncFolderUrl" type="text" placeholder="https://drive.google.com/drive/folders/...">
+                    <button class="icon-action input-action-btn" type="button" id="openSyncFolderBtn" title="Otevřít složku v Drive" aria-label="Otevřít složku v Drive">
+                      <svg width="14" height="14" viewBox="0 0 24 24"><use href="#i-folder"></use></svg>
+                    </button>
+                  </div>
+                </label>
+                <div class="form-row-2">
+                  <label>
+                    <span>Název listu — filiálky</span>
+                    <input name="syncStoresSheet" type="text" placeholder="VTBZL_export">
+                  </label>
+                  <label>
+                    <span>Prefix listu — dočasné zavření</span>
+                    <input name="syncTempClosedPrefix" type="text" placeholder="Dočasné zavření">
+                  </label>
                 </div>
-              </label>
-              <div class="form-row-2">
-                <label>
-                  <span>Název listu — filiálky</span>
-                  <input name="syncStoresSheet" type="text" placeholder="VTBZL_export">
-                </label>
-                <label>
-                  <span>Prefix listu — dočasné zavření</span>
-                  <input name="syncTempClosedPrefix" type="text" placeholder="Dočasné zavření">
-                </label>
-              </div>
-              <div class="form-row-2">
-                <label>
-                  <span>Automatická synchronizace</span>
-                  <select name="autoSyncEnabled">
-                    <option value="false">Vypnuto</option>
-                    <option value="true">Zapnuto</option>
-                  </select>
-                </label>
-                <label>
-                  <span>Čas kontroly</span>
-                  <select name="autoSyncHour">
-                    <option value="0">0:00</option><option value="1">1:00</option><option value="2">2:00</option>
-                    <option value="3">3:00</option><option value="4">4:00</option><option value="5">5:00</option>
-                    <option value="6">6:00</option><option value="7">7:00</option><option value="8">8:00</option>
-                    <option value="9">9:00</option><option value="10">10:00</option><option value="11">11:00</option>
-                    <option value="12">12:00</option><option value="13">13:00</option><option value="14">14:00</option>
-                    <option value="15">15:00</option><option value="16">16:00</option><option value="17">17:00</option>
-                    <option value="18">18:00</option><option value="19">19:00</option><option value="20">20:00</option>
-                    <option value="21">21:00</option><option value="22">22:00</option><option value="23">23:00</option>
-                  </select>
-                </label>
-              </div>
-              <small class="form-hint">Jednou denně ve zvolenou hodinu se zkontroluje, zda se soubor ve složce změnil (jiný soubor nebo novější úprava) — pokud ano, synchronizace proběhne automaticky.</small>
-              <div class="form-actions">
-                <button class="button button-secondary write-only" type="submit" id="saveSyncSettingsButton"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-check"></use></svg>Uložit konfiguraci</button>
-              </div>
-            </form>
-          </div>
-        </section>
+                <div class="form-row-2">
+                  <label>
+                    <span>Automatická synchronizace</span>
+                    <select name="autoSyncEnabled">
+                      <option value="false">Vypnuto</option>
+                      <option value="true">Zapnuto</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Čas kontroly</span>
+                    <select name="autoSyncHour">
+                      <option value="0">0:00</option><option value="1">1:00</option><option value="2">2:00</option>
+                      <option value="3">3:00</option><option value="4">4:00</option><option value="5">5:00</option>
+                      <option value="6">6:00</option><option value="7">7:00</option><option value="8">8:00</option>
+                      <option value="9">9:00</option><option value="10">10:00</option><option value="11">11:00</option>
+                      <option value="12">12:00</option><option value="13">13:00</option><option value="14">14:00</option>
+                      <option value="15">15:00</option><option value="16">16:00</option><option value="17">17:00</option>
+                      <option value="18">18:00</option><option value="19">19:00</option><option value="20">20:00</option>
+                      <option value="21">21:00</option><option value="22">22:00</option><option value="23">23:00</option>
+                    </select>
+                  </label>
+                </div>
+                <small class="form-hint">Jednou denně ve zvolenou hodinu se zkontroluje, zda se soubor ve složce změnil — pokud ano, synchronizace proběhne automaticky.</small>
+                <div class="form-actions">
+                  <button class="button button-secondary write-only" type="submit" id="saveSyncSettingsButton"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-check"></use></svg>Uložit konfiguraci</button>
+                </div>
+              </form>
+            </div>
+          </section>
+          <section class="panel">
+            <div class="panel-header"><div><h2>Poslední výsledek</h2></div></div>
+            <div class="panel-body" id="syncResultArea"></div>
+          </section>
+        </div>
         <section class="panel">
-          <div class="panel-header"><div><h2>Výsledek</h2></div></div>
-          <div class="panel-body" id="syncResultArea"></div>
+          <div class="panel-header"><div><h2>Historie synchronizací</h2></div></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Datum a čas</th>
+                  <th>Spuštění</th>
+                  <th>Soubor</th>
+                  <th>Výsledek</th>
+                </tr>
+              </thead>
+              <tbody id="syncHistoryRows"></tbody>
+            </table>
+          </div>
         </section>
       </div>
     </section>
@@ -2794,6 +2812,39 @@ _sfState: {},
         document.querySelector('#syncResultArea').innerHTML =
           '<p style="color:var(--muted);font-size:13px">Synchronizace zatím nebyla spuštěna.</p>';
       }
+      this.renderSyncHistory(s.syncHistory || []);
+    },
+
+    renderSyncHistory(history) {
+      const tbody = document.querySelector('#syncHistoryRows');
+      if (!tbody) return;
+      tbody.innerHTML = (history || []).map((h) => `
+        <tr>
+          <td style="white-space:nowrap">${Ui.escape(Ui.formatDateTime(h.at))}</td>
+          <td>${h.auto ? '<span class="pill is-blue">Automaticky</span>' : Ui.escape(String(h.by || '').replace(/@.*/, ''))}</td>
+          <td style="color:var(--muted)">${Ui.escape(h.file || '')}</td>
+          <td><div class="sync-pills">${this._syncStatPills(h)}</div></td>
+        </tr>`).join('')
+        || '<tr><td colspan="4" style="color:var(--muted)">Zatím žádné synchronizace.</td></tr>';
+    },
+
+    /** Přidá právě doběhlou synchronizaci na začátek lokální historie (bez refetche). */
+    _syncHistoryPrepend(result) {
+      if (!this._syncSettings) return;
+      const st = result.stores || {};
+      const h = this._syncSettings.syncHistory = this._syncSettings.syncHistory || [];
+      h.unshift({
+        at: new Date().toISOString(),
+        by: (this.boot.user && this.boot.user.email) || '',
+        auto: false,
+        file: result.fileName || '',
+        added: st.added || 0, updated: st.updated || 0,
+        deactivated: st.deactivated || 0, reactivated: st.reactivated || 0,
+        unchanged: st.unchanged || 0,
+        errors: (st.errors || []).length,
+      });
+      if (h.length > 20) h.length = 20;
+      this.renderSyncHistory(h);
     },
 
     saveSyncSettings(button) {
@@ -2832,6 +2883,7 @@ _sfState: {},
             this._syncResult = null;
             this._syncWarning = null;
           }
+          this._syncHistoryPrepend(result);
           this.loadHome();
         })
         .catch((e) => {
@@ -2849,6 +2901,7 @@ _sfState: {},
         .then((result) => {
           Ui.setButtonLoading(button, false);
           this.renderSyncResult(new Date().toISOString(), result, true);
+          this._syncHistoryPrepend(result);
           Ui.toast('Synchronizace dokončena.');
         })
         .catch((e) => {
@@ -2859,22 +2912,25 @@ _sfState: {},
         });
     },
 
+    /** Pilulky se souhrnem synchronizace — bere plné stats (errors pole) i záznam historie (errors číslo). */
+    _syncStatPills(stats) {
+      if (!stats) return '<span class="pill">Neprobíhala</span>';
+      const fmt = (n) => n > 0 ? n : 0;
+      const errs = Array.isArray(stats.errors) ? stats.errors.length : (stats.errors || 0);
+      return [
+        stats.added    > 0 ? `<span class="pill is-green">+${fmt(stats.added)} přidáno</span>` : '',
+        stats.updated  > 0 ? `<span class="pill is-blue">${fmt(stats.updated)} upraveno</span>` : '',
+        stats.deactivated > 0 ? `<span class="pill is-red">${fmt(stats.deactivated)} deaktivováno</span>` : '',
+        stats.reactivated > 0 ? `<span class="pill is-orange">${fmt(stats.reactivated)} reaktivováno</span>` : '',
+        `<span class="pill">${fmt(stats.unchanged)} beze změny</span>`,
+        errs > 0 ? `<span class="pill is-red">${errs} chyb</span>` : '',
+      ].filter(Boolean).join('');
+    },
+
     renderSyncResult(syncAt, result, fresh) {
       if (!result) return;
-      const fmt = (n) => n > 0 ? n : 0;
       const esc = Ui.escape.bind(Ui);
-      const statPills = (stats) => {
-        if (!stats) return '<span class="pill">Neprobíhala</span>';
-        const errs = (stats.errors || []).length;
-        return [
-          stats.added    > 0 ? `<span class="pill is-green">+${fmt(stats.added)} přidáno</span>` : '',
-          stats.updated  > 0 ? `<span class="pill is-blue">${fmt(stats.updated)} upraveno</span>` : '',
-          stats.deactivated > 0 ? `<span class="pill is-red">${fmt(stats.deactivated)} deaktivováno</span>` : '',
-          stats.reactivated > 0 ? `<span class="pill is-orange">${fmt(stats.reactivated)} reaktivováno</span>` : '',
-          `<span class="pill">${fmt(stats.unchanged)} beze změny</span>`,
-          errs > 0 ? `<span class="pill is-red">${errs} chyb</span>` : '',
-        ].filter(Boolean).join('');
-      };
+      const statPills = (stats) => this._syncStatPills(stats);
       const errList = (stats) => {
         if (!stats || !(stats.errors || []).length) return '';
         return '<div class="sync-errors">' + stats.errors.map((e) => esc(e)).join('<br>') + '</div>';

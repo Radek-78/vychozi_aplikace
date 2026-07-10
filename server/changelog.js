@@ -4,6 +4,7 @@
  * Nejnovejsi verze prvni.
  */
 const CHANGELOG = [
+  { version: 'v3.1.21', date: '10.7.2026', message: 'Synchronizace: kompaktnejsi dvousloupcovy layout (konfigurace vedle posledniho vysledku); novy panel Historie synchronizaci (poslednich 20 behu - kdy, kdo, soubor, vysledek); server uklada souhrn kazdeho behu do _settings.syncHistory' },
   { version: 'v3.1.20', date: '10.7.2026', message: 'Pridan soubor 00_VERZE.js - prvni v seznamu souboru v editoru, ukazuje verzi a cas posledniho nahrani; release.ps1 ho aktualizuje automaticky' },
   { version: 'v3.1.19', date: '9.7.2026', message: 'Design: sjednoceny styl chipu v hero banneru - chipy Dnesni den prevzaly tvar a pismo chipu pocasi (zaobleni 6px misto pilulky)' },
   { version: 'v3.1.18', date: '9.7.2026', message: 'Revert na stav v3.1.15: minikalendar docasnych zavreni odstranen (opakovane rozbiji nacitani aplikace, pricina zatim nenalezena - emoji teorie vyloucena), widget Dnesni den ponechan' },

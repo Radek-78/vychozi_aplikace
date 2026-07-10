@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.1.21 - 10.07.2026 12:45
+- Synchronizace: kompaktnejsi dvousloupcovy layout (konfigurace vedle posledniho vysledku)
+- novy panel Historie synchronizaci (poslednich 20 behu - kdy, kdo, soubor, vysledek)
+- server uklada souhrn kazdeho behu do _settings.syncHistory
+
 ## v3.1.20 - 10.07.2026 11:03
 - Pridan soubor 00_VERZE.js - prvni v seznamu souboru v editoru, ukazuje verzi a cas posledniho nahrani
 - release.ps1 ho aktualizuje automaticky

@@ -64,7 +64,7 @@ function autoSyncCheck_() {
     const signature = file.getId() + ':' + file.getLastUpdated().getTime();
     if (signature === settings.syncLastFileSignature) return; // soubor beze změny
 
-    const result = runSyncCore_(settings);
+    const result = runSyncCore_(settings, true);
     audit_('sync_run_auto',
       'Soubor: ' + result.fileName +
       ' | Filiálky: +' + result.stores.added + ' u' + result.stores.updated + ' d' + result.stores.deactivated
@@ -78,8 +78,33 @@ function autoSyncCheck_() {
 
 /* ── Interní funkce ───────────────────────────────────────────── */
 
+/**
+ * Zapíše kompaktní záznam o proběhlé synchronizaci do _settings.syncHistory
+ * (posledních 20 běhů — kdo, kdy, soubor, počty). Detail změn drží jen
+ * poslední běh (lastSyncResult), historie je jen souhrn.
+ */
+function appendSyncHistory_(settings, result, isAuto) {
+  let history = [];
+  try { history = settings.syncHistory ? JSON.parse(settings.syncHistory) : []; } catch (e) { history = []; }
+  const s = result.stores || {};
+  history.unshift({
+    at: nowIso_(),
+    by: currentEmail_() || 'system',
+    auto: isAuto === true,
+    file: result.fileName || '',
+    added: s.added || 0,
+    updated: s.updated || 0,
+    deactivated: s.deactivated || 0,
+    reactivated: s.reactivated || 0,
+    unchanged: s.unchanged || 0,
+    errors: (s.errors || []).length,
+  });
+  if (history.length > 20) history = history.slice(0, 20);
+  settingsSet_('syncHistory', JSON.stringify(history));
+}
+
 /** Jádro synchronizace sdílené ruční (apiRunSync) i automatickou (autoSyncCheck_) cestou. */
-function runSyncCore_(settings) {
+function runSyncCore_(settings, isAuto) {
   const folderUrl = settings.syncFolderUrl || '';
   if (!folderUrl) throw new Error('Není nastavena URL složky. Vyplňte ji v sekci Synchronizace.');
 
@@ -117,6 +142,7 @@ function runSyncCore_(settings) {
   settingsSet_('lastSyncAt', nowIso_());
   settingsSet_('lastSyncResult', JSON.stringify(result));
   settingsSet_('syncLastFileSignature', xlsxFile.getId() + ':' + xlsxFile.getLastUpdated().getTime());
+  appendSyncHistory_(settings, result, isAuto);
   return result;
 }
 
