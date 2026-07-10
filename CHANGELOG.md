@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.25 - 10.07.2026 13:11
+- Design: polozka Aplikace v postrannim panelu ma vlastni ikonu (mrizka 2x2) misto duplicitni ikony Domu
+
 ## v3.1.24 - 10.07.2026 13:04
 - Auto sync: ulozeni konfigurace nyni overi ze trigger skutecne existuje (pri selhani ukaze chybu misto ticheho uspechu)
 - toast hlasi stav triggeru
