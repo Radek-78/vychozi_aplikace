@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.22 - 10.07.2026 12:53
+- Synchronizace: layout 2/3 + 1/3 - Konfigurace a Historie pod sebou vlevo, Posledni vysledek v samostatnem pravem sloupci (rozbaleni detailu uz neposouva historii)
+- v detailu zmen tlacitko Rozbalit vse / Sbalit vse
+
 ## v3.1.21 - 10.07.2026 12:45
 - Synchronizace: kompaktnejsi dvousloupcovy layout (konfigurace vedle posledniho vysledku)
 - novy panel Historie synchronizaci (poslednich 20 behu - kdy, kdo, soubor, vysledek)

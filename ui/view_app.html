@@ -356,6 +356,7 @@
       </div>
       <div class="section-body">
         <div class="sync-layout">
+          <div class="sync-main">
           <section class="panel">
             <div class="panel-header"><div><h2>Konfigurace</h2></div></div>
             <div class="panel-body">
@@ -409,26 +410,27 @@
             </div>
           </section>
           <section class="panel">
+            <div class="panel-header"><div><h2>Historie synchronizací</h2></div></div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Datum a čas</th>
+                    <th>Spuštění</th>
+                    <th>Soubor</th>
+                    <th>Výsledek</th>
+                  </tr>
+                </thead>
+                <tbody id="syncHistoryRows"></tbody>
+              </table>
+            </div>
+          </section>
+          </div>
+          <section class="panel">
             <div class="panel-header"><div><h2>Poslední výsledek</h2></div></div>
             <div class="panel-body" id="syncResultArea"></div>
           </section>
         </div>
-        <section class="panel">
-          <div class="panel-header"><div><h2>Historie synchronizací</h2></div></div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Datum a čas</th>
-                  <th>Spuštění</th>
-                  <th>Soubor</th>
-                  <th>Výsledek</th>
-                </tr>
-              </thead>
-              <tbody id="syncHistoryRows"></tbody>
-            </table>
-          </div>
-        </section>
       </div>
     </section>
 
@@ -2975,10 +2977,13 @@ _sfState: {},
           </div>`);
         }
         if (!sections.length) return '';
-        return `<details class="sync-change-detail"><summary>Zobrazit detail změn</summary>${sections.join('')}</details>`;
+        return `<details class="sync-change-detail"><summary>Zobrazit detail změn</summary>
+          <div class="sync-detail-tools"><button class="button button-secondary button-small sync-expand-all" type="button" data-state="closed">Rozbalit vše</button></div>
+          ${sections.join('')}</details>`;
       };
       const ts = syncAt ? Ui.formatDateTime(syncAt) : '';
-      document.querySelector('#syncResultArea').innerHTML = `
+      const area = document.querySelector('#syncResultArea');
+      area.innerHTML = `
         <div class="sync-result">
           <div class="sync-result-header">
             <span class="sync-badge is-success">✓</span>
@@ -2995,6 +3000,16 @@ _sfState: {},
             </div>
           </div>
         </div>`;
+
+      const expandBtn = area.querySelector('.sync-expand-all');
+      if (expandBtn) {
+        expandBtn.addEventListener('click', () => {
+          const open = expandBtn.dataset.state !== 'open';
+          area.querySelectorAll('details.sync-change-store').forEach((d) => { d.open = open; });
+          expandBtn.dataset.state = open ? 'open' : 'closed';
+          expandBtn.textContent = open ? 'Sbalit vše' : 'Rozbalit vše';
+        });
+      }
     },
 
     /* ── Sort / filter ────────────────────────────── */
