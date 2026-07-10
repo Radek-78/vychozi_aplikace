@@ -85,3 +85,26 @@ function TOOLS_authorizeAutoSync() {
   const count = ScriptApp.getProjectTriggers().length;
   console.log('Autorizace scriptapp OK. Aktuální počet triggerů v projektu: ' + count);
 }
+
+/**
+ * Zkontroluje stav triggeru automatické synchronizace a srovná ho podle
+ * uloženého nastavení (zapnuto/vypnuto + hodina). Spusť z editoru, pokud
+ * zapnutí v aplikaci trigger nevytvořilo — editor je pro zakládání
+ * triggerů vždy spolehlivý kontext.
+ */
+function TOOLS_zkontrolujAutoSync() {
+  assertToolsOwner_();
+  const s = settingsAll_();
+  const enabled = s.autoSyncEnabled === true || s.autoSyncEnabled === 'true';
+  const hour = Math.min(23, Math.max(0, parseInt(s.autoSyncHour, 10) || 0));
+
+  const before = ScriptApp.getProjectTriggers().filter((t) => t.getHandlerFunction() === 'autoSyncCheck_').length;
+  console.log('Nastaveni: autoSyncEnabled=' + enabled + ', hodina=' + hour + ':00 | triggeru pred srovnanim: ' + before);
+
+  applyAutoSyncTrigger_(enabled, hour);
+
+  const after = ScriptApp.getProjectTriggers().filter((t) => t.getHandlerFunction() === 'autoSyncCheck_').length;
+  console.log('Triggeru po srovnani: ' + after + (enabled
+    ? (after > 0 ? ' — OK, denni kontrola pobezi cca v ' + hour + ':00.' : ' — CHYBA: trigger se nepodarilo vytvorit!')
+    : ' — auto sync je vypnuta, zadny trigger nema existovat.'));
+}

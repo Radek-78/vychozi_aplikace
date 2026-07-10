@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.1.24 - 10.07.2026 13:04
+- Auto sync: ulozeni konfigurace nyni overi ze trigger skutecne existuje (pri selhani ukaze chybu misto ticheho uspechu)
+- toast hlasi stav triggeru
+- pridan TOOLS_zkontrolujAutoSync pro zalozeni triggeru primo z editoru
+
 ## v3.1.23 - 10.07.2026 12:59
 - Synchronizace: historie zobrazuje jen poslednich 10 behu (server jich dal uklada 20)
 

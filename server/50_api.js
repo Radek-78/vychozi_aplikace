@@ -497,12 +497,20 @@ function apiSaveSyncSettings(payload) {
     const autoSyncEnabled = !!(payload && payload.autoSyncEnabled);
     const autoSyncHour = Math.min(23, Math.max(0, parseInt(payload && payload.autoSyncHour, 10) || 0));
     applyAutoSyncTrigger_(autoSyncEnabled, autoSyncHour);
+
+    // Ověření, že trigger po vytvoření skutečně existuje — jinak by selhání
+    // (např. chybějící autorizace scope script.scriptapp) zůstalo neviditelné.
+    const triggerActive = ScriptApp.getProjectTriggers().some((t) => t.getHandlerFunction() === 'autoSyncCheck_');
+    if (autoSyncEnabled && !triggerActive) {
+      throw new Error('Trigger automatické synchronizace se nepodařilo vytvořit. Spusťte v editoru Apps Script funkci TOOLS_zkontrolujAutoSync.');
+    }
+
     settingsSet_('autoSyncEnabled', autoSyncEnabled);
     settingsSet_('autoSyncHour', autoSyncHour);
 
     audit_('sync_settings_update', 'Aktualizace konfigurace synchronizace.'
-      + (autoSyncEnabled ? ' Auto. sync zapnuta, kontrola cca v ' + autoSyncHour + ':00.' : ' Auto. sync vypnuta.'));
-    return null;
+      + (autoSyncEnabled ? ' Auto. sync zapnuta, kontrola cca v ' + autoSyncHour + ':00, trigger aktivní: ' + triggerActive + '.' : ' Auto. sync vypnuta.'));
+    return { autoSyncTriggerActive: triggerActive };
   });
 }
 

@@ -4,6 +4,7 @@
  * Nejnovejsi verze prvni.
  */
 const CHANGELOG = [
+  { version: 'v3.1.24', date: '10.7.2026', message: 'Auto sync: ulozeni konfigurace nyni overi ze trigger skutecne existuje (pri selhani ukaze chybu misto ticheho uspechu); toast hlasi stav triggeru; pridan TOOLS_zkontrolujAutoSync pro zalozeni triggeru primo z editoru' },
   { version: 'v3.1.23', date: '10.7.2026', message: 'Synchronizace: historie zobrazuje jen poslednich 10 behu (server jich dal uklada 20)' },
   { version: 'v3.1.22', date: '10.7.2026', message: 'Synchronizace: layout 2/3 + 1/3 - Konfigurace a Historie pod sebou vlevo, Posledni vysledek v samostatnem pravem sloupci (rozbaleni detailu uz neposouva historii); v detailu zmen tlacitko Rozbalit vse / Sbalit vse' },
   { version: 'v3.1.21', date: '10.7.2026', message: 'Synchronizace: kompaktnejsi dvousloupcovy layout (konfigurace vedle posledniho vysledku); novy panel Historie synchronizaci (poslednich 20 behu - kdy, kdo, soubor, vysledek); server uklada souhrn kazdeho behu do _settings.syncHistory' },

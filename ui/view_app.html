@@ -2859,7 +2859,10 @@ _sfState: {},
         autoSyncEnabled: form.elements.autoSyncEnabled.value === 'true',
         autoSyncHour: parseInt(form.elements.autoSyncHour.value, 10),
       }, { silent: true, busy: 'Ukládám konfiguraci…' })
-        .then(() => { Ui.setButtonLoading(button, false); Ui.toast('Konfigurace uložena.'); })
+        .then((res) => {
+          Ui.setButtonLoading(button, false);
+          Ui.toast('Konfigurace uložena.' + (res && res.autoSyncTriggerActive ? ' Automatická synchronizace je aktivní.' : ''));
+        })
         .catch((e) => { Ui.setButtonLoading(button, false); Ui.toast(e.message, 'error'); });
     },
 
