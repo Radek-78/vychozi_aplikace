@@ -8,6 +8,7 @@
     2. zapise zaznam s datem a casem do CHANGELOG.md,
     2b. z CHANGELOG.md vygeneruje server/changelog.js (modal "Historie zmen" v aplikaci) -
         CHANGELOG.md je jediny rucne udrzovany zdroj, changelog.js se needituje rucne,
+    2c. prepise 00_VERZE.js (prvni soubor v editoru Apps Scriptu - verze + cas nahrani),
     3. nahraje soubory do Apps Scriptu (clasp push),
     4. provede git commit, tag verze a push na GitHub.
 
@@ -97,6 +98,22 @@ $changelogJsLines = @(
   ''
 )
 Set-Content $changelogJsPath $changelogJsLines -Encoding UTF8
+
+# 2c) 00_VERZE.js - prvni soubor v editoru Apps Scriptu, needituj rucne.
+$verzePath = Join-Path $root '00_VERZE.js'
+$verzeLines = @(
+  '/**',
+  ' * ============================================',
+  ' *  POSLEDNI NASAZENI',
+  " *  Verze:    $Version",
+  " *  Nahrano:  $stamp",
+  ' * ============================================',
+  ' * Generovano automaticky skriptem tools/release.ps1 - needituj rucne.',
+  ' * Datum odpovida okamziku nahrani kodu (clasp push); nasazeni nove verze',
+  ' * web appky se pak provadi rucne v editoru (Nasadit - Spravovat nasazeni).',
+  ' */'
+)
+Set-Content $verzePath $verzeLines -Encoding UTF8
 
 Write-Host "Verze nastavena na $Version ($stamp)."
 

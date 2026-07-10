@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.20 - 10.07.2026 11:03
+- Pridan soubor 00_VERZE.js - prvni v seznamu souboru v editoru, ukazuje verzi a cas posledniho nahrani
+- release.ps1 ho aktualizuje automaticky
+
 ## v3.1.19 - 09.07.2026 15:01
 - Design: sjednoceny styl chipu v hero banneru - chipy Dnesni den prevzaly tvar a pismo chipu pocasi (zaobleni 6px misto pilulky)
 
