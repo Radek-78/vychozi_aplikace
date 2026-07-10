@@ -2820,7 +2820,7 @@ _sfState: {},
     renderSyncHistory(history) {
       const tbody = document.querySelector('#syncHistoryRows');
       if (!tbody) return;
-      tbody.innerHTML = (history || []).map((h) => `
+      tbody.innerHTML = (history || []).slice(0, 10).map((h) => `
         <tr>
           <td style="white-space:nowrap">${Ui.escape(Ui.formatDateTime(h.at))}</td>
           <td>${h.auto ? '<span class="pill is-blue">Automaticky</span>' : Ui.escape(String(h.by || '').replace(/@.*/, ''))}</td>
