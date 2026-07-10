@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.28 - 10.07.2026 13:38
+- Auto sync: kazda denni kontrola si zapise cas a vysledek (i kdyz se soubor nezmenil) - zobrazuje se v Konfiguraci jako Posledni automaticka kontrola
+- historie dal obsahuje jen skutecne synchronizace
+
 ## v3.1.27 - 10.07.2026 13:29
 - Uzivatele a LC: po kliknuti na Ulozit se dialog hned zavre a je videt spinner s popisem prubehu (stejna oprava jako u Aplikaci)
 - pri chybe se dialog znovu otevre s rozepsanymi hodnotami

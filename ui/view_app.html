@@ -403,6 +403,7 @@
                   </label>
                 </div>
                 <small class="form-hint">Jednou denně ve zvolenou hodinu se zkontroluje, zda se soubor ve složce změnil — pokud ano, synchronizace proběhne automaticky.</small>
+                <small class="form-hint" id="autoSyncLastCheck"></small>
                 <div class="form-actions">
                   <button class="button button-secondary write-only" type="submit" id="saveSyncSettingsButton"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-check"></use></svg>Uložit konfiguraci</button>
                 </div>
@@ -2814,6 +2815,13 @@ _sfState: {},
       form.elements.syncTempClosedPrefix.value = s.syncTempClosedPrefix || '';
       form.elements.autoSyncEnabled.value = s.autoSyncEnabled ? 'true' : 'false';
       form.elements.autoSyncHour.value = String(s.autoSyncHour ?? 3);
+      const lastCheck = document.querySelector('#autoSyncLastCheck');
+      if (lastCheck) {
+        lastCheck.textContent = s.autoSyncLastCheckAt
+          ? 'Poslední automatická kontrola: ' + Ui.formatDateTime(s.autoSyncLastCheckAt)
+            + (s.autoSyncLastCheckResult ? ' — ' + s.autoSyncLastCheckResult : '') + '.'
+          : (s.autoSyncEnabled ? 'Automatická kontrola zatím neproběhla.' : '');
+      }
       if (s.lastSyncAt || s.lastSyncResult) {
         this.renderSyncResult(s.lastSyncAt, s.lastSyncResult, false);
       } else {

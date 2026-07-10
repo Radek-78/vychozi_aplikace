@@ -4,6 +4,7 @@
  * Nejnovejsi verze prvni.
  */
 const CHANGELOG = [
+  { version: 'v3.1.28', date: '10.7.2026', message: 'Auto sync: kazda denni kontrola si zapise cas a vysledek (i kdyz se soubor nezmenil) - zobrazuje se v Konfiguraci jako Posledni automaticka kontrola; historie dal obsahuje jen skutecne synchronizace' },
   { version: 'v3.1.27', date: '10.7.2026', message: 'Uzivatele a LC: po kliknuti na Ulozit se dialog hned zavre a je videt spinner s popisem prubehu (stejna oprava jako u Aplikaci); pri chybe se dialog znovu otevre s rozepsanymi hodnotami' },
   { version: 'v3.1.26', date: '10.7.2026', message: 'Aplikace: po kliknuti na Ulozit se dialog hned zavre a je videt spinner s popisem prubehu (drive dialog prekryval overlay); pri chybe se dialog znovu otevre s rozepsanymi hodnotami' },
   { version: 'v3.1.25', date: '10.7.2026', message: 'Design: polozka Aplikace v postrannim panelu ma vlastni ikonu (mrizka 2x2) misto duplicitni ikony Domu' },

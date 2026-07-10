@@ -43,6 +43,12 @@ function apiRunSync() {
   });
 }
 
+/** Poznamená čas a výsledek automatické kontroly — zobrazuje se v Konfiguraci. */
+function autoSyncNoteCheck_(outcome) {
+  settingsSet_('autoSyncLastCheckAt', nowIso_());
+  settingsSet_('autoSyncLastCheckResult', outcome);
+}
+
 /**
  * Cíl časovaného triggeru (viz apiSaveSyncSettings) — jednou denně zkontroluje,
  * zda se ve složce od poslední kontroly změnil soubor (jiné ID nebo novější úprava),
@@ -54,23 +60,28 @@ function autoSyncCheck_() {
     if (settings.autoSyncEnabled !== true && settings.autoSyncEnabled !== 'true') return;
 
     const folderUrl = settings.syncFolderUrl || '';
-    if (!folderUrl) return;
+    if (!folderUrl) { autoSyncNoteCheck_('složka není nastavena'); return; }
     const folderId = extractFolderIdFromUrl_(folderUrl);
-    if (!folderId) return;
+    if (!folderId) { autoSyncNoteCheck_('z URL složky nelze rozpoznat ID'); return; }
 
     const file = findSyncFileInFolder_(folderId);
-    if (!file) return;
+    if (!file) { autoSyncNoteCheck_('ve složce není žádný soubor .xlsx ani Google Sheets'); return; }
 
     const signature = file.getId() + ':' + file.getLastUpdated().getTime();
-    if (signature === settings.syncLastFileSignature) return; // soubor beze změny
+    if (signature === settings.syncLastFileSignature) {
+      autoSyncNoteCheck_('soubor beze změny, synchronizace nebyla potřeba');
+      return;
+    }
 
     const result = runSyncCore_(settings, true);
+    autoSyncNoteCheck_('soubor se změnil, synchronizace proběhla');
     audit_('sync_run_auto',
       'Soubor: ' + result.fileName +
       ' | Filiálky: +' + result.stores.added + ' u' + result.stores.updated + ' d' + result.stores.deactivated
     );
   } catch (e) {
     console.error('Automatická synchronizace selhala: ' + e);
+    try { autoSyncNoteCheck_('chyba: ' + String(e && e.message ? e.message : e)); } catch (_) {}
     audit_('sync_run_auto_error', String(e && e.message ? e.message : e));
     throw e; // necháme GAS poslat vlastníkovi e-mail o selhání triggeru
   }
