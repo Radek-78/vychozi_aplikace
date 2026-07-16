@@ -891,7 +891,7 @@ _sfState: {},
         .then((d) => {
           if (d.apps) { this.apps = d.apps; this.renderModules(); }
           if (d.users) this.users = this.decorateUsers(d.users);
-          if (d.stores) this.stores = d.stores;
+          if (d.stores) { this.stores = d.stores; this._applyMetroOverrides(); }
           if (d.logistics) this.logistics = d.logistics;
           if (d.audit) this.audit = d.audit;
           if (d.settings) this._settings = d.settings;
@@ -2241,6 +2241,7 @@ _sfState: {},
       Ui.call('apiListStores', null, cached ? { silent: true } : { silent: true, busy: 'Načítám filiálky…' })
         .then((stores) => {
           this.stores = stores;
+          this._applyMetroOverrides();
           this.renderSfBadges();
           this.renderStores();
           this.markUpdated();
@@ -2299,19 +2300,40 @@ _sfState: {},
       this.updateSortIndicators('stores');
     },
 
+    /**
+     * Optimistické změny checkboxu Metropolitní. Override mapa chrání změnu
+     * před přepsáním starší odpovědí ze serveru — tichá obnova seznamu mohla
+     * být načtena ještě před uložením změny a dorazit až po něm.
+     */
+    _metroOverrides: {},
+
+    _applyMetroOverrides() {
+      const now = Date.now();
+      Object.keys(this._metroOverrides).forEach((id) => {
+        const o = this._metroOverrides[id];
+        if (now - o.at > 60000) { delete this._metroOverrides[id]; return; }
+        const s = this.stores.find((x) => x.id === id);
+        if (s) s.metropolitni = o.value;
+      });
+    },
+
     /** Optimistická změna příznaku Metropolitní — projeví se hned, server běží na pozadí. */
     toggleStoreMetro(id, checked) {
       const s = this.stores.find((x) => x.id === id);
       if (!s) return;
       const previous = s.metropolitni === true;
       s.metropolitni = checked;
+      this._metroOverrides[id] = { value: checked, at: Date.now() };
       Ui.call('apiSetStoreMetropolitni', { id: id, metropolitni: checked }, { silent: true })
         .then(() => {
           Ui.toast(s.code + ' ' + s.name + ': ' + (checked ? 'označena jako Metropolitní.' : 'označení Metropolitní zrušeno.'));
         })
         .catch((e) => {
-          s.metropolitni = previous;
-          this.renderStores(); // vrátí checkbox do původního stavu
+          if (this._metroOverrides[id] && this._metroOverrides[id].value === checked) {
+            delete this._metroOverrides[id];
+            s.metropolitni = previous;
+            this.renderStores(); // vrátí checkbox do původního stavu
+          }
           Ui.toast(e.message, 'error');
         });
     },

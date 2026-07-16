@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.33 - 16.07.2026 13:28
+- Filialky: oprava race condition u checkboxu Metropolitni - zmena provedena behem tiche obnovy seznamu uz neni prepsana starsi odpovedi ze serveru (lokalni zmena ma 60s ochranu)
+
 ## v3.1.32 - 16.07.2026 13:18
 - Design: potvrzovaci dialogy mazani (uzivatel, aplikace) nahrazeny vlastnim modalem v designu aplikace misto nativniho confirm() prohlizece
 - nova komponenta Ui.confirm a tlacitko button-danger
