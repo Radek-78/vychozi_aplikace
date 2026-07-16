@@ -1464,11 +1464,15 @@ _sfState: {},
             <td><span class="pill ${permClass}">${Ui.escape(permLabel)}</span></td>
             <td><strong>${Ui.escape(locLabel)}</strong></td>
             <td>${user.active === true ? 'Aktivní' : 'Blokován'}</td>
-            <td>
+            <td style="white-space:nowrap">
               ${this.hasWriteAccess
                 ? `<button class="icon-action" type="button" data-user-id="${Ui.escape(user.id)}" title="Upravit uživatele">
                     <svg><use href="#i-pencil"></use></svg>
-                   </button>`
+                   </button>${user.email !== (this.boot.user && this.boot.user.email)
+                     ? `<button class="icon-action danger" type="button" data-user-del="${Ui.escape(user.id)}" title="Smazat uživatele">
+                         <svg><use href="#i-trash"></use></svg>
+                        </button>`
+                     : ''}`
                 : '—'
               }
             </td>
@@ -1478,7 +1482,19 @@ _sfState: {},
       document.querySelectorAll('[data-user-id]').forEach((btn) => {
         btn.addEventListener('click', () => this.openUserModal(this.users.find((u) => u.id === btn.dataset.userId)));
       });
+      document.querySelectorAll('[data-user-del]').forEach((btn) => {
+        btn.addEventListener('click', () => this.deleteUser(btn.dataset.userDel));
+      });
       this.updateSortIndicators('users');
+    },
+
+    deleteUser(id) {
+      const user = this.users.find((u) => u.id === id);
+      if (!user) return;
+      if (!confirm('Opravdu trvale smazat uživatele ' + user.email + '?\nPokud mu chcete jen zakázat přístup, použijte v editaci stav Blokován.')) return;
+      Ui.call('apiDeleteUser', id, { silent: true, busy: 'Mažu uživatele…' })
+        .then(() => { Ui.toast('Uživatel byl smazán.'); this.loadUsers(); })
+        .catch((e) => Ui.toast(e.message, 'error'));
     },
 
     openUserModal(user) {
@@ -2386,7 +2402,7 @@ _sfState: {},
           <div class="sm-card-icon sm-card-icon--vt">${ico.person}</div>
           <div class="sm-card-body">
             <div class="sm-field-row">
-              <div class="sm-field sm-field--wide"><span class="sm-label">VT</span><span class="sm-value">${Ui.escape(s.area_manager || '–')}</span></div>
+              ${textField('VT', 'area_manager', ' sm-field--wide')}
             </div>
           </div>
         </div>
@@ -2394,8 +2410,8 @@ _sfState: {},
           <div class="sm-card-icon sm-card-icon--rm">${ico.person}</div>
           <div class="sm-card-body">
             <div class="sm-field-row">
-              <div class="sm-field sm-field--wide"><span class="sm-label">RM</span><span class="sm-value">${Ui.escape(s.regional_manager || '–')}</span></div>
-              <div class="sm-field"><span class="sm-label">Telefon RM</span><span class="sm-value">${Ui.escape(s.rm_phone || '–')}</span></div>
+              ${textField('RM', 'regional_manager', ' sm-field--wide')}
+              ${textField('Telefon RM', 'rm_phone')}
             </div>
           </div>
         </div>
@@ -2403,7 +2419,9 @@ _sfState: {},
           <div class="sm-card-icon sm-card-icon--status">${ico.status}</div>
           <div class="sm-card-body">
             <div class="sm-field-row">
-              <div class="sm-field"><span class="sm-label">Stav filiálky</span><span class="sm-value">${statusHtml}</span></div>
+              <div class="sm-field"><span class="sm-label">Stav filiálky</span>${edit
+                ? `<select class="sm-input" data-sm-field="active"><option value="true"${s.active !== false ? ' selected' : ''}>Aktivní</option><option value="false"${s.active === false ? ' selected' : ''}>Neaktivní</option></select>`
+                : `<span class="sm-value">${statusHtml}</span>`}</div>
             </div>
           </div>
         </div>`;
@@ -2578,6 +2596,7 @@ _sfState: {},
         else payload[el.dataset.smField] = el.value;
       });
       if (payload.code === undefined) payload.code = store.code; // u existující filiálky se číslo needituje
+      payload.active = payload.active === true || payload.active === 'true'; // select vrací string
 
       const overlay = document.querySelector('#smSavingOverlay');
       if (overlay) overlay.hidden = false;

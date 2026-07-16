@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.1.30 - 16.07.2026 13:02
+- Filialky: v editaci lze menit i VT, RM, telefon RM a stav filialky (vcetne nove filialky)
+- rucni deaktivace pres editaci se chova jako tlacitko vypnuti (sync ji nevrati zpet). Uzivatele: pridano mazani uzivatele (kos v tabulce, s potvrzenim
+- nelze smazat sam sebe ani posledniho aktivniho superadmina)
+
 ## v3.1.29 - 16.07.2026 12:50
 - Filialky: detail je nyni pro uzivatele s pravem zapisu editovatelny (nazev, LC, telefony, VT/RM, oteviraci doby)
 - nove tlacitko Pridat filialku

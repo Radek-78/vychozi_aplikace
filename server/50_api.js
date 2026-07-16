@@ -195,6 +195,32 @@ function apiSaveUser(payload) {
   });
 }
 
+function apiDeleteUser(id) {
+  return guard_(ROLES.ADMIN, (actor) => {
+    const users = dbGetAll_(SHEETS.USERS);
+    const user = users.find((u) => u.id === id);
+    if (!user) throw new Error('Uživatel nenalezen.');
+
+    if (String(user.email).toLowerCase() === String(actor.email).toLowerCase()) {
+      throw new Error('Nemůžete smazat sami sebe.');
+    }
+
+    if (user.role === ROLES.SUPERADMIN) {
+      if (actor.role !== ROLES.SUPERADMIN) {
+        throw new Error('Superadmina může smazat pouze superadmin.');
+      }
+      const activeSuperadmins = users.filter((u) => u.role === ROLES.SUPERADMIN && u.active === true);
+      if (user.active === true && activeSuperadmins.length <= 1) {
+        throw new Error('Aplikace musí mít alespoň jednoho aktivního superadmina.');
+      }
+    }
+
+    dbDelete_(SHEETS.USERS, id);
+    audit_('user_delete', user.email);
+    return null;
+  });
+}
+
 /* ── Nastavení ──────────────────────────────────────────────────── */
 
 function apiGetSettings() {
@@ -278,6 +304,9 @@ function apiSaveStore(payload) {
       active: !payload || payload.active !== false,
       metropolitni: !!(payload && payload.metropolitni),
     };
+    // Ruční deaktivace přes editaci se chová stejně jako tlačítko vypnutí —
+    // sync ji nesmí automaticky vrátit zpět (viz manually_inactive v syncStores_).
+    data.manually_inactive = !data.active;
     HOUR_FIELDS.forEach((f) => { data[f] = String((payload && payload[f]) || '').trim(); });
     if (payload && Array.isArray(payload.temp_closed_ranges)) {
       data.temp_closed_ranges = JSON.stringify(payload.temp_closed_ranges);
