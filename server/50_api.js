@@ -342,6 +342,21 @@ function apiDeleteStore(id) {
   });
 }
 
+function apiSetStoreMetropolitni(payload) {
+  return guard_(ROLES.USER, (actor) => {
+    const id = payload && payload.id;
+    const store = dbGetById_(SHEETS.STORES, id);
+    if (!store) throw new Error('Filiálka nenalezena.');
+    if (!isAllowed_(actor, 'stores_write', store.lc_code)) {
+      throw new Error('Nemáte oprávnění upravovat filiálku v lokaci ' + store.lc_code);
+    }
+    const value = !!(payload && payload.metropolitni);
+    dbUpdate_(SHEETS.STORES, id, { metropolitni: value });
+    audit_('store_metropolitni', store.code + ' ' + store.name + ' → ' + (value ? 'metropolitní' : 'běžná'));
+    return null;
+  });
+}
+
 function apiToggleStoreActive(id) {
   return guard_(ROLES.USER, (actor) => {
     const store = dbGetById_(SHEETS.STORES, id);

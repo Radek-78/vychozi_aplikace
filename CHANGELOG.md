@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.1.31 - 16.07.2026 13:09
+- Filialky: novy sloupec Metropolitni s checkboxem primo v tabulce - zmena se projevi okamzite (optimistic update) s toast potvrzenim, pri chybe se checkbox vrati
+- sloupec jde radit i filtrovat (Ano/Ne)
+- odebrana pilulka M u nazvu
+
 ## v3.1.30 - 16.07.2026 13:02
 - Filialky: v editaci lze menit i VT, RM, telefon RM a stav filialky (vcetne nove filialky)
 - rucni deaktivace pres editaci se chova jako tlacitko vypnuti (sync ji nevrati zpet). Uzivatele: pridano mazani uzivatele (kos v tabulce, s potvrzenim

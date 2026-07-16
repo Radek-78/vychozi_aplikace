@@ -4,6 +4,7 @@
  * Nejnovejsi verze prvni.
  */
 const CHANGELOG = [
+  { version: 'v3.1.31', date: '16.7.2026', message: 'Filialky: novy sloupec Metropolitni s checkboxem primo v tabulce - zmena se projevi okamzite (optimistic update) s toast potvrzenim, pri chybe se checkbox vrati; sloupec jde radit i filtrovat (Ano/Ne); odebrana pilulka M u nazvu' },
   { version: 'v3.1.30', date: '16.7.2026', message: 'Filialky: v editaci lze menit i VT, RM, telefon RM a stav filialky (vcetne nove filialky); rucni deaktivace pres editaci se chova jako tlacitko vypnuti (sync ji nevrati zpet). Uzivatele: pridano mazani uzivatele (kos v tabulce, s potvrzenim; nelze smazat sam sebe ani posledniho aktivniho superadmina)' },
   { version: 'v3.1.29', date: '16.7.2026', message: 'Filialky: detail je nyni pro uzivatele s pravem zapisu editovatelny (nazev, LC, telefony, VT/RM, oteviraci doby); nove tlacitko Pridat filialku; novy sloupec Metropolitni (checkbox v detailu, badge M v tabulce); poznamka ze pole z exportu prepise pristi synchronizace; interne rozdelen hlavni skript na dva bloky' },
   { version: 'v3.1.28', date: '10.7.2026', message: 'Auto sync: kazda denni kontrola si zapise cas a vysledek (i kdyz se soubor nezmenil) - zobrazuje se v Konfiguraci jako Posledni automaticka kontrola; historie dal obsahuje jen skutecne synchronizace' },

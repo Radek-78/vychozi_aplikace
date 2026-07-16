@@ -295,6 +295,7 @@
                 <col style="width:60px">
                 <col style="width:160px">
                 <col style="width:160px">
+                <col style="width:110px">
                 <col style="width:90px">
                 <col style="width:80px">
               </colgroup>
@@ -310,6 +311,7 @@
                   <th><button class="th-btn" type="button" data-table="stores" data-col="lc_code">LC<span class="sort-ind" data-sort-ind="stores-lc_code"></span></button></th>
                   <th><button class="th-btn" type="button" data-table="stores" data-col="area_manager">VT<span class="sort-ind" data-sort-ind="stores-area_manager"></span></button></th>
                   <th><button class="th-btn" type="button" data-table="stores" data-col="regional_manager">RM<span class="sort-ind" data-sort-ind="stores-regional_manager"></span></button></th>
+                  <th><button class="th-btn" type="button" data-table="stores" data-col="metropolitni">Metropolitní<span class="sort-ind" data-sort-ind="stores-metropolitni"></span></button></th>
                   <th><button class="th-btn" type="button" data-table="stores" data-col="active">Stav<span class="sort-ind" data-sort-ind="stores-active"></span></button></th>
                   <th style="text-align:center">Akce</th>
                 </tr>
@@ -2247,10 +2249,11 @@ _sfState: {},
             return `
           <tr class="${s.active === false ? 'is-muted' : ''}">
             <td><strong>${Ui.escape(s.code)}</strong></td>
-            <td><span class="store-name-cell">${Ui.escape(s.name)}${s.metropolitni === true ? ' <span class="pill is-blue" title="Metropolitní filiálka">M</span>' : ''}${tempClosed ? `<span class="store-tc-right"><span class="store-tc-range">${Ui.escape(this._tempClosedRangeLabel(s))}</span><span class="pill is-orange">Dočasně uzavřena</span></span>` : ''}</span></td>
+            <td><span class="store-name-cell">${Ui.escape(s.name)}${tempClosed ? `<span class="store-tc-right"><span class="store-tc-range">${Ui.escape(this._tempClosedRangeLabel(s))}</span><span class="pill is-orange">Dočasně uzavřena</span></span>` : ''}</span></td>
             <td>${Ui.escape(s.lc_code || '–')}</td>
             <td>${Ui.escape(s.area_manager || '–')}</td>
             <td>${Ui.escape(s.regional_manager || '–')}</td>
+            <td style="text-align:center"><input type="checkbox" class="store-metro-toggle" data-store-metro="${Ui.escape(s.id)}"${s.metropolitni === true ? ' checked' : ''}${this.hasStoresWrite ? '' : ' disabled'} title="Metropolitní filiálka"></td>
             <td>${s.active === false ? '<span class="pill is-red">Neaktivní</span>' : '<span class="pill is-green">Aktivní</span>'}</td>
             <td style="text-align:center;white-space:nowrap">
               ${this.hasStoresWrite
@@ -2269,14 +2272,34 @@ _sfState: {},
             </td>
           </tr>`;
           }).join('')
-        : '<tr><td colspan="7">Žádné filiálky. Spusťte synchronizaci.</td></tr>';
+        : '<tr><td colspan="8">Žádné filiálky. Spusťte synchronizaci.</td></tr>';
       document.querySelectorAll('[data-store-toggle]').forEach((btn) => {
         btn.addEventListener('click', () => this.toggleStoreActive(btn.dataset.storeToggle));
       });
       document.querySelectorAll('[data-store-edit]').forEach((btn) => {
         btn.addEventListener('click', () => this.openStoreModal(btn.dataset.storeEdit));
       });
+      document.querySelectorAll('[data-store-metro]').forEach((cb) => {
+        cb.addEventListener('change', () => this.toggleStoreMetro(cb.dataset.storeMetro, cb.checked));
+      });
       this.updateSortIndicators('stores');
+    },
+
+    /** Optimistická změna příznaku Metropolitní — projeví se hned, server běží na pozadí. */
+    toggleStoreMetro(id, checked) {
+      const s = this.stores.find((x) => x.id === id);
+      if (!s) return;
+      const previous = s.metropolitni === true;
+      s.metropolitni = checked;
+      Ui.call('apiSetStoreMetropolitni', { id: id, metropolitni: checked }, { silent: true })
+        .then(() => {
+          Ui.toast(s.code + ' ' + s.name + ': ' + (checked ? 'označena jako Metropolitní.' : 'označení Metropolitní zrušeno.'));
+        })
+        .catch((e) => {
+          s.metropolitni = previous;
+          this.renderStores(); // vrátí checkbox do původního stavu
+          Ui.toast(e.message, 'error');
+        });
     },
 
     toggleStoreActive(id) {
@@ -3094,6 +3117,7 @@ _sfState: {},
 
     _colDisplayVal(tableKey, col, rawVal) {
       if (col === 'active') return rawVal === true || rawVal === 'true' ? 'Aktivní' : 'Neaktivní';
+      if (col === 'metropolitni') return rawVal === true || rawVal === 'true' ? 'Ano' : 'Ne';
       if (col === 'role') return this.roleLabel(rawVal) || String(rawVal || '');
       if (col === 'timestamp') return Ui.formatDateTime(rawVal);
       return String(rawVal !== null && rawVal !== undefined ? rawVal : '');
