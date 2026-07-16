@@ -282,6 +282,7 @@
               </div>
             </div>
           </div>
+          <button class="button button-primary button-small write-only" type="button" id="addStoreButton"><svg width="14" height="14" viewBox="0 0 24 24"><use href="#i-plus"></use></svg>Přidat</button>
         </div>
       </div>
       <div class="section-body">
@@ -707,7 +708,8 @@
     '21.12':'Natálie','22.12':'Štefanie','23.12':'Vlasta','24.12':'Adam a Eva',
     '25.12':'Boží hod','26.12':'Štěpán','27.12':'Žaneta','28.12':'Bohumila','29.12':'Judita','30.12':'David','31.12':'Silvestr',
   };
-
+</script>
+<script>
   const App = {
     boot: window.APP_BOOTSTRAP || {},
     sectionTitles: {
@@ -1036,6 +1038,7 @@ _sfState: {},
         e.preventDefault(); this.saveRolePermissions(e.submitter);
       });
 
+      document.querySelector('#addStoreButton').addEventListener('click', () => this.openStoreModal(null));
       document.querySelector('#addLogisticButton').addEventListener('click', () => this.openLogisticModal(null));
       document.querySelectorAll('[data-action="close-logistic-modal"]').forEach((b) => {
         b.addEventListener('click', () => Ui.closeModal(document.querySelector('#logisticModal')));
@@ -2228,7 +2231,7 @@ _sfState: {},
             return `
           <tr class="${s.active === false ? 'is-muted' : ''}">
             <td><strong>${Ui.escape(s.code)}</strong></td>
-            <td><span class="store-name-cell">${Ui.escape(s.name)}${tempClosed ? `<span class="store-tc-right"><span class="store-tc-range">${Ui.escape(this._tempClosedRangeLabel(s))}</span><span class="pill is-orange">Dočasně uzavřena</span></span>` : ''}</span></td>
+            <td><span class="store-name-cell">${Ui.escape(s.name)}${s.metropolitni === true ? ' <span class="pill is-blue" title="Metropolitní filiálka">M</span>' : ''}${tempClosed ? `<span class="store-tc-right"><span class="store-tc-range">${Ui.escape(this._tempClosedRangeLabel(s))}</span><span class="pill is-orange">Dočasně uzavřena</span></span>` : ''}</span></td>
             <td>${Ui.escape(s.lc_code || '–')}</td>
             <td>${Ui.escape(s.area_manager || '–')}</td>
             <td>${Ui.escape(s.regional_manager || '–')}</td>
@@ -2269,15 +2272,21 @@ _sfState: {},
     /* ── Filiálky – modal detail ──────────────────── */
 
     _smStore: null,
+    _smEditable: false,
     _smRanges: [],
     _smCalYear: 0,
     _smCalMonth: 0,
     _smSelStart: null,
 
     openStoreModal(id) {
-      const store = this.stores.find((s) => s.id === id);
+      // id = null → nová filiálka (prázdný formulář)
+      const store = id
+        ? this.stores.find((s) => s.id === id)
+        : { id: '', code: '', name: '', lc_code: '', phone: '', area_manager: '', regional_manager: '', rm_phone: '', active: true, metropolitni: false, temp_closed_ranges: '' };
       if (!store) return;
+      if (!id && !this.hasStoresWrite) return;
       this._smStore = store;
+      this._smEditable = this.hasStoresWrite;
 
       let ranges = [];
       try {
@@ -2292,7 +2301,7 @@ _sfState: {},
       this._smCalYear = now.getFullYear();
       this._smCalMonth = now.getMonth();
 
-      document.querySelector('#storeModalTitle').textContent = store.code + ' – ' + store.name;
+      document.querySelector('#storeModalTitle').textContent = id ? (store.code + ' – ' + store.name) : 'Přidat filiálku';
 
       this._smRenderFields(store);
       this._smRenderHours(store);
@@ -2336,14 +2345,27 @@ _sfState: {},
       const statusHtml = s.active === false
         ? `<span class="pill is-red">Neaktivní</span>`
         : `<span class="pill is-green">Aktivní</span>`;
+      const edit = this._smEditable === true;
+      const isNew = !s.id;
+      const val = (f) => Ui.escape(s[f] || '');
+      const textField = (label, field, extra) => edit
+        ? `<div class="sm-field${extra || ''}"><span class="sm-label">${label}</span><input class="sm-input" data-sm-field="${field}" value="${val(field)}"></div>`
+        : `<div class="sm-field${extra || ''}"><span class="sm-label">${label}</span><span class="sm-value">${val(field) || '–'}</span></div>`;
+      const lcOptions = (this.logistics || [])
+        .filter((lc) => lc.active === true)
+        .map((lc) => `<option value="${Ui.escape(lc.abbreviation)}"${lc.abbreviation === s.lc_code ? ' selected' : ''}>${Ui.escape(lc.abbreviation)} — ${Ui.escape(lc.name)}</option>`)
+        .join('');
       document.querySelector('#smFields').innerHTML = `
+        ${edit ? '<p class="sm-sync-note">Pole z měsíčního exportu (název, LC, VT, RM, telefony, otevírací doby) budou při příští synchronizaci přepsána podle zdrojového souboru.</p>' : ''}
         <div class="sm-card">
           <div class="sm-card-icon sm-card-icon--store">${ico.store}</div>
           <div class="sm-card-body">
             <div class="sm-field-row">
-              <div class="sm-field"><span class="sm-label">Číslo prodejny</span><span class="sm-value sm-value--bold">${Ui.escape(s.code)}</span></div>
-              <div class="sm-field sm-field--wide"><span class="sm-label">Název</span><span class="sm-value">${Ui.escape(s.name)}</span></div>
-              <div class="sm-field"><span class="sm-label">Telefon prodejny</span><span class="sm-value">${Ui.escape(s.phone || '–')}</span></div>
+              ${edit && isNew
+                ? `<div class="sm-field"><span class="sm-label">Číslo prodejny</span><input class="sm-input" data-sm-field="code" value="${val('code')}" placeholder="001"></div>`
+                : `<div class="sm-field"><span class="sm-label">Číslo prodejny</span><span class="sm-value sm-value--bold">${val('code')}</span></div>`}
+              ${textField('Název', 'name', ' sm-field--wide')}
+              ${textField('Telefon prodejny', 'phone')}
             </div>
           </div>
         </div>
@@ -2351,7 +2373,12 @@ _sfState: {},
           <div class="sm-card-icon sm-card-icon--lc">${ico.lc}</div>
           <div class="sm-card-body">
             <div class="sm-field-row">
-              <div class="sm-field"><span class="sm-label">LC</span><span class="sm-value sm-value--bold">${Ui.escape(s.lc_code || '–')}</span></div>
+              ${edit
+                ? `<div class="sm-field"><span class="sm-label">LC</span><select class="sm-input" data-sm-field="lc_code"><option value=""></option>${lcOptions}</select></div>`
+                : `<div class="sm-field"><span class="sm-label">LC</span><span class="sm-value sm-value--bold">${val('lc_code') || '–'}</span></div>`}
+              <div class="sm-field"><span class="sm-label">Metropolitní</span>${edit
+                ? `<label class="sm-check"><input type="checkbox" data-sm-field="metropolitni"${s.metropolitni === true ? ' checked' : ''}><span>Ano</span></label>`
+                : `<span class="sm-value">${s.metropolitni === true ? 'Ano' : 'Ne'}</span>`}</div>
             </div>
           </div>
         </div>
@@ -2387,12 +2414,15 @@ _sfState: {},
         ['Po', 'mon', false], ['Út', 'tue', false], ['St', 'wed', false],
         ['Čt', 'thu', false], ['Pá', 'fri', false], ['So', 'sat', true], ['Ne', 'sun', true],
       ];
+      const edit = this._smEditable === true;
       document.querySelector('#smHours').innerHTML = days.map(([label, d, weekend]) => {
         const o = s[d + '_open'] || '', c = s[d + '_close'] || '';
         const val = o && c ? o + '–' + c : '–';
         return `<div class="sm-hour-item${weekend ? ' sm-hour-item--weekend' : ''}">
           <span class="sm-hour-day">${label}</span>
-          <span class="sm-hour-val">${Ui.escape(val)}</span>
+          ${edit
+            ? `<span class="sm-hour-edit"><input class="sm-input sm-hour-input" data-sm-field="${d}_open" value="${Ui.escape(o)}" placeholder="7:00">–<input class="sm-input sm-hour-input" data-sm-field="${d}_close" value="${Ui.escape(c)}" placeholder="20:00"></span>`
+            : `<span class="sm-hour-val">${Ui.escape(val)}</span>`}
         </div>`;
       }).join('');
     },
@@ -2533,22 +2563,34 @@ _sfState: {},
     },
 
     _smSave() {
-      const id = this._smStore && this._smStore.id;
-      if (!id) return;
+      const store = this._smStore;
+      if (!store) return;
+
+      if (!this._smEditable) {
+        // Uživatel bez práva zápisu nemá co ukládat (modal se mu ani neotvírá)
+        Ui.closeModal(document.querySelector('#storeModal'));
+        return;
+      }
+
+      const payload = { id: store.id || null, temp_closed_ranges: this._smRanges, active: store.active !== false, metropolitni: false };
+      document.querySelectorAll('#storeModal [data-sm-field]').forEach((el) => {
+        if (el.type === 'checkbox') payload[el.dataset.smField] = el.checked;
+        else payload[el.dataset.smField] = el.value;
+      });
+      if (payload.code === undefined) payload.code = store.code; // u existující filiálky se číslo needituje
+
       const overlay = document.querySelector('#smSavingOverlay');
       if (overlay) overlay.hidden = false;
-      Ui.call('apiSaveStoreTempRanges', { id, temp_closed_ranges: this._smRanges }, { silent: true })
+      Ui.call('apiSaveStore', payload, { silent: true })
         .then(() => {
-          const s = this.stores.find((x) => x.id === id);
-          if (s) s.temp_closed_ranges = JSON.stringify(this._smRanges);
           if (overlay) overlay.hidden = true;
           Ui.closeModal(document.querySelector('#storeModal'));
-          Ui.toast('Dočasné uzavření bylo uloženo.');
-          this.renderStores();
+          Ui.toast('Filiálka byla uložena.');
+          this.loadStores();
         })
         .catch((e) => {
           if (overlay) overlay.hidden = true;
-          Ui.toast(e.message, 'error');
+          Ui.toast(e.message, 'error'); // modal zůstává otevřený, hodnoty se neztratí
         });
     },
 

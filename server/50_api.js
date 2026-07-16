@@ -276,8 +276,12 @@ function apiSaveStore(payload) {
       rm_phone: String((payload && payload.rm_phone) || '').trim(),
       temporarily_closed: payload && payload.temporarily_closed === true,
       active: !payload || payload.active !== false,
+      metropolitni: !!(payload && payload.metropolitni),
     };
     HOUR_FIELDS.forEach((f) => { data[f] = String((payload && payload[f]) || '').trim(); });
+    if (payload && Array.isArray(payload.temp_closed_ranges)) {
+      data.temp_closed_ranges = JSON.stringify(payload.temp_closed_ranges);
+    }
 
     const stores = dbGetAll_(SHEETS.STORES);
     const existing = payload && payload.id ? stores.find((s) => s.id === payload.id) : null;
@@ -528,7 +532,7 @@ function apiSaveSyncSettings(payload) {
  * to omezí na jednou za běh skriptu, CacheService pak i napříč requesty.
  */
 let dbSchemaEnsuredThisRun_ = false;
-const SCHEMA_CHECK_CACHE_KEY_ = 'schema:checked';
+const SCHEMA_CHECK_CACHE_KEY_ = 'schema:checked:2'; // změna klíče vynutí novou kontrolu po přidání sloupce
 const SCHEMA_CHECK_TTL_ = 1800; // sekund
 
 function dbEnsureApps_() {
@@ -542,7 +546,7 @@ function dbEnsureApps_() {
   } catch (e) { /* cache je jen optimalizace */ }
 
   const ss = dbSpreadsheet_();
-  const sheetsToCheck = [SHEETS.APPS, SHEETS.USERS, SHEETS.ROLE_PERMISSIONS];
+  const sheetsToCheck = [SHEETS.APPS, SHEETS.USERS, SHEETS.ROLE_PERMISSIONS, SHEETS.STORES];
   let needsMigration = false;
 
   for (const name of sheetsToCheck) {

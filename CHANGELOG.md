@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.1.29 - 16.07.2026 12:50
+- Filialky: detail je nyni pro uzivatele s pravem zapisu editovatelny (nazev, LC, telefony, VT/RM, oteviraci doby)
+- nove tlacitko Pridat filialku
+- novy sloupec Metropolitni (checkbox v detailu, badge M v tabulce)
+- poznamka ze pole z exportu prepise pristi synchronizace
+- interne rozdelen hlavni skript na dva bloky
+
 ## v3.1.28 - 10.07.2026 13:38
 - Auto sync: kazda denni kontrola si zapise cas a vysledek (i kdyz se soubor nezmenil) - zobrazuje se v Konfiguraci jako Posledni automaticka kontrola
 - historie dal obsahuje jen skutecne synchronizace
