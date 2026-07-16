@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.36 - 16.07.2026 22:07
+- Oprava razeni: sloupce s cisly (napr. cislo filialky) se v tabulkach nyni radi numericky misto textove (11 uz nepredbehne 5,6,7,9)
+- sjednocena logika razeni s filtrem hodnot sloupce do sdilene funkce _compareVals
+
 ## v3.1.35 - 16.07.2026 21:58
 - Log. centra: nove tlacitko Doplnit LC ze souboru - porovna zkratky LC nalezene ve filialkach s existujicimi zaznamy a otevre modal s predvyplnenymi radky (zkratka je znama, cislo a nazev doplni uzivatel)
 - hromadne vytvoreni jednim ulozenim pres novy endpoint apiBulkCreateLogistics

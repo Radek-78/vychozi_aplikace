@@ -4,6 +4,7 @@
  * Nejnovejsi verze prvni.
  */
 const CHANGELOG = [
+  { version: 'v3.1.36', date: '16.7.2026', message: 'Oprava razeni: sloupce s cisly (napr. cislo filialky) se v tabulkach nyni radi numericky misto textove (11 uz nepredbehne 5,6,7,9); sjednocena logika razeni s filtrem hodnot sloupce do sdilene funkce _compareVals' },
   { version: 'v3.1.35', date: '16.7.2026', message: 'Log. centra: nove tlacitko Doplnit LC ze souboru - porovna zkratky LC nalezene ve filialkach s existujicimi zaznamy a otevre modal s predvyplnenymi radky (zkratka je znama, cislo a nazev doplni uzivatel); hromadne vytvoreni jednim ulozenim pres novy endpoint apiBulkCreateLogistics' },
   { version: 'v3.1.34', date: '16.7.2026', message: 'Wizard: upresnen popisek pole URL slozky - Synchronizace filialek misto obecne Synchronizace' },
   { version: 'v3.1.33', date: '16.7.2026', message: 'Filialky: oprava race condition u checkboxu Metropolitni - zmena provedena behem tiche obnovy seznamu uz neni prepsana starsi odpovedi ze serveru (lokalni zmena ma 60s ochranu)' },

@@ -3276,13 +3276,20 @@ _sfState: {},
           for (const { col, dir } of sorts) {
             const av = this._colDisplayVal(tableKey, col, a[col]);
             const bv = this._colDisplayVal(tableKey, col, b[col]);
-            const cmp = av.localeCompare(bv, 'cs');
+            const cmp = this._compareVals(av, bv);
             if (cmp !== 0) return dir === 'desc' ? -cmp : cmp;
           }
           return 0;
         });
       }
       return result;
+    },
+
+    /** Číselné hodnoty (i s vedoucími nulami, např. čísla filiálek) řadí numericky, jinak abecedně (cs). */
+    _compareVals(av, bv) {
+      const na = Number(av), nb = Number(bv);
+      if (String(av).trim() !== '' && String(bv).trim() !== '' && !isNaN(na) && !isNaN(nb)) return na - nb;
+      return String(av).localeCompare(String(bv), 'cs');
     },
 
     updateSortIndicators(tableKey) {
@@ -3316,11 +3323,8 @@ _sfState: {},
       const activeFilters = st.filters[col] || null;
       const sortIdx = st.sorts.findIndex((s) => s.col === col);
       const curDir = sortIdx >= 0 ? st.sorts[sortIdx].dir : null;
-      const uniqueVals = [...new Set(allRows.map((r) => this._colDisplayVal(tableKey, col, r[col])))].sort((a, b) => {
-        const na = Number(a), nb = Number(b);
-        if (!isNaN(na) && !isNaN(nb)) return na - nb;
-        return a.localeCompare(b, 'cs');
-      });
+      const uniqueVals = [...new Set(allRows.map((r) => this._colDisplayVal(tableKey, col, r[col])))]
+        .sort((a, b) => this._compareVals(a, b));
 
       const menu = document.createElement('div');
       menu.className = 'col-menu';
