@@ -136,6 +136,49 @@
       dialog.showModal();
     },
 
+    /**
+     * Potvrzovací dialog v designu aplikace (náhrada za nativní confirm()).
+     * Vrací Promise<boolean> — true po potvrzení, false při zrušení/Esc.
+     */
+    confirm(opts) {
+      const o = opts || {};
+      return new Promise((resolve) => {
+        document.querySelector('#confirmDialog')?.remove();
+        const dialog = document.createElement('dialog');
+        dialog.id = 'confirmDialog';
+        dialog.className = 'modal modal-confirm';
+        dialog.innerHTML =
+          '<div class="modal-header">' +
+            '<span class="modal-icon modal-icon--danger"><svg><use href="#i-warning"></use></svg></span>' +
+            '<div class="modal-header-text">' +
+              '<p class="kicker">' + this.escape(o.kicker || 'Potvrzení') + '</p>' +
+              '<h2>' + this.escape(o.title || 'Opravdu?') + '</h2>' +
+            '</div>' +
+          '</div>' +
+          '<div class="modal-body">' +
+            '<p class="confirm-message">' + this.escape(o.message || '') + '</p>' +
+            (o.note ? '<p class="confirm-note">' + this.escape(o.note) + '</p>' : '') +
+          '</div>' +
+          '<footer class="modal-actions">' +
+            '<button class="button button-secondary" type="button" data-confirm="no"><svg><use href="#i-close"></use></svg>Zrušit</button>' +
+            '<button class="button button-danger" type="button" data-confirm="yes"><svg><use href="#i-trash"></use></svg>' + this.escape(o.confirmLabel || 'Smazat') + '</button>' +
+          '</footer>';
+        document.body.appendChild(dialog);
+
+        const finish = (result) => {
+          this.closeModal(dialog);
+          setTimeout(() => dialog.remove(), 400);
+          resolve(result);
+        };
+        dialog.querySelector('[data-confirm="no"]').addEventListener('click', () => finish(false));
+        dialog.querySelector('[data-confirm="yes"]').addEventListener('click', () => finish(true));
+        dialog.addEventListener('cancel', (e) => { e.preventDefault(); finish(false); });
+        dialog.addEventListener('click', (e) => { if (e.target === dialog) finish(false); });
+
+        this.openModal(dialog);
+      });
+    },
+
     closeModal(dialog) {
       dialog.classList.add('is-closing');
       const done = () => {

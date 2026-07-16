@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.32 - 16.07.2026 13:18
+- Design: potvrzovaci dialogy mazani (uzivatel, aplikace) nahrazeny vlastnim modalem v designu aplikace misto nativniho confirm() prohlizece
+- nova komponenta Ui.confirm a tlacitko button-danger
+
 ## v3.1.31 - 16.07.2026 13:09
 - Filialky: novy sloupec Metropolitni s checkboxem primo v tabulce - zmena se projevi okamzite (optimistic update) s toast potvrzenim, pri chybe se checkbox vrati
 - sloupec jde radit i filtrovat (Ano/Ne)

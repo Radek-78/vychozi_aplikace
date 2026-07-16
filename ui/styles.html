@@ -569,6 +569,15 @@
     background: var(--page);
   }
 
+  .button-danger {
+    background: var(--lidl-red);
+    color: var(--white);
+  }
+
+  .button-danger:hover {
+    background: #b40810;
+  }
+
   .button-ghost {
     background: transparent;
     border-color: rgba(255, 255, 255, 0.3);
@@ -2198,6 +2207,28 @@
   .modal-icon svg {
     height: 18px;
     width: 18px;
+  }
+
+  .modal-icon--danger {
+    background: #fde8e8;
+    color: var(--lidl-red);
+  }
+
+  .modal-confirm {
+    max-width: 440px;
+  }
+
+  .modal-confirm .confirm-message {
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .modal-confirm .confirm-note {
+    color: var(--muted);
+    font-size: 12.5px;
+    line-height: 1.5;
+    margin: 10px 0 0;
   }
 
   .modal-header-text {

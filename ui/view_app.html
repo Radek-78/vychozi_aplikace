@@ -1493,10 +1493,17 @@ _sfState: {},
     deleteUser(id) {
       const user = this.users.find((u) => u.id === id);
       if (!user) return;
-      if (!confirm('Opravdu trvale smazat uživatele ' + user.email + '?\nPokud mu chcete jen zakázat přístup, použijte v editaci stav Blokován.')) return;
-      Ui.call('apiDeleteUser', id, { silent: true, busy: 'Mažu uživatele…' })
-        .then(() => { Ui.toast('Uživatel byl smazán.'); this.loadUsers(); })
-        .catch((e) => Ui.toast(e.message, 'error'));
+      Ui.confirm({
+        kicker: 'Uživatelé',
+        title: 'Smazat uživatele?',
+        message: 'Opravdu trvale smazat uživatele ' + user.email + '?',
+        note: 'Pokud mu chcete jen zakázat přístup, použijte v editaci stav Blokován.',
+      }).then((ok) => {
+        if (!ok) return;
+        Ui.call('apiDeleteUser', id, { silent: true, busy: 'Mažu uživatele…' })
+          .then(() => { Ui.toast('Uživatel byl smazán.'); this.loadUsers(); })
+          .catch((e) => Ui.toast(e.message, 'error'));
+      });
     },
 
     openUserModal(user) {
@@ -2205,10 +2212,17 @@ _sfState: {},
     },
 
     deleteApp(id) {
-      if (!confirm('Opravdu smazat tuto aplikaci?')) return;
-      Ui.call('apiDeleteApp', id, { silent: true, busy: 'Mažu aplikaci…' })
-        .then(() => { this.loadApps(); })
-        .catch((err) => Ui.toast(err.message, 'error'));
+      const app = (this.apps || []).find((a) => a.id === id);
+      Ui.confirm({
+        kicker: 'Aplikace',
+        title: 'Smazat aplikaci?',
+        message: 'Opravdu smazat aplikaci ' + ((app && app.name) || '') + '?',
+      }).then((ok) => {
+        if (!ok) return;
+        Ui.call('apiDeleteApp', id, { silent: true, busy: 'Mažu aplikaci…' })
+          .then(() => { Ui.toast('Aplikace byla smazána.'); this.loadApps(); })
+          .catch((err) => Ui.toast(err.message, 'error'));
+      });
     },
 
     /* ── Filiálky ─────────────────────────────────── */
