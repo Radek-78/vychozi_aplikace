@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.35 - 16.07.2026 21:58
+- Log. centra: nove tlacitko Doplnit LC ze souboru - porovna zkratky LC nalezene ve filialkach s existujicimi zaznamy a otevre modal s predvyplnenymi radky (zkratka je znama, cislo a nazev doplni uzivatel)
+- hromadne vytvoreni jednim ulozenim pres novy endpoint apiBulkCreateLogistics
+
 ## v3.1.34 - 16.07.2026 13:47
 - Wizard: upresnen popisek pole URL slozky - Synchronizace filialek misto obecne Synchronizace
 

@@ -327,6 +327,7 @@
       <div class="section-bar">
         <span class="section-title">Logistická centra</span>
         <div class="section-bar-actions">
+          <button class="button button-secondary write-only" type="button" id="bulkAddLogisticButton"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-sync"></use></svg>Doplnit LC ze souboru</button>
           <button class="button button-secondary write-only" type="button" id="addLogisticButton"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-plus"></use></svg>Přidat LC</button>
         </div>
       </div>
@@ -593,6 +594,38 @@
       <button class="button button-primary write-only" type="submit"><svg><use href="#i-check"></use></svg>Uložit</button>
     </footer>
   </form>
+</dialog>
+
+<dialog class="modal modal-large" id="bulkLogisticModal">
+  <div class="modal-header">
+    <span class="modal-icon"><svg><use href="#i-truck"></use></svg></span>
+    <div class="modal-header-text">
+      <p class="kicker">Síť</p>
+      <h2>Doplnit logistická centra ze souboru</h2>
+    </div>
+    <button class="modal-close" type="button" id="closeBulkLogisticModal" aria-label="Zavřít"><svg><use href="#i-close"></use></svg></button>
+  </div>
+  <div class="modal-body">
+    <p class="form-hint" style="margin:0 0 12px">Ve filiálkách byly nalezeny zkratky LC bez vlastního záznamu. Doplň číslo a název — zkratku už známe ze souboru.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:36px"></th>
+            <th style="width:110px">Číslo LC</th>
+            <th style="width:100px">Zkratka</th>
+            <th>Název (město)</th>
+            <th style="width:100px">Aktivní</th>
+          </tr>
+        </thead>
+        <tbody id="bulkLogisticRows"></tbody>
+      </table>
+    </div>
+  </div>
+  <footer class="modal-actions">
+    <button class="button button-secondary" type="button" id="cancelBulkLogisticModal"><svg><use href="#i-close"></use></svg>Zrušit</button>
+    <button class="button button-primary" type="button" id="saveBulkLogisticButton"><svg><use href="#i-check"></use></svg>Vytvořit vybraná LC</button>
+  </footer>
 </dialog>
 
 <dialog class="modal modal-large" id="storeModal">
@@ -1048,6 +1081,10 @@ _sfState: {},
       document.querySelector('#logisticForm').addEventListener('submit', (e) => {
         e.preventDefault(); this.saveLogistic(e.submitter);
       });
+      document.querySelector('#bulkAddLogisticButton').addEventListener('click', () => this.openBulkLogisticModal());
+      document.querySelector('#closeBulkLogisticModal').addEventListener('click', () => Ui.closeModal(document.querySelector('#bulkLogisticModal')));
+      document.querySelector('#cancelBulkLogisticModal').addEventListener('click', () => Ui.closeModal(document.querySelector('#bulkLogisticModal')));
+      document.querySelector('#saveBulkLogisticButton').addEventListener('click', () => this.saveBulkLogistics());
 
       document.querySelector('#syncSettingsForm').addEventListener('submit', (e) => {
         e.preventDefault(); this.saveSyncSettings(e.submitter);
@@ -2912,6 +2949,69 @@ _sfState: {},
           Ui.toast(e.message, 'error');
           this.openLogisticModal(Object.assign({}, payload, { id: payload.id || '' })); // vrátí dialog s rozepsanými hodnotami
         });
+    },
+
+    /** Zkratky LC nalezené ve filiálkách, které zatím nemají vlastní záznam v Log. centrech. */
+    _missingLogisticAbbreviations() {
+      const known = new Set((this.logistics || []).map((lc) => String(lc.abbreviation || '').trim().toUpperCase()));
+      const found = new Set();
+      (this.stores || []).forEach((s) => {
+        const abbr = String(s.lc_code || '').trim().toUpperCase();
+        if (abbr && !known.has(abbr)) found.add(abbr);
+      });
+      return [...found].sort();
+    },
+
+    openBulkLogisticModal() {
+      if (!this.stores.length) {
+        Ui.call('apiListStores', null, { silent: true, busy: 'Načítám filiálky…' })
+          .then((stores) => { this.stores = stores || []; this._openBulkLogisticModalReady(); })
+          .catch((e) => Ui.toast(e.message, 'error'));
+        return;
+      }
+      this._openBulkLogisticModalReady();
+    },
+
+    _openBulkLogisticModalReady() {
+      const missing = this._missingLogisticAbbreviations();
+      if (!missing.length) {
+        Ui.toast('Všechny LC ze souboru už mají svůj záznam.');
+        return;
+      }
+      document.querySelector('#bulkLogisticRows').innerHTML = missing.map((abbr, i) => `
+        <tr>
+          <td style="text-align:center"><input type="checkbox" class="bulk-lc-use" data-idx="${i}" checked></td>
+          <td><input class="sm-input" data-idx="${i}" data-bulk-field="code" placeholder="5"></td>
+          <td><strong>${Ui.escape(abbr)}</strong><input type="hidden" data-idx="${i}" data-bulk-field="abbreviation" value="${Ui.escape(abbr)}"></td>
+          <td><input class="sm-input" data-idx="${i}" data-bulk-field="name" placeholder="Brandýs nad Labem"></td>
+          <td style="text-align:center"><input type="checkbox" data-idx="${i}" data-bulk-field="active" checked></td>
+        </tr>`).join('');
+      Ui.openModal(document.querySelector('#bulkLogisticModal'));
+    },
+
+    saveBulkLogistics() {
+      const rows = [];
+      document.querySelectorAll('#bulkLogisticRows tr').forEach((tr) => {
+        if (!tr.querySelector('.bulk-lc-use').checked) return;
+        const row = {};
+        tr.querySelectorAll('[data-bulk-field]').forEach((el) => {
+          row[el.dataset.bulkField] = el.type === 'checkbox' ? el.checked : el.value.trim();
+        });
+        rows.push(row);
+      });
+      if (!rows.length) { Ui.toast('Nevybrali jste žádné LC k vytvoření.', 'error'); return; }
+      const missingFields = rows.some((r) => !r.code || !r.name);
+      if (missingFields) { Ui.toast('U vybraných LC vyplňte číslo i název.', 'error'); return; }
+
+      Ui.closeModal(document.querySelector('#bulkLogisticModal'));
+      Ui.call('apiBulkCreateLogistics', rows, { silent: true, busy: 'Vytvářím logistická centra…' })
+        .then((result) => {
+          const errs = result.errors || [];
+          if (result.created > 0) Ui.toast('Vytvořeno LC: ' + result.created + (errs.length ? ' (' + errs.length + ' se nezdařilo)' : '.'));
+          if (errs.length) Ui.toast('Chyby: ' + errs.join('; '), 'error');
+          this.loadLogistics();
+        })
+        .catch((e) => Ui.toast(e.message, 'error'));
     },
 
     /* ── Synchronizace ────────────────────────────── */

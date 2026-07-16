@@ -499,6 +499,39 @@ function apiDeleteLogistic(id) {
   });
 }
 
+/**
+ * Hromadné vytvoření logistických center — z modalu, kdy uživatel doplňuje
+ * zkratky LC nalezené ve filiálkách, ale zatím bez vlastního záznamu.
+ * Vrací počet vytvořených + pole chyb (jednotlivé řádky se navzájem neblokují).
+ */
+function apiBulkCreateLogistics(rows) {
+  return guard_(ROLES.USER, (user) => {
+    if (!Array.isArray(rows) || !rows.length) throw new Error('Nebyla vybrána žádná LC k vytvoření.');
+    const existing = dbGetAll_(SHEETS.LOGISTICS);
+    const created = [];
+    const errors = [];
+    rows.forEach((row) => {
+      const abbreviation = String((row && row.abbreviation) || '').trim().toUpperCase();
+      try {
+        if (!/^[A-Z]{2,4}$/.test(abbreviation)) throw new Error('neplatná zkratka');
+        if (!isAllowed_(user, 'logistics_write', abbreviation)) throw new Error('nemáte oprávnění');
+        const code = String((row && row.code) || '').trim();
+        if (!code) throw new Error('chybí číslo LC');
+        const name = String((row && row.name) || '').trim();
+        if (!name) throw new Error('chybí název');
+        const isDup = existing.some((l) => l.abbreviation === abbreviation) || created.some((c) => c.abbreviation === abbreviation);
+        if (isDup) throw new Error('LC už existuje');
+        const active = !row || row.active !== false;
+        created.push(dbInsert_(SHEETS.LOGISTICS, { code, name, abbreviation, active }));
+      } catch (e) {
+        errors.push(abbreviation + ': ' + e.message);
+      }
+    });
+    if (created.length) audit_('logistic_bulk_create', created.map((c) => c.abbreviation).join(', '));
+    return { created: created.length, errors: errors };
+  });
+}
+
 function apiUpdateLastVisit() {
   return guard_(ROLES.USER, (actor) => {
     const users = dbGetAll_(SHEETS.USERS);
