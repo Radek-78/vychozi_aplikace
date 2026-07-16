@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.34 - 16.07.2026 13:47
+- Wizard: upresnen popisek pole URL slozky - Synchronizace filialek misto obecne Synchronizace
+
 ## v3.1.33 - 16.07.2026 13:28
 - Filialky: oprava race condition u checkboxu Metropolitni - zmena provedena behem tiche obnovy seznamu uz neni prepsana starsi odpovedi ze serveru (lokalni zmena ma 60s ochranu)
 
