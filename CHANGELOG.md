@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.37 - 17.07.2026 06:35
+- Oprava: reset aplikace (TOOLS_resetInicializace i novy apiResetApplication) nyni maze i server cache, ne jen napojeni na DB - drive se mohla po resetu jeste chvili zobrazovat data ze stare databaze. Nastaveni: pridana sekce Kompletni reset aplikace jen pro superadmina (Ui.confirm, plna navigace na execUrl po dokonceni). Sdilena funkce clearAllDbCache_
+
 ## v3.1.36 - 16.07.2026 22:07
 - Oprava razeni: sloupce s cisly (napr. cislo filialky) se v tabulkach nyni radi numericky misto textove (11 uz nepredbehne 5,6,7,9)
 - sjednocena logika razeni s filtrem hodnot sloupce do sdilene funkce _compareVals

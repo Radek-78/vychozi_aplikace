@@ -8,8 +8,8 @@
 const CONFIG = {
   defaultAppName: 'Výchozí aplikace',
   defaultAppSubtitle: '',
-  version: 'v3.1.36',
-  releaseDate: '16.7.2026',
+  version: 'v3.1.37',
+  releaseDate: '17.7.2026',
   logoUrl: 'https://drive.google.com/thumbnail?id=18mu_Lq1F_FqqSZcolMjLwG0aaQDPMdyD&sz=w320',
   theme: {
     blue: '#0050aa',

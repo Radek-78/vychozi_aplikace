@@ -199,6 +199,14 @@
             </div>
           </div>
         </section>
+        <section class="panel superadmin-only is-hidden" id="resetAppPanel">
+          <div class="panel-body" style="display:flex;flex-direction:column;gap:6px">
+            <p class="form-hint" style="color:var(--lidl-red)">Nebezpečná zóna: kompletně odpojí aplikaci od aktuální databáze a spustí znovu úvodní průvodce. Databázový spreadsheet v Disku zůstane zachovaný, jen se na něj appka přestane odkazovat.</p>
+            <div>
+              <button class="button button-danger" type="button" id="resetAppBtn"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-warning"></use></svg>Kompletní reset aplikace</button>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
 
@@ -907,6 +915,8 @@ _sfState: {},
       }
       if (user.role !== 'SUPERADMIN') {
         document.querySelector('#superadminOption').disabled = true;
+      } else {
+        document.querySelectorAll('.superadmin-only').forEach((node) => node.classList.remove('is-hidden'));
       }
       Ui.hideLoader();
       this.initVisit();
@@ -1069,6 +1079,7 @@ _sfState: {},
           .then(() => { btn.disabled = false; Ui.toast('Cache vymazána — data se nyní načtou čerstvě.'); })
           .catch((err) => { btn.disabled = false; Ui.toast(err.message, 'error'); });
       });
+      document.querySelector('#resetAppBtn')?.addEventListener('click', () => this.resetApplication());
       document.querySelector('#rolePermissionsForm').addEventListener('submit', (e) => {
         e.preventDefault(); this.saveRolePermissions(e.submitter);
       });
@@ -1791,6 +1802,21 @@ _sfState: {},
           Ui.setButtonLoading(button, false);
           Ui.toast(error.message, 'error');
         });
+    },
+
+    resetApplication() {
+      Ui.confirm({
+        kicker: 'Nebezpečná zóna',
+        title: 'Kompletní reset aplikace?',
+        message: 'Aplikace se odpojí od aktuální databáze a všichni uživatelé (včetně tebe) uvidí při dalším otevření znovu úvodní průvodce.',
+        note: 'Databázový spreadsheet v Disku zůstane zachovaný — appka se na něj jen přestane odkazovat. Tuto akci nelze vzít zpět z aplikace.',
+        confirmLabel: 'Resetovat aplikaci',
+      }).then((ok) => {
+        if (!ok) return;
+        Ui.call('apiResetApplication', null, { silent: true, busy: 'Resetuji aplikaci…' })
+          .then(() => { window.location.href = this.boot.execUrl || window.location.href; })
+          .catch((e) => Ui.toast(e.message, 'error'));
+      });
     },
 
     loadAudit() {

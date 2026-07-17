@@ -240,9 +240,23 @@ function apiSaveSettings(payload) {
 
 function apiClearCache() {
   return guard_(ROLES.ADMIN, () => {
-    const cache = CacheService.getScriptCache();
-    cache.removeAll(Object.values(SHEETS).map((t) => 'tbl:' + t).concat(['tbl:_settings']));
+    clearAllDbCache_();
     audit_('cache_clear', 'Manuální vymazání cache');
+    return null;
+  });
+}
+
+/**
+ * Kompletní reset aplikace — odpojí od databáze a vymaže server cache.
+ * Appka při dalším načtení znovu spustí úvodní průvodce. Samotný databázový
+ * spreadsheet v Drive zůstává nedotčený (lze ho v Disku smazat ručně).
+ */
+function apiResetApplication() {
+  return guard_('SUPERADMIN', () => {
+    audit_('app_reset', 'Kompletní reset aplikace — inicializace zrušena, spustí se úvodní průvodce.');
+    PropertiesService.getScriptProperties().deleteAllProperties();
+    clearAllDbCache_();
+    dbHandle_ = null;
     return null;
   });
 }

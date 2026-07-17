@@ -38,22 +38,22 @@ function TOOLS_presunSkriptDoSlozky() {
 }
 
 /**
- * POZOR: odpojí aplikaci od databáze (smaže Script Properties), takže
- * při dalším otevření znovu naběhne úvodní průvodce. Samotný spreadsheet
- * v Drive zůstává — případné smazání proveď ručně.
+ * POZOR: odpojí aplikaci od databáze (smaže Script Properties) a vymaže
+ * server cache, takže při dalším otevření znovu naběhne úvodní průvodce
+ * bez rizika, že se ještě chvíli zobrazují data ze staré databáze.
+ * Samotný spreadsheet v Drive zůstává — případné smazání proveď ručně.
  */
 function TOOLS_resetInicializace() {
   assertToolsOwner_();
   PropertiesService.getScriptProperties().deleteAllProperties();
-  console.log('Inicializace zrušena. Další otevření aplikace spustí průvodce.');
+  clearAllDbCache_();
+  console.log('Inicializace zrušena a cache vymazána. Další otevření aplikace spustí průvodce.');
 }
 
 /** Smaže celou server-side cache (CacheService). Použij po přímých úpravách v DB sheetu. */
 function TOOLS_clearCache() {
   assertToolsOwner_();
-  CacheService.getScriptCache().removeAll(
-    Object.values(SHEETS).map((t) => 'tbl:' + t).concat(['tbl:_settings'])
-  );
+  clearAllDbCache_();
   console.log('Cache smazána.');
 }
 

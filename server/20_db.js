@@ -52,6 +52,19 @@ function dbCacheInvalidate_(table) {
   } catch (e) { /* cache je jen optimalizace */ }
 }
 
+/**
+ * Smaže veškerou DB cache (data všech tabulek + kontrolu schématu). Použij
+ * po přímé úpravě dat mimo appku i při kompletním resetu — jinak může po
+ * přepnutí na novou databázi ještě chvíli "prosvítat" obsah té staré.
+ */
+function clearAllDbCache_() {
+  try {
+    CacheService.getScriptCache().removeAll(
+      Object.values(SHEETS).map((t) => dbCacheKey_(t)).concat([SCHEMA_CHECK_CACHE_KEY_])
+    );
+  } catch (e) { /* cache je jen optimalizace */ }
+}
+
 function dbSpreadsheet_() {
   if (dbHandle_) return dbHandle_;
   const id = PropertiesService.getScriptProperties().getProperty(PROPS.DB_ID);
