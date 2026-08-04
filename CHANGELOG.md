@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.41 - 04.08.2026 08:41
+- Oprava prekryvu ikon u pole URL slozky (Aktualizace dat) - ikona vyplneni vychozi slozky a ikona otevreni slozky se drive prekryvaly na stejne pozici, nyni jsou vedle sebe.
+
 ## v3.1.40 - 04.08.2026 08:37
 - Aktualizace dat: tlacitko pro rychle vyplneni vychozi URL slozky u pole URL slozky. Po ulozeni konfigurace se nyni automaticky overi zdroj dat a vypise se vysledek - jestli byla nalezena slozka, soubor (vcetne vsech shod podle hledaneho vyrazu) a jestli existuji listy Organizace_Detail a Zavrene_Openings, bez nutnosti spoustet plnou synchronizaci.
 
