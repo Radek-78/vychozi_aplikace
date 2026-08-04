@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.43 - 04.08.2026 09:21
+- Log. centra: tlacitko Doplnit LC ze souboru prepracovano pro novy format - nyni cte primo ze zdrojoveho souboru (ne z jiz synchronizovanych filialek, coz s novym formatem stejne nikdy nic nenajde) a nabidne k vytvoreni LC, ktera v souboru chybi. Reseni pro jiz beziici aplikace (ne jen pro novou instalaci pres wizard z v3.1.42) - umoznuje hned doplnit LC a spustit synchronizaci filialek bez chyb.
+
 ## v3.1.42 - 04.08.2026 09:16
 - Reseni problemu slepiceho vejce s LC: pri prvnim spusteni (wizard) po vytvoreni databaze a superadmina nasleduji 3 nove kroky - vyber a overeni zdrojoveho souboru (vcetne kontroly sloupcu, ne jen listu), vytvoreni chybejicich logistickych center nalezenych v souboru, a nasledne nacteni filialek. Diky tomu uz pri prvni synchronizaci LC existuji a filialky se nepreskakuji. Server: apiCheckSyncSource nyni umi vybrat konkretni soubor a hlasi chybejici sloupce, novy endpoint apiFindMissingLcInFile, apiRunSync/runSyncCore_ umi synchronizovat konkretni vybrany soubor. Aktualizace dat: kontrola zdroje nyni tez hlasi chybejici sloupce.
 

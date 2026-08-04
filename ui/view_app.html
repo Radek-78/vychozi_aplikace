@@ -622,7 +622,7 @@
     <button class="modal-close" type="button" id="closeBulkLogisticModal" aria-label="Zavřít"><svg><use href="#i-close"></use></svg></button>
   </div>
   <div class="modal-body">
-    <p class="form-hint" style="margin:0 0 12px">Ve filiálkách byly nalezeny zkratky LC bez vlastního záznamu. Doplň číslo a název — zkratku už známe ze souboru.</p>
+    <p class="form-hint" style="margin:0 0 12px">Ve zdrojovém souboru byla nalezena LC bez vlastního záznamu. Doplň číslo a zkratku — název už známe ze souboru.</p>
     <div class="table-wrap">
       <table>
         <thead>
@@ -2990,39 +2990,31 @@ _sfState: {},
         });
     },
 
-    /** Zkratky LC nalezené ve filiálkách, které zatím nemají vlastní záznam v Log. centrech. */
-    _missingLogisticAbbreviations() {
-      const known = new Set((this.logistics || []).map((lc) => String(lc.abbreviation || '').trim().toUpperCase()));
-      const found = new Set();
-      (this.stores || []).forEach((s) => {
-        const abbr = String(s.lc_code || '').trim().toUpperCase();
-        if (abbr && !known.has(abbr)) found.add(abbr);
-      });
-      return [...found].sort();
-    },
-
+    /** Najde zdrojový soubor (dle uložené konfigurace) a otevře modal s LC, která v něm chybí. */
     openBulkLogisticModal() {
-      if (!this.stores.length) {
-        Ui.call('apiListStores', null, { silent: true, busy: 'Načítám filiálky…' })
-          .then((stores) => { this.stores = stores || []; this._openBulkLogisticModalReady(); })
-          .catch((e) => Ui.toast(e.message, 'error'));
-        return;
-      }
-      this._openBulkLogisticModalReady();
+      Ui.call('apiCheckSyncSource', null, { silent: true, busy: 'Hledám zdrojový soubor…' })
+        .then((r) => {
+          if (!r.folderOk || !r.fileFound) {
+            Ui.toast(r.message || 'Zdrojový soubor se nepodařilo najít. Zkontrolujte konfiguraci v sekci Aktualizace dat.', 'error');
+            return;
+          }
+          return Ui.call('apiFindMissingLcInFile', { fileId: r.chosenFileId }, { silent: true, busy: 'Hledám chybějící LC v souboru…' })
+            .then((res) => this._openBulkLogisticModalReady(res.missing || []));
+        })
+        .catch((e) => Ui.toast(e.message, 'error'));
     },
 
-    _openBulkLogisticModalReady() {
-      const missing = this._missingLogisticAbbreviations();
+    _openBulkLogisticModalReady(missing) {
       if (!missing.length) {
-        Ui.toast('Všechny LC ze souboru už mají svůj záznam.');
+        Ui.toast('Všechna LC ze zdrojového souboru už mají svůj záznam.');
         return;
       }
-      document.querySelector('#bulkLogisticRows').innerHTML = missing.map((abbr, i) => `
+      document.querySelector('#bulkLogisticRows').innerHTML = missing.map((name, i) => `
         <tr>
           <td style="text-align:center"><input type="checkbox" class="bulk-lc-use" data-idx="${i}" checked></td>
           <td><input class="sm-input" data-idx="${i}" data-bulk-field="code" placeholder="5"></td>
-          <td><strong>${Ui.escape(abbr)}</strong><input type="hidden" data-idx="${i}" data-bulk-field="abbreviation" value="${Ui.escape(abbr)}"></td>
-          <td><input class="sm-input" data-idx="${i}" data-bulk-field="name" placeholder="Brandýs nad Labem"></td>
+          <td><input class="sm-input" data-idx="${i}" data-bulk-field="abbreviation" placeholder="BZL"></td>
+          <td><strong>${Ui.escape(name)}</strong><input type="hidden" data-idx="${i}" data-bulk-field="name" value="${Ui.escape(name)}"></td>
           <td style="text-align:center"><input type="checkbox" data-idx="${i}" data-bulk-field="active" checked></td>
         </tr>`).join('');
       Ui.openModal(document.querySelector('#bulkLogisticModal'));
