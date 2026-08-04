@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.42 - 04.08.2026 09:16
+- Reseni problemu slepiceho vejce s LC: pri prvnim spusteni (wizard) po vytvoreni databaze a superadmina nasleduji 3 nove kroky - vyber a overeni zdrojoveho souboru (vcetne kontroly sloupcu, ne jen listu), vytvoreni chybejicich logistickych center nalezenych v souboru, a nasledne nacteni filialek. Diky tomu uz pri prvni synchronizaci LC existuji a filialky se nepreskakuji. Server: apiCheckSyncSource nyni umi vybrat konkretni soubor a hlasi chybejici sloupce, novy endpoint apiFindMissingLcInFile, apiRunSync/runSyncCore_ umi synchronizovat konkretni vybrany soubor. Aktualizace dat: kontrola zdroje nyni tez hlasi chybejici sloupce.
+
 ## v3.1.41 - 04.08.2026 08:41
 - Oprava prekryvu ikon u pole URL slozky (Aktualizace dat) - ikona vyplneni vychozi slozky a ikona otevreni slozky se drive prekryvaly na stejne pozici, nyni jsou vedle sebe.
 

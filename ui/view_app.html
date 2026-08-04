@@ -3170,7 +3170,9 @@ _sfState: {},
       html += line(true, 'Soubor nalezen: <strong>' + esc(r.fileName) + '</strong>'
         + (r.matchedFiles.length > 1 ? ' (celkem shod: ' + r.matchedFiles.length + ': ' + r.matchedFiles.map(esc).join(', ') + ')' : ''));
       html += line(r.storesSheetFound, 'List filiálek „' + esc(r.storesSheetName) + '"' + (r.storesSheetFound ? ' nalezen' : ' nenalezen'));
+      if (r.storesSheetFound && r.storesMissingColumns && r.storesMissingColumns.length) html += line(false, 'Chybí sloupce: ' + r.storesMissingColumns.map(esc).join(', '));
       html += line(r.closuresSheetFound, 'List dočasných uzavření „' + esc(r.closuresSheetName) + '"' + (r.closuresSheetFound ? ' nalezen' : ' nenalezen'));
+      if (r.closuresSheetFound && r.closuresMissingColumns && r.closuresMissingColumns.length) html += line(false, 'Chybí sloupce: ' + r.closuresMissingColumns.map(esc).join(', '));
       area.innerHTML = html;
     },
 

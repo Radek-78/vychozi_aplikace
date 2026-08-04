@@ -41,11 +41,13 @@ const STORES_COL_MAP = {
 /* ── Veřejné API ──────────────────────────────────────────────── */
 
 /**
- * Jen ověří, že konfigurace najde soubor a listy — bez zápisu do DB.
- * Volá se po uložení konfigurace, aby uživatel hned viděl, jestli sedí
- * URL složky, hledaný výraz i názvy listů.
+ * Jen ověří, že konfigurace najde soubor, listy i sloupce — bez zápisu do DB.
+ * Volá se po uložení konfigurace, aby uživatel hned viděl, jestli sedí URL
+ * složky, hledaný výraz, názvy listů i jejich sloupce. Pokud je nalezeno víc
+ * souborů odpovídajících výrazu, payload.fileId umožní ověřit konkrétní
+ * vybraný soubor místo automaticky nejnovějšího (používá i wizard).
  */
-function apiCheckSyncSource() {
+function apiCheckSyncSource(payload) {
   return guard_(ROLES.ADMIN, () => {
     const settings = settingsAll_();
     const folderUrl = settings.syncFolderUrl || '';
@@ -66,15 +68,21 @@ function apiCheckSyncSource() {
     if (!candidates.length) {
       return {
         folderOk: true, folderName: folder.getName(), fileFound: false,
-        matchedFiles: [], message: 'Ve složce nebyl nalezen žádný soubor odpovídající výrazu "' + searchTerm + '".',
+        matchedFiles: [], candidates: [], message: 'Ve složce nebyl nalezen žádný soubor odpovídající výrazu "' + searchTerm + '".',
       };
     }
 
-    const file = candidates[0];
+    const forcedFileId = payload && payload.fileId;
+    const file = forcedFileId
+      ? (candidates.find((f) => f.getId() === forcedFileId) || DriveApp.getFileById(forcedFileId))
+      : candidates[0];
+
     const storesSheetName = settings.syncStoresSheet || 'Organizace_Detail';
     const closuresSheetName = settings.syncClosuresSheet || 'Zavrene_Openings';
     let storesSheetFound = false;
     let closuresSheetFound = false;
+    let storesMissingColumns = [];
+    let closuresMissingColumns = [];
     let tempSheetId = null;
     try {
       const scriptFolder = scriptFolder_();
@@ -83,24 +91,76 @@ function apiCheckSyncSource() {
       const copy = Drive.Files.copy(copyMeta, file.getId());
       tempSheetId = copy.id;
       const ss = SpreadsheetApp.openById(tempSheetId);
-      storesSheetFound = !!ss.getSheetByName(storesSheetName);
-      closuresSheetFound = !!ss.getSheetByName(closuresSheetName);
+
+      const storesSheet = ss.getSheetByName(storesSheetName);
+      storesSheetFound = !!storesSheet;
+      if (storesSheet) {
+        const headers = readSheetHeaders_(storesSheet);
+        storesMissingColumns = Object.keys(STORES_COL_MAP).filter((c) => headers.indexOf(c) === -1);
+      }
+
+      const closuresSheet = ss.getSheetByName(closuresSheetName);
+      closuresSheetFound = !!closuresSheet;
+      if (closuresSheet) {
+        const headers = readSheetHeaders_(closuresSheet);
+        closuresMissingColumns = ['Číslo', 'Od', 'Do'].filter((c) => headers.indexOf(c) === -1);
+      }
     } finally {
       if (tempSheetId) { try { Drive.Files.remove(tempSheetId); } catch (_) {} }
     }
 
     return {
       folderOk: true, folderName: folder.getName(),
-      fileFound: true, fileName: file.getName(), matchedFiles: candidates.map((f) => f.getName()),
-      storesSheetFound: storesSheetFound, storesSheetName: storesSheetName,
-      closuresSheetFound: closuresSheetFound, closuresSheetName: closuresSheetName,
+      fileFound: true, fileName: file.getName(), chosenFileId: file.getId(),
+      matchedFiles: candidates.map((f) => f.getName()),
+      candidates: candidates.map((f) => ({ id: f.getId(), name: f.getName() })),
+      storesSheetFound: storesSheetFound, storesSheetName: storesSheetName, storesMissingColumns: storesMissingColumns,
+      closuresSheetFound: closuresSheetFound, closuresSheetName: closuresSheetName, closuresMissingColumns: closuresMissingColumns,
     };
   });
 }
 
-function apiRunSync() {
+/**
+ * Přečte z konkrétního souboru všechny názvy LC ve sloupci LC a vrátí ty,
+ * které zatím nemají záznam v Log. centrech. Používá wizard i budoucí
+ * ruční doplnění LC — nic nezapisuje do DB.
+ */
+function apiFindMissingLcInFile(payload) {
   return guard_(ROLES.ADMIN, () => {
-    const result = runSyncCore_(settingsAll_());
+    const fileId = payload && payload.fileId;
+    if (!fileId) throw new Error('Chybí ID souboru.');
+    const settings = settingsAll_();
+    const storesSheetName = settings.syncStoresSheet || 'Organizace_Detail';
+
+    let tempSheetId = null;
+    let names = [];
+    try {
+      const scriptFolder = scriptFolder_();
+      const copyMeta = { name: '__sync_lc_tmp__', mimeType: 'application/vnd.google-apps.spreadsheet' };
+      if (scriptFolder) copyMeta.parents = [scriptFolder.getId()];
+      const copy = Drive.Files.copy(copyMeta, fileId);
+      tempSheetId = copy.id;
+      const ss = SpreadsheetApp.openById(tempSheetId);
+      const sheet = ss.getSheetByName(storesSheetName);
+      if (!sheet) throw new Error('List "' + storesSheetName + '" nebyl v souboru nalezen.');
+      const rows = parseSheetRows_(sheet, STORES_COL_MAP);
+      const seen = new Set();
+      rows.forEach((r) => { const name = String(r.lc_name || '').trim(); if (name) seen.add(name); });
+      names = [...seen];
+    } finally {
+      if (tempSheetId) { try { Drive.Files.remove(tempSheetId); } catch (_) {} }
+    }
+
+    const known = new Set(dbGetAll_(SHEETS.LOGISTICS).map((lc) => String(lc.name || '').trim().toLowerCase()));
+    const missing = names.filter((n) => !known.has(n.toLowerCase())).sort((a, b) => a.localeCompare(b, 'cs'));
+    return { missing: missing };
+  });
+}
+
+function apiRunSync(payload) {
+  return guard_(ROLES.ADMIN, () => {
+    const forcedFileId = payload && payload.fileId;
+    const result = runSyncCore_(settingsAll_(), false, forcedFileId);
     audit_('sync_run',
       'Soubor: ' + result.fileName +
       ' | Filiálky: +' + result.stores.added + ' u' + result.stores.updated + ' d' + result.stores.deactivated
@@ -181,21 +241,37 @@ function appendSyncHistory_(settings, result, isAuto) {
   settingsSet_('syncHistory', JSON.stringify(history));
 }
 
-/** Jádro synchronizace sdílené ruční (apiRunSync) i automatickou (autoSyncCheck_) cestou. */
-function runSyncCore_(settings, isAuto) {
-  const folderUrl = settings.syncFolderUrl || '';
-  if (!folderUrl) throw new Error('Není nastavena URL složky. Vyplňte ji v sekci Aktualizace dat.');
+/**
+ * Jádro synchronizace sdílené ruční (apiRunSync) i automatickou (autoSyncCheck_)
+ * cestou. Volitelný forcedFileId (z wizardu nebo z ruční volby mezi více
+ * nalezenými soubory) obejde hledání ve složce a použije přímo daný soubor.
+ */
+function runSyncCore_(settings, isAuto, forcedFileId) {
+  let xlsxFile;
+  let matchedFiles;
 
-  const folderId = extractFolderIdFromUrl_(folderUrl);
-  if (!folderId) throw new Error('Z URL složky se nepodařilo rozpoznat ID. Použijte URL ve tvaru https://drive.google.com/drive/folders/...');
+  if (forcedFileId) {
+    try {
+      xlsxFile = DriveApp.getFileById(forcedFileId);
+    } catch (e) {
+      throw new Error('Vybraný soubor už neexistuje nebo k němu chybí přístup.');
+    }
+    matchedFiles = [xlsxFile.getName()];
+  } else {
+    const folderUrl = settings.syncFolderUrl || '';
+    if (!folderUrl) throw new Error('Není nastavena URL složky. Vyplňte ji v sekci Aktualizace dat.');
 
-  const searchTerm = settings.syncFileSearchTerm || 'OSO';
-  const candidates = findSyncCandidateFiles_(folderId, searchTerm);
-  if (!candidates.length) {
-    throw new Error('Ve složce nebyl nalezen žádný soubor .xlsx ani Google Sheets, jehož název obsahuje "' + searchTerm + '".');
+    const folderId = extractFolderIdFromUrl_(folderUrl);
+    if (!folderId) throw new Error('Z URL složky se nepodařilo rozpoznat ID. Použijte URL ve tvaru https://drive.google.com/drive/folders/...');
+
+    const searchTerm = settings.syncFileSearchTerm || 'OSO';
+    const candidates = findSyncCandidateFiles_(folderId, searchTerm);
+    if (!candidates.length) {
+      throw new Error('Ve složce nebyl nalezen žádný soubor .xlsx ani Google Sheets, jehož název obsahuje "' + searchTerm + '".');
+    }
+    xlsxFile = candidates[0]; // nejnovější z nalezených
+    matchedFiles = candidates.map((f) => f.getName());
   }
-  const xlsxFile = candidates[0]; // nejnovější z nalezených
-  const matchedFiles = candidates.map((f) => f.getName());
 
   let ss;
   let tempSheetId = null;
@@ -416,6 +492,13 @@ function storeChangedFields_(existing, patch) {
   return result;
 }
 
+/** Vrátí trimovaná záhlaví z prvního řádku listu. */
+function readSheetHeaders_(sheet) {
+  const lastCol = sheet.getLastColumn();
+  if (lastCol < 1) return [];
+  return sheet.getRange(1, 1, 1, lastCol).getValues()[0].map((h) => String(h).trim());
+}
+
 /**
  * Přečte list tabulky a vrátí pole objektů namapovaných přes colMap.
  * Záhlaví je na řádku 1 (trimované). Prázdné řádky (bez code) jsou přeskočeny.
@@ -424,8 +507,7 @@ function parseSheetRows_(sheet, colMap) {
   const lastRow = sheet.getLastRow();
   if (lastRow < 2) return [];
   const lastCol = sheet.getLastColumn();
-  const rawHeaders = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
-  const headers = rawHeaders.map((h) => String(h).trim());
+  const headers = readSheetHeaders_(sheet);
 
   // Index každého cílového pole
   const colIndices = {};
@@ -454,7 +536,7 @@ function parseClosuresRows_(sheet) {
   const lastRow = sheet.getLastRow();
   if (lastRow < 2) return [];
   const lastCol = sheet.getLastColumn();
-  const headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map((h) => String(h).trim());
+  const headers = readSheetHeaders_(sheet);
   const idx = { code: headers.indexOf('Číslo'), from: headers.indexOf('Od'), to: headers.indexOf('Do') };
   if (idx.code === -1 || idx.from === -1 || idx.to === -1) return [];
 
