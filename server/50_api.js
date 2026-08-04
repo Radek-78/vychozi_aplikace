@@ -62,8 +62,17 @@ function apiGetBootstrap() {
       };
       dbEnsureRolePermissions_();
       data.rolePermissions = dbGetAll_(SHEETS.ROLE_PERMISSIONS);
+      data.needsDataBootstrap = s.needsDataBootstrap === true || s.needsDataBootstrap === 'true';
     }
     return data;
+  });
+}
+
+/** Zavře jednorázový průvodce načtením LC a filiálek po prvním spuštění appky (natrvalo, i při přeskočení). */
+function apiDismissDataBootstrap() {
+  return guard_(ROLES.ADMIN, () => {
+    settingsSet_('needsDataBootstrap', false);
+    return null;
   });
 }
 

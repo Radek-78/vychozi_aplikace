@@ -101,6 +101,7 @@ function setupInitialize(payload) {
       });
       settingsSet_('appName', appName);
       settingsSet_('appSubtitle', appSubtitle);
+      settingsSet_('needsDataBootstrap', true);
       audit_('setup', 'Inicializace aplikace. DB: ' + ss.getId()
         + (folder ? ', složka: ' + folder.getName() : ', složka: kořen Disku'));
 

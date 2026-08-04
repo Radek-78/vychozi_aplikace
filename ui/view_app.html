@@ -644,6 +644,65 @@
   </footer>
 </dialog>
 
+<dialog class="modal modal-large" id="dataBootstrapModal">
+  <div class="modal-header">
+    <span class="modal-icon"><svg><use href="#i-sync"></use></svg></span>
+    <div class="modal-header-text">
+      <p class="kicker">Prvotní nastavení</p>
+      <h2>Načtení filiálek a logistických center</h2>
+    </div>
+  </div>
+  <div class="modal-body">
+    <div class="db-phase" data-db-phase="source">
+      <p class="form-hint" style="margin:0 0 12px">Aplikace je připravena — teď načteme data ze zdrojového souboru filiálek a logistických center.</p>
+      <label>
+        <span>URL složky v Google Drive</span>
+        <div class="input-with-action">
+          <input id="dbSrcFolderUrl" type="text" placeholder="https://drive.google.com/drive/folders/...">
+          <button class="icon-action input-action-btn" type="button" id="dbFillFolderBtn" title="Vyplnit výchozí složku" aria-label="Vyplnit výchozí složku">
+            <svg width="14" height="14" viewBox="0 0 24 24"><use href="#i-zap"></use></svg>
+          </button>
+        </div>
+      </label>
+      <label>
+        <span>Hledaný výraz v názvu souboru</span>
+        <input id="dbSrcSearchTerm" type="text" value="OSO">
+      </label>
+      <div class="form-actions">
+        <button class="button button-secondary" type="button" id="dbFindFileBtn">Najít soubor</button>
+        <button class="button button-primary is-hidden" type="button" id="dbSourceContinueBtn">Pokračovat</button>
+      </div>
+      <div id="dbSrcResult"></div>
+      <div id="dbSrcCandidates"></div>
+    </div>
+
+    <div class="db-phase is-hidden" data-db-phase="lc">
+      <p class="form-hint" style="margin:0 0 12px">Ve zdrojovém souboru byla nalezena tato logistická centra, která zatím v appce neexistují. Název je ze souboru, doplňte číslo a zkratku.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Použít</th><th>Číslo</th><th>Zkratka</th><th>Název</th></tr></thead>
+          <tbody id="dbLcRows"></tbody>
+        </table>
+      </div>
+      <div class="form-actions">
+        <button class="button button-primary" type="button" id="dbCreateLcBtn">Vytvořit LC a pokračovat</button>
+      </div>
+    </div>
+
+    <div class="db-phase is-hidden" data-db-phase="stores">
+      <p class="form-hint" style="margin:0 0 12px">Poslední krok — načtení filiálek ze zvoleného souboru.</p>
+      <div class="form-actions">
+        <button class="button button-primary" type="button" id="dbRunStoresBtn">Načíst filiálky</button>
+        <button class="button button-primary is-hidden" type="button" id="dbStoresContinueBtn">Dokončit</button>
+      </div>
+      <div id="dbStoresResult"></div>
+    </div>
+  </div>
+  <footer class="modal-actions">
+    <button class="button button-secondary" type="button" id="dbSkipButton">Přeskočit, nastavím později</button>
+  </footer>
+</dialog>
+
 <dialog class="modal modal-large" id="storeModal">
   <div class="modal-header">
     <h2 class="modal-title" id="storeModalTitle">Detail filiálky</h2>
@@ -915,6 +974,7 @@ _sfState: {},
       this.boot.user = user;
       this.applyBranding();
       this.bindEvents();
+      DataBootstrap.bindEvents();
       if (!this.isAdmin) {
         document.querySelectorAll('.admin-only').forEach((node) => node.classList.add('is-hidden'));
       }
@@ -949,6 +1009,7 @@ _sfState: {},
           if (d.syncSettings) this._syncSettings = d.syncSettings;
           if (d.rolePermissions) this.rolePermissions = d.rolePermissions;
           this.renderSection(this.section);
+          if (d.needsDataBootstrap) DataBootstrap.open();
         })
         .catch(() => {});
     },
@@ -3532,6 +3593,203 @@ _sfState: {},
       const collapsed = app.classList.contains('sidebar-collapsed');
       toggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
       toggle.setAttribute('title', collapsed ? 'Zobrazit texty panelu' : 'Skrýt texty panelu');
+    },
+  };
+
+  /**
+   * Jednorázový průvodce po prvním spuštění appky (needsDataBootstrap ze
+   * settings) — provede superadmina výběrem zdroje, doplněním chybějících LC
+   * a načtením filiálek. Zavře se natrvalo i při přeskočení (apiDismissDataBootstrap).
+   */
+  const DataBootstrap = {
+    _chosenFileId: null,
+
+    bindEvents() {
+      document.querySelector('#dbFillFolderBtn').addEventListener('click', () => {
+        document.querySelector('#dbSrcFolderUrl').value =
+          'https://drive.google.com/drive/folders/1DX1VFWt5fAztALgMdVGJvLwQEjm-t83B?lfhs=2';
+      });
+      document.querySelector('#dbFindFileBtn').addEventListener('click', () => this.findSourceFile());
+      document.querySelector('#dbSourceContinueBtn').addEventListener('click', () => this.goToLcStep());
+      document.querySelector('#dbCreateLcBtn').addEventListener('click', () => this.createLcAndContinue());
+      document.querySelector('#dbRunStoresBtn').addEventListener('click', () => this.runStoresSync());
+      document.querySelector('#dbStoresContinueBtn').addEventListener('click', () => this.finish());
+      document.querySelector('#dbSkipButton').addEventListener('click', () => this.skip());
+    },
+
+    open() {
+      this._chosenFileId = null;
+      document.querySelector('#dbSrcFolderUrl').value = '';
+      document.querySelector('#dbSrcResult').innerHTML = '';
+      document.querySelector('#dbSrcCandidates').innerHTML = '';
+      document.querySelector('#dbSourceContinueBtn').classList.add('is-hidden');
+      this.showPhase('source');
+      Ui.openModal(document.querySelector('#dataBootstrapModal'));
+    },
+
+    showPhase(name) {
+      document.querySelectorAll('.db-phase').forEach((el) => {
+        el.classList.toggle('is-hidden', el.dataset.dbPhase !== name);
+      });
+    },
+
+    skip() {
+      Ui.closeModal(document.querySelector('#dataBootstrapModal'));
+      Ui.call('apiDismissDataBootstrap', null, { silent: true }).catch(() => {});
+    },
+
+    finish() {
+      Ui.closeModal(document.querySelector('#dataBootstrapModal'));
+      Ui.call('apiDismissDataBootstrap', null, { silent: true })
+        .then(() => { App.loadLogistics(); App.loadHome(); })
+        .catch(() => {});
+    },
+
+    checkSource(fileId) {
+      const btn = document.querySelector('#dbFindFileBtn');
+      Ui.setButtonLoading(btn, true);
+      Ui.call('apiCheckSyncSource', fileId ? { fileId } : null, { silent: true })
+        .then((r) => { Ui.setButtonLoading(btn, false); this.renderSourceCheck(r); })
+        .catch((e) => {
+          Ui.setButtonLoading(btn, false);
+          document.querySelector('#dbSrcResult').innerHTML = '<p style="color:var(--lidl-red);font-size:13px">✕ ' + Ui.escape(e.message) + '</p>';
+        });
+    },
+
+    findSourceFile() {
+      const url = document.querySelector('#dbSrcFolderUrl').value.trim();
+      const term = document.querySelector('#dbSrcSearchTerm').value.trim() || 'OSO';
+      if (!url) { Ui.toast('Vyplňte URL složky.', 'error'); return; }
+      const btn = document.querySelector('#dbFindFileBtn');
+      Ui.setButtonLoading(btn, true);
+      Ui.call('apiSaveSyncSettings', {
+        syncFolderUrl: url, syncFileSearchTerm: term,
+        syncStoresSheet: 'Organizace_Detail', syncClosuresSheet: 'Zavrene_Openings',
+        autoSyncEnabled: false, autoSyncHour: 3,
+      }, { silent: true })
+        .then(() => Ui.call('apiCheckSyncSource', null, { silent: true }))
+        .then((r) => { Ui.setButtonLoading(btn, false); this.renderSourceCheck(r); })
+        .catch((e) => {
+          Ui.setButtonLoading(btn, false);
+          document.querySelector('#dbSrcResult').innerHTML = '<p style="color:var(--lidl-red);font-size:13px">✕ ' + Ui.escape(e.message) + '</p>';
+        });
+    },
+
+    renderSourceCheck(r) {
+      const esc = Ui.escape.bind(Ui);
+      const resultEl = document.querySelector('#dbSrcResult');
+      const candEl = document.querySelector('#dbSrcCandidates');
+      const continueBtn = document.querySelector('#dbSourceContinueBtn');
+      const line = (ok, text) => `<p style="font-size:13px;margin:4px 0;color:${ok ? '#007a45' : 'var(--lidl-red)'}">${ok ? '✓' : '✕'} ${text}</p>`;
+
+      candEl.innerHTML = '';
+      continueBtn.classList.add('is-hidden');
+      this._chosenFileId = null;
+
+      if (!r.folderOk) { resultEl.innerHTML = line(false, esc(r.message || 'Složku se nepodařilo ověřit.')); return; }
+      let html = line(true, 'Složka nalezena: <strong>' + esc(r.folderName) + '</strong>');
+      if (!r.fileFound) { html += line(false, esc(r.message || 'Soubor nebyl nalezen.')); resultEl.innerHTML = html; return; }
+
+      html += line(true, 'Vybraný soubor: <strong>' + esc(r.fileName) + '</strong>');
+      html += line(r.storesSheetFound, 'List „' + esc(r.storesSheetName) + '"' + (r.storesSheetFound ? ' nalezen' : ' nenalezen'));
+      if (r.storesSheetFound && r.storesMissingColumns.length) html += line(false, 'Chybí sloupce: ' + r.storesMissingColumns.map(esc).join(', '));
+      html += line(r.closuresSheetFound, 'List „' + esc(r.closuresSheetName) + '"' + (r.closuresSheetFound ? ' nalezen' : ' nenalezen'));
+      if (r.closuresSheetFound && r.closuresMissingColumns.length) html += line(false, 'Chybí sloupce: ' + r.closuresMissingColumns.map(esc).join(', '));
+      resultEl.innerHTML = html;
+
+      if (r.candidates && r.candidates.length > 1) {
+        candEl.innerHTML = '<p class="form-hint">Nalezeno více souborů, vyberte který použít:</p>' +
+          r.candidates.map((c) => `<div class="info-row"><div><strong>${esc(c.name)}</strong></div><button class="button button-secondary button-small db-pick-file" type="button" data-file-id="${esc(c.id)}">${c.id === r.chosenFileId ? 'Vybráno' : 'Použít'}</button></div>`).join('');
+        candEl.querySelectorAll('.db-pick-file').forEach((btn) => {
+          btn.addEventListener('click', () => this.checkSource(btn.dataset.fileId));
+        });
+      }
+
+      const storesOk = r.storesSheetFound && r.storesMissingColumns.length === 0;
+      const closuresOk = r.closuresSheetFound && r.closuresMissingColumns.length === 0;
+      if (storesOk && closuresOk) {
+        this._chosenFileId = r.chosenFileId;
+        continueBtn.classList.remove('is-hidden');
+      }
+    },
+
+    goToLcStep() {
+      this.showPhase('lc');
+      document.querySelector('#dbLcRows').innerHTML = '<tr><td colspan="4" style="color:var(--muted)">Načítám…</td></tr>';
+      Ui.call('apiFindMissingLcInFile', { fileId: this._chosenFileId }, { silent: true })
+        .then((r) => this._renderLcRows(r.missing || []))
+        .catch((e) => { document.querySelector('#dbLcRows').innerHTML = ''; Ui.toast(e.message, 'error'); });
+    },
+
+    _renderLcRows(missing) {
+      if (!missing.length) {
+        document.querySelector('#dbLcRows').innerHTML = '<tr><td colspan="4" style="color:var(--muted)">Všechna LC ze souboru už existují.</td></tr>';
+        document.querySelector('#dbCreateLcBtn').textContent = 'Pokračovat';
+        return;
+      }
+      document.querySelector('#dbCreateLcBtn').textContent = 'Vytvořit LC a pokračovat';
+      document.querySelector('#dbLcRows').innerHTML = missing.map((name, i) => `
+        <tr>
+          <td style="text-align:center"><input type="checkbox" class="db-lc-use" data-idx="${i}" checked></td>
+          <td><input class="sm-input" data-idx="${i}" data-lc-field="code" placeholder="5"></td>
+          <td><input class="sm-input" data-idx="${i}" data-lc-field="abbreviation" placeholder="BZL"></td>
+          <td><strong>${Ui.escape(name)}</strong><input type="hidden" data-idx="${i}" data-lc-field="name" value="${Ui.escape(name)}"></td>
+        </tr>`).join('');
+    },
+
+    createLcAndContinue() {
+      const rows = [];
+      document.querySelectorAll('#dbLcRows tr').forEach((tr) => {
+        const use = tr.querySelector('.db-lc-use');
+        if (use && !use.checked) return;
+        const fields = tr.querySelectorAll('[data-lc-field]');
+        if (!fields.length) return;
+        const row = { active: true };
+        fields.forEach((el) => { row[el.dataset.lcField] = el.value.trim(); });
+        rows.push(row);
+      });
+      if (!rows.length) { this.goToStoresStep(); return; }
+      if (rows.some((r) => !r.code || !r.abbreviation)) { Ui.toast('U vybraných LC vyplňte číslo i zkratku.', 'error'); return; }
+
+      const btn = document.querySelector('#dbCreateLcBtn');
+      Ui.setButtonLoading(btn, true);
+      Ui.call('apiBulkCreateLogistics', rows, { silent: true })
+        .then((result) => {
+          Ui.setButtonLoading(btn, false);
+          const errs = result.errors || [];
+          if (errs.length) Ui.toast('Chyby: ' + errs.join('; '), 'error');
+          this.goToStoresStep();
+        })
+        .catch((e) => { Ui.setButtonLoading(btn, false); Ui.toast(e.message, 'error'); });
+    },
+
+    goToStoresStep() {
+      this.showPhase('stores');
+      document.querySelector('#dbStoresResult').innerHTML = '';
+    },
+
+    runStoresSync() {
+      const btn = document.querySelector('#dbRunStoresBtn');
+      Ui.setButtonLoading(btn, true);
+      document.querySelector('#dbStoresResult').innerHTML = '<p style="color:var(--muted);font-size:13px">⏳ Načítám filiálky…</p>';
+      Ui.call('apiRunSync', { fileId: this._chosenFileId }, { silent: true, busy: 'Načítám filiálky… může to trvat až minutu' })
+        .then((result) => {
+          Ui.setButtonLoading(btn, false);
+          const s = result.stores || {};
+          const parts = [
+            s.added > 0 ? '+' + s.added + ' přidáno' : '',
+            s.updated > 0 ? s.updated + ' upraveno' : '',
+            (s.errors || []).length > 0 ? s.errors.length + ' chyb' : '',
+          ].filter(Boolean).join(', ');
+          document.querySelector('#dbStoresResult').innerHTML =
+            '<p style="font-size:13px;color:#007a45;margin:4px 0">✓ Hotovo' + (parts ? ': ' + parts : '') + '.</p>' +
+            ((s.errors || []).length ? '<div class="sync-errors">' + s.errors.map((e) => Ui.escape(e)).join('<br>') + '</div>' : '');
+          document.querySelector('#dbStoresContinueBtn').classList.remove('is-hidden');
+        })
+        .catch((e) => {
+          Ui.setButtonLoading(btn, false);
+          document.querySelector('#dbStoresResult').innerHTML = '<p style="color:var(--lidl-red);font-size:13px">✕ ' + Ui.escape(e.message) + '</p>';
+        });
     },
   };
 </script>

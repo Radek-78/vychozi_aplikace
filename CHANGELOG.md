@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.44 - 04.08.2026 09:52
+- Prvni wizard vracen do puvodni podoby (jen Ucet/Aplikace/Souhrn/Hotovo) - nacitani LC a filialek do nej nepatri. Misto toho novy samostatny pruvodce primo v aplikaci (modal, spusti se automaticky jen jednou po prvnim spusteni aplikace diky priznaku needsDataBootstrap v nastaveni) - provede vyberem zdrojoveho souboru, doplnenim chybejicich LC a nactenim filialek. Zavre se natrvalo i pri preskoceni (novy endpoint apiDismissDataBootstrap).
+
 ## v3.1.43 - 04.08.2026 09:21
 - Log. centra: tlacitko Doplnit LC ze souboru prepracovano pro novy format - nyni cte primo ze zdrojoveho souboru (ne z jiz synchronizovanych filialek, coz s novym formatem stejne nikdy nic nenajde) a nabidne k vytvoreni LC, ktera v souboru chybi. Reseni pro jiz beziici aplikace (ne jen pro novou instalaci pres wizard z v3.1.42) - umoznuje hned doplnit LC a spustit synchronizaci filialek bez chyb.
 
