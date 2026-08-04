@@ -152,9 +152,43 @@ function apiFindMissingLcInFile(payload) {
     }
 
     const known = new Set(dbGetAll_(SHEETS.LOGISTICS).map((lc) => String(lc.name || '').trim().toLowerCase()));
-    const missing = names.filter((n) => !known.has(n.toLowerCase())).sort((a, b) => a.localeCompare(b, 'cs'));
+    const refByName = {};
+    KNOWN_LC_REFERENCE_.forEach((r) => { refByName[r.name.trim().toLowerCase()] = r; });
+
+    const missing = names
+      .filter((n) => !known.has(n.toLowerCase()))
+      .map((name) => {
+        const ref = refByName[name.trim().toLowerCase()];
+        return { name: name, code: ref ? ref.code : '', abbreviation: ref ? ref.abbreviation : '' };
+      })
+      .sort(compareLcRows_);
     return { missing: missing };
   });
+}
+
+/**
+ * Známá logistická centra (název → číslo, zkratka) — používá se k automatickému
+ * předvyplnění při zakládání chybějících LC nalezených ve zdrojovém souboru.
+ * Ruční změna, mění se jen výjimečně (vznik nového LC ve firmě).
+ */
+const KNOWN_LC_REFERENCE_ = [
+  { name: 'Brandýs nad Labem', code: '5', abbreviation: 'BNL' },
+  { name: 'Olomouc', code: '6', abbreviation: 'OLO' },
+  { name: 'Cerhovice', code: '7', abbreviation: 'CER' },
+  { name: 'Buštěhrad', code: '9', abbreviation: 'BUS' },
+  { name: 'Bravantice', code: '11', abbreviation: 'BRV' },
+];
+
+/** Řadí řádky {name,code,...} vzestupně podle čísla LC (číselně, bez ohledu na "0" vs "000"); bez čísla jde na konec, řazeno podle názvu. */
+function compareLcRows_(a, b) {
+  const an = parseInt(a.code, 10);
+  const bn = parseInt(b.code, 10);
+  const aValid = a.code !== '' && !isNaN(an);
+  const bValid = b.code !== '' && !isNaN(bn);
+  if (aValid && bValid) return an - bn;
+  if (aValid) return -1;
+  if (bValid) return 1;
+  return a.name.localeCompare(b.name, 'cs');
 }
 
 function apiRunSync(payload) {

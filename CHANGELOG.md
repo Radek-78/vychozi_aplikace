@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.45 - 04.08.2026 10:03
+- Doplnovani chybejicich LC (pruvodce po prvnim spusteni i tlacitko Doplnit LC ze souboru v Log. centrech) nyni automaticky predvyplni cislo a zkratku podle zabudovaneho referencniho seznamu znamych LC (Brandys nad Labem/Olomouc/Cerhovice/Bustehrad/Bravantice) - uzivatel uz jen potvrdi, misto rucniho psani. Seznam chybejicich LC se navic radi vzestupne podle cisla LC (ciselne, ne textove - '0' a '000' se poradi stejne).
+
 ## v3.1.44 - 04.08.2026 09:52
 - Prvni wizard vracen do puvodni podoby (jen Ucet/Aplikace/Souhrn/Hotovo) - nacitani LC a filialek do nej nepatri. Misto toho novy samostatny pruvodce primo v aplikaci (modal, spusti se automaticky jen jednou po prvnim spusteni aplikace diky priznaku needsDataBootstrap v nastaveni) - provede vyberem zdrojoveho souboru, doplnenim chybejicich LC a nactenim filialek. Zavre se natrvalo i pri preskoceni (novy endpoint apiDismissDataBootstrap).
 

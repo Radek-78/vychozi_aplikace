@@ -3070,12 +3070,12 @@ _sfState: {},
         Ui.toast('Všechna LC ze zdrojového souboru už mají svůj záznam.');
         return;
       }
-      document.querySelector('#bulkLogisticRows').innerHTML = missing.map((name, i) => `
+      document.querySelector('#bulkLogisticRows').innerHTML = missing.map((lc, i) => `
         <tr>
           <td style="text-align:center"><input type="checkbox" class="bulk-lc-use" data-idx="${i}" checked></td>
-          <td><input class="sm-input" data-idx="${i}" data-bulk-field="code" placeholder="5"></td>
-          <td><input class="sm-input" data-idx="${i}" data-bulk-field="abbreviation" placeholder="BZL"></td>
-          <td><strong>${Ui.escape(name)}</strong><input type="hidden" data-idx="${i}" data-bulk-field="name" value="${Ui.escape(name)}"></td>
+          <td><input class="sm-input" data-idx="${i}" data-bulk-field="code" placeholder="5" value="${Ui.escape(lc.code || '')}"></td>
+          <td><input class="sm-input" data-idx="${i}" data-bulk-field="abbreviation" placeholder="BZL" value="${Ui.escape(lc.abbreviation || '')}"></td>
+          <td><strong>${Ui.escape(lc.name)}</strong><input type="hidden" data-idx="${i}" data-bulk-field="name" value="${Ui.escape(lc.name)}"></td>
           <td style="text-align:center"><input type="checkbox" data-idx="${i}" data-bulk-field="active" checked></td>
         </tr>`).join('');
       Ui.openModal(document.querySelector('#bulkLogisticModal'));
@@ -3728,12 +3728,12 @@ _sfState: {},
         return;
       }
       document.querySelector('#dbCreateLcBtn').textContent = 'Vytvořit LC a pokračovat';
-      document.querySelector('#dbLcRows').innerHTML = missing.map((name, i) => `
+      document.querySelector('#dbLcRows').innerHTML = missing.map((lc, i) => `
         <tr>
           <td style="text-align:center"><input type="checkbox" class="db-lc-use" data-idx="${i}" checked></td>
-          <td><input class="sm-input" data-idx="${i}" data-lc-field="code" placeholder="5"></td>
-          <td><input class="sm-input" data-idx="${i}" data-lc-field="abbreviation" placeholder="BZL"></td>
-          <td><strong>${Ui.escape(name)}</strong><input type="hidden" data-idx="${i}" data-lc-field="name" value="${Ui.escape(name)}"></td>
+          <td><input class="sm-input" data-idx="${i}" data-lc-field="code" placeholder="5" value="${Ui.escape(lc.code || '')}"></td>
+          <td><input class="sm-input" data-idx="${i}" data-lc-field="abbreviation" placeholder="BZL" value="${Ui.escape(lc.abbreviation || '')}"></td>
+          <td><strong>${Ui.escape(lc.name)}</strong><input type="hidden" data-idx="${i}" data-lc-field="name" value="${Ui.escape(lc.name)}"></td>
         </tr>`).join('');
     },
 
