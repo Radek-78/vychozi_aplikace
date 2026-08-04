@@ -44,19 +44,6 @@ function wizardInfo_() {
   };
 }
 
-/** Ověří, zda má aktuální uživatel přístup ke složce zadané URL. Jen před inicializací. */
-function wizardCheckFolderAccess(url) {
-  try {
-    if (isSetupDone_()) return ok_({ ok: false, message: 'Aplikace už je inicializována.' });
-    const folderId = extractFolderIdFromUrl_(url || '');
-    if (!folderId) return ok_({ ok: false, message: 'Nepodařilo se rozpoznat ID složky z URL.' });
-    const folder = DriveApp.getFolderById(folderId);
-    return ok_({ ok: true, message: 'Přístup potvrzen: „' + folder.getName() + '"' });
-  } catch (e) {
-    return ok_({ ok: false, message: 'Přístup odepřen nebo složka neexistuje.' });
-  }
-}
-
 /** Vrátí email a složku pro wizard — volá se z klienta přes google.script.run. */
 function wizardGetOwnerEmail() {
   try {
@@ -87,7 +74,6 @@ function setupInitialize(payload) {
     const appSubtitle = String((payload && payload.appSubtitle) || '').trim();
     const firstName = String((payload && payload.firstName) || '').trim();
     const lastName = String((payload && payload.lastName) || '').trim();
-    const syncFolderUrl = String((payload && payload.syncFolderUrl) || '').trim();
 
     return withLock_(() => {
       if (isSetupDone_()) return fail_('Aplikace už je inicializována.');
@@ -115,7 +101,6 @@ function setupInitialize(payload) {
       });
       settingsSet_('appName', appName);
       settingsSet_('appSubtitle', appSubtitle);
-      if (syncFolderUrl) settingsSet_('syncFolderUrl', syncFolderUrl);
       audit_('setup', 'Inicializace aplikace. DB: ' + ss.getId()
         + (folder ? ', složka: ' + folder.getName() : ', složka: kořen Disku'));
 

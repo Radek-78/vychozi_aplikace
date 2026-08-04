@@ -55,14 +55,6 @@
             <input id="wizLastName" type="text" placeholder="Novák">
           </label>
         </div>
-        <label>
-          <span class="label-with-status">
-            <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> URL složky pro synchronizaci filiálek (volitelné)</span>
-            <span id="wizFolderStatus" class="folder-status"></span>
-          </span>
-          <input id="wizSyncFolderUrl" type="url" placeholder="https://drive.google.com/drive/folders/...">
-          <small class="form-hint">Budoucí superadmin musí mít složku nasdílenu. Lze nastavit i později.</small>
-        </label>
       </section>
 
       <section class="wizard-panel" data-panel="3">
@@ -89,10 +81,6 @@
           <div class="wiz-step" data-wiz-step="settings">
             <span class="wiz-step-icon"></span>
             <span>Zapisuji nastavení…</span>
-          </div>
-          <div class="wiz-step is-hidden" data-wiz-step="sync">
-            <span class="wiz-step-icon"></span>
-            <span>Načítám data filiálek…</span>
           </div>
           <div class="wiz-step" data-wiz-step="done">
             <span class="wiz-step-icon"></span>
@@ -121,7 +109,6 @@
   const Wizard = {
     step: 1,
     appUrl: null,
-    folderAccessOk: false,
     emailLoaded: false,
     info: (window.APP_BOOTSTRAP && window.APP_BOOTSTRAP.setup) || {},
     _progressTimer: null,
@@ -136,7 +123,6 @@
 
       document.querySelector('#wizBack').addEventListener('click', () => this.goTo(this.step - 1));
       document.querySelector('#wizNext').addEventListener('click', () => this.next());
-      document.querySelector('#wizSyncFolderUrl').addEventListener('change', () => this.checkFolderAccess());
       this.goTo(1);
 
       google.script.run
@@ -205,8 +191,6 @@
         item.classList.toggle('is-done', index < this.step);
       });
 
-      if (this.step === 2) this.checkFolderAccess();
-
       const card = document.querySelector('.gate-card');
       card.dataset.state = this.step === 4 ? 'success' : '';
 
@@ -233,12 +217,10 @@
       Ui.setButtonLoading(next, true);
       this.showProgressPanel();
 
-      const syncStep = document.querySelector('[data-wiz-step="sync"]');
       const doneStep = document.querySelector('[data-wiz-step="done"]');
-      if (this.folderAccessOk) syncStep.classList.remove('is-hidden');
-      // Kroky animované timerem: vše kromě sync a done
+      // Kroky animované timerem: vše kromě done
       const timerSteps = Array.from(document.querySelectorAll('.wiz-step:not(.is-hidden)')).filter(
-        (s) => s.dataset.wizStep !== 'sync' && s.dataset.wizStep !== 'done'
+        (s) => s.dataset.wizStep !== 'done'
       );
       timerSteps[0].classList.add('is-active');
       let stepIdx = 0;
@@ -256,27 +238,18 @@
         appSubtitle: document.querySelector('#wizAppSubtitle').value.trim(),
         firstName: document.querySelector('#wizFirstName').value.trim(),
         lastName: document.querySelector('#wizLastName').value.trim(),
-        syncFolderUrl: document.querySelector('#wizSyncFolderUrl').value.trim(),
       }, { silent: true })
         .then((result) => {
           clearInterval(this._progressTimer);
           timerSteps.forEach((el) => { el.classList.remove('is-active'); el.classList.add('is-done'); });
           this.appUrl = result.appUrl;
           document.querySelector('#wizDbLink').href = result.spreadsheetUrl;
-          const finish = () => {
+          doneStep.classList.add('is-active');
+          setTimeout(() => {
             doneStep.classList.remove('is-active');
             doneStep.classList.add('is-done');
             setTimeout(() => { Ui.setButtonLoading(next, false); this.goTo(4); }, 400);
-          };
-          if (this.folderAccessOk) {
-            syncStep.classList.add('is-active');
-            Ui.call('apiRunSync', null, { silent: true })
-              .then(() => { syncStep.classList.remove('is-active'); syncStep.classList.add('is-done'); doneStep.classList.add('is-active'); setTimeout(finish, 600); })
-              .catch(() => { syncStep.classList.remove('is-active'); doneStep.classList.add('is-active'); setTimeout(finish, 600); });
-          } else {
-            doneStep.classList.add('is-active');
-            setTimeout(finish, 700);
-          }
+          }, 700);
         })
         .catch((error) => {
           clearInterval(this._progressTimer);
@@ -284,31 +257,6 @@
           this.goTo(3, 'back');
           Ui.toast(error.message, 'error');
         });
-    },
-
-    checkFolderAccess() {
-      const url = document.querySelector('#wizSyncFolderUrl').value.trim();
-      const status = document.querySelector('#wizFolderStatus');
-      const hint = document.querySelector('#wizFolderHint');
-      if (!url) { status.textContent = ''; status.className = 'folder-status'; this.folderAccessOk = false; return; }
-      status.textContent = 'Ověřuji přístup…';
-      status.className = 'folder-status is-checking';
-      google.script.run
-        .withSuccessHandler((res) => {
-          this.folderAccessOk = res.data.ok;
-          if (res.data.ok) {
-            status.textContent = '✓ ' + res.data.message;
-            status.className = 'folder-status is-ok';
-          } else {
-            status.textContent = '✗ ' + res.data.message;
-            status.className = 'folder-status is-error';
-          }
-        })
-        .withFailureHandler(() => {
-          status.textContent = '✗ Kontrolu se nepodařilo provést.';
-          status.className = 'folder-status is-error';
-        })
-        .wizardCheckFolderAccess(url);
     },
 
     shakeInvalid(input, message) {
