@@ -3791,15 +3791,26 @@ _sfState: {},
       Ui.call('apiRunSync', { fileId: this._chosenFileId }, { silent: true, busy: 'Načítám filiálky… může to trvat až minutu' })
         .then((result) => {
           Ui.setButtonLoading(btn, false);
+          const esc = Ui.escape.bind(Ui);
           const s = result.stores || {};
           const parts = [
             s.added > 0 ? '+' + s.added + ' přidáno' : '',
             s.updated > 0 ? s.updated + ' upraveno' : '',
             (s.errors || []).length > 0 ? s.errors.length + ' chyb' : '',
           ].filter(Boolean).join(', ');
+          const added = (s.changes && s.changes.added) || [];
+          const preview = added.length
+            ? `<div class="sync-change-group" style="margin-top:8px">
+                <div class="sync-change-label is-green">Ukázka načtených filiálek${added.length > 5 ? ' (prvních 5 z ' + s.added + ')' : ''}</div>
+                ${added.slice(0, 5).map((a) => `<div class="sync-change-row">${esc(a.code)} — ${esc(a.name)}</div>`).join('')}
+              </div>`
+            : '';
           document.querySelector('#dbStoresResult').innerHTML =
-            '<p style="font-size:13px;color:#007a45;margin:4px 0">✓ Hotovo' + (parts ? ': ' + parts : '') + '.</p>' +
-            ((s.errors || []).length ? '<div class="sync-errors">' + s.errors.map((e) => Ui.escape(e)).join('<br>') + '</div>' : '');
+            '<p style="font-size:13px;color:#007a45;margin:4px 0">✓ Filiálky úspěšně načteny' + (parts ? ' — ' + parts : '') + '. Nyní pokračujte tlačítkem Dokončit.</p>' +
+            preview +
+            ((s.errors || []).length ? '<div class="sync-errors">' + s.errors.map(esc).join('<br>') + '</div>' : '');
+          btn.disabled = true;
+          btn.textContent = 'Filiálky načteny';
           document.querySelector('#dbStoresContinueBtn').classList.remove('is-hidden');
         })
         .catch((e) => {

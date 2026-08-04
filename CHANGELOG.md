@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.47 - 04.08.2026 10:31
+- Sync: filialky s cislem prodejny nad 900 se nikdy nenactou ani nezalozi (testovaci/vyhrazeny rozsah). Pruvodce po prvnim spusteni - krok Filialky: po uspesnem nacteni se zobrazi ukazka prvnich nekolika nactenych filialek a tlacitko Nacist filialky se deaktivuje (zustane aktivni jen Dokoncit), aby bylo jasne ze proces dobehl. Detail filialky: opravena oriznuta cisla v oteviracich dobach - modal siršsi (jen storeModal), mrizka dnu 7->4 sloupce (2 radky), vetsi font a padding vstupu.
+
 ## v3.1.46 - 04.08.2026 10:13
 - Pruvodce po prvnim spusteni (modal): chyby v kroku LC (nacteni chybejicich LC i vytvoreni LC) se nyni vypisuji primo v modalu misto toastu, ktery pod otevrenym modalem prosviti jen rozmazane a je necitelny. Pri chybe vytvoreni LC se navic uz needeme automaticky do dalsiho kroku, aby chyba zustala viditelna.
 
