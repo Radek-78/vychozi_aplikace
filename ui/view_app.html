@@ -377,6 +377,9 @@
                   <span>URL složky v Google Drive</span>
                   <div class="input-with-action">
                     <input name="syncFolderUrl" type="text" placeholder="https://drive.google.com/drive/folders/...">
+                    <button class="icon-action input-action-btn" type="button" id="fillSyncFolderBtn" title="Vyplnit výchozí složku" aria-label="Vyplnit výchozí složku">
+                      <svg width="14" height="14" viewBox="0 0 24 24"><use href="#i-zap"></use></svg>
+                    </button>
                     <button class="icon-action input-action-btn" type="button" id="openSyncFolderBtn" title="Otevřít složku v Drive" aria-label="Otevřít složku v Drive">
                       <svg width="14" height="14" viewBox="0 0 24 24"><use href="#i-folder"></use></svg>
                     </button>
@@ -424,6 +427,7 @@
                   <button class="button button-secondary write-only" type="submit" id="saveSyncSettingsButton"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#i-check"></use></svg>Uložit konfiguraci</button>
                 </div>
               </form>
+              <div id="syncSourceCheck"></div>
             </div>
           </section>
           <section class="panel">
@@ -1109,6 +1113,10 @@ _sfState: {},
         const url = document.querySelector('#syncSettingsForm').elements.syncFolderUrl.value.trim();
         if (!url) { Ui.toast('Nejprve zadejte URL složky.', 'error'); return; }
         window.open(url, '_blank', 'noopener');
+      });
+      document.querySelector('#fillSyncFolderBtn').addEventListener('click', () => {
+        document.querySelector('#syncSettingsForm').elements.syncFolderUrl.value =
+          'https://drive.google.com/drive/folders/1DX1VFWt5fAztALgMdVGJvLwQEjm-t83B?lfhs=2';
       });
 
       document.querySelectorAll('[data-go-section]').forEach((btn) => {
@@ -3129,8 +3137,41 @@ _sfState: {},
         .then((res) => {
           Ui.setButtonLoading(button, false);
           Ui.toast('Konfigurace uložena.' + (res && res.autoSyncTriggerActive ? ' Automatická synchronizace je aktivní.' : ''));
+          this.checkSyncSource();
         })
         .catch((e) => { Ui.setButtonLoading(button, false); Ui.toast(e.message, 'error'); });
+    },
+
+    checkSyncSource() {
+      const area = document.querySelector('#syncSourceCheck');
+      area.innerHTML = '<p style="color:var(--muted);font-size:13px">Ověřuji zdroj dat…</p>';
+      Ui.call('apiCheckSyncSource', null, { silent: true })
+        .then((r) => this.renderSyncSourceCheck(r))
+        .catch((e) => {
+          area.innerHTML = '<p style="color:var(--lidl-red);font-size:13px">✕ ' + Ui.escape(e.message) + '</p>';
+        });
+    },
+
+    renderSyncSourceCheck(r) {
+      const esc = Ui.escape.bind(Ui);
+      const area = document.querySelector('#syncSourceCheck');
+      const line = (ok, text) => `<p style="font-size:13px;margin:4px 0;color:${ok ? '#007a45' : 'var(--lidl-red)'}">${ok ? '✓' : '✕'} ${text}</p>`;
+
+      if (!r.folderOk) {
+        area.innerHTML = line(false, esc(r.message || 'Složku se nepodařilo ověřit.'));
+        return;
+      }
+      let html = line(true, 'Složka nalezena: <strong>' + esc(r.folderName) + '</strong>');
+      if (!r.fileFound) {
+        html += line(false, esc(r.message || 'Soubor nebyl nalezen.'));
+        area.innerHTML = html;
+        return;
+      }
+      html += line(true, 'Soubor nalezen: <strong>' + esc(r.fileName) + '</strong>'
+        + (r.matchedFiles.length > 1 ? ' (celkem shod: ' + r.matchedFiles.length + ': ' + r.matchedFiles.map(esc).join(', ') + ')' : ''));
+      html += line(r.storesSheetFound, 'List filiálek „' + esc(r.storesSheetName) + '"' + (r.storesSheetFound ? ' nalezen' : ' nenalezen'));
+      html += line(r.closuresSheetFound, 'List dočasných uzavření „' + esc(r.closuresSheetName) + '"' + (r.closuresSheetFound ? ' nalezen' : ' nenalezen'));
+      area.innerHTML = html;
     },
 
     heroRunSync() {

@@ -40,6 +40,64 @@ const STORES_COL_MAP = {
 
 /* ── Veřejné API ──────────────────────────────────────────────── */
 
+/**
+ * Jen ověří, že konfigurace najde soubor a listy — bez zápisu do DB.
+ * Volá se po uložení konfigurace, aby uživatel hned viděl, jestli sedí
+ * URL složky, hledaný výraz i názvy listů.
+ */
+function apiCheckSyncSource() {
+  return guard_(ROLES.ADMIN, () => {
+    const settings = settingsAll_();
+    const folderUrl = settings.syncFolderUrl || '';
+    if (!folderUrl) return { folderOk: false, message: 'Není nastavena URL složky.' };
+
+    const folderId = extractFolderIdFromUrl_(folderUrl);
+    if (!folderId) return { folderOk: false, message: 'Z URL složky se nepodařilo rozpoznat ID.' };
+
+    let folder;
+    try {
+      folder = DriveApp.getFolderById(folderId);
+    } catch (e) {
+      return { folderOk: false, message: 'Složka nebyla nalezena nebo k ní chybí přístup.' };
+    }
+
+    const searchTerm = settings.syncFileSearchTerm || 'OSO';
+    const candidates = findSyncCandidateFiles_(folderId, searchTerm);
+    if (!candidates.length) {
+      return {
+        folderOk: true, folderName: folder.getName(), fileFound: false,
+        matchedFiles: [], message: 'Ve složce nebyl nalezen žádný soubor odpovídající výrazu "' + searchTerm + '".',
+      };
+    }
+
+    const file = candidates[0];
+    const storesSheetName = settings.syncStoresSheet || 'Organizace_Detail';
+    const closuresSheetName = settings.syncClosuresSheet || 'Zavrene_Openings';
+    let storesSheetFound = false;
+    let closuresSheetFound = false;
+    let tempSheetId = null;
+    try {
+      const scriptFolder = scriptFolder_();
+      const copyMeta = { name: '__sync_check_tmp__', mimeType: 'application/vnd.google-apps.spreadsheet' };
+      if (scriptFolder) copyMeta.parents = [scriptFolder.getId()];
+      const copy = Drive.Files.copy(copyMeta, file.getId());
+      tempSheetId = copy.id;
+      const ss = SpreadsheetApp.openById(tempSheetId);
+      storesSheetFound = !!ss.getSheetByName(storesSheetName);
+      closuresSheetFound = !!ss.getSheetByName(closuresSheetName);
+    } finally {
+      if (tempSheetId) { try { Drive.Files.remove(tempSheetId); } catch (_) {} }
+    }
+
+    return {
+      folderOk: true, folderName: folder.getName(),
+      fileFound: true, fileName: file.getName(), matchedFiles: candidates.map((f) => f.getName()),
+      storesSheetFound: storesSheetFound, storesSheetName: storesSheetName,
+      closuresSheetFound: closuresSheetFound, closuresSheetName: closuresSheetName,
+    };
+  });
+}
+
 function apiRunSync() {
   return guard_(ROLES.ADMIN, () => {
     const result = runSyncCore_(settingsAll_());

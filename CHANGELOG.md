@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.40 - 04.08.2026 08:37
+- Aktualizace dat: tlacitko pro rychle vyplneni vychozi URL slozky u pole URL slozky. Po ulozeni konfigurace se nyni automaticky overi zdroj dat a vypise se vysledek - jestli byla nalezena slozka, soubor (vcetne vsech shod podle hledaneho vyrazu) a jestli existuji listy Organizace_Detail a Zavrene_Openings, bez nutnosti spoustet plnou synchronizaci.
+
 ## v3.1.39 - 04.08.2026 08:27
 - Oprava synchronizace: sloupec Telefon prodejny ve zdrojovem listu Organizace_Detail existuje (v3.1.38 se mylne predpokladalo, ze chybi) - telefon prodejny se tedy opet nacita ze zdroje stejne jako ostatni pole.
 
