@@ -17,6 +17,7 @@ const STORES_COL_MAP = {
   'Číslo':            'code',
   'Název':            'name',
   'LC':               'lc_name',
+  'Telefon prodejny': 'phone',
   'VT':               'area_manager',
   'Telefon VT':       'vt_phone',
   'RM':               'regional_manager',
@@ -307,12 +308,12 @@ const HOUR_FIELDS_ = [
 /**
  * Sestaví patch pro jednu filiálku. lcAbbr je už vyřešená zkratka LC (viz
  * resolveLc_ v syncStores_) — sem přichází vždy platná, jinak se řádek
- * nezpracovává vůbec. Pole, která list nenese (např. telefon prodejny —
- * v novém exportu chybí), sync nikdy nepřepíše: patch je buď z xlsx, nebo
- * (pokud xlsx pro dané pole nic nemá) se ponechá stávající hodnota z DB.
+ * nezpracovává vůbec. Pokud má některé pole v xlsx řádku prázdnou hodnotu
+ * (např. sloupec chybí nebo je buňka prázdná), sync ho nepřepíše prázdnem —
+ * ponechá se stávající hodnota z DB.
  */
 function buildStorePatch_(xlsxRow, now, existing, lcAbbr) {
-  const NON_HOUR_FIELDS = ['code', 'name', 'area_manager', 'vt_phone', 'regional_manager', 'rm_phone'];
+  const NON_HOUR_FIELDS = ['code', 'name', 'phone', 'area_manager', 'vt_phone', 'regional_manager', 'rm_phone'];
   const patch = { temporarily_closed: existing ? isTempClosedNow_(existing) : false, active: true, synced_at: now, updated_at: now, lc_code: lcAbbr };
   NON_HOUR_FIELDS.forEach((f) => {
     const xlsxVal = xlsxRow[f] !== undefined ? xlsxRow[f] : '';
@@ -329,13 +330,13 @@ function buildStorePatch_(xlsxRow, now, existing, lcAbbr) {
 }
 
 const STORE_DIFF_FIELDS = [
-  'name','lc_code','area_manager','vt_phone','regional_manager','rm_phone',
+  'name','lc_code','phone','area_manager','vt_phone','regional_manager','rm_phone',
   'mon_open','mon_close','tue_open','tue_close','wed_open','wed_close',
   'thu_open','thu_close','fri_open','fri_close','sat_open','sat_close','sun_open','sun_close',
 ];
 
 const STORE_FIELD_LABELS = {
-  name: 'Název', lc_code: 'LC',
+  name: 'Název', lc_code: 'LC', phone: 'Telefon prodejny',
   area_manager: 'VT', vt_phone: 'Telefon VT', regional_manager: 'RM', rm_phone: 'Telefon RM',
   mon_open: 'Po otevřeno', mon_close: 'Po zavřeno',
   tue_open: 'Út otevřeno', tue_close: 'Út zavřeno',

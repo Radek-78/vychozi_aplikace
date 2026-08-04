@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.39 - 04.08.2026 08:27
+- Oprava synchronizace: sloupec Telefon prodejny ve zdrojovem listu Organizace_Detail existuje (v3.1.38 se mylne predpokladalo, ze chybi) - telefon prodejny se tedy opet nacita ze zdroje stejne jako ostatni pole.
+
 ## v3.1.38 - 04.08.2026 08:24
 - Kompletni prepracovani synchronizace filialek na novy format exportu: zdrojovy soubor se nyni hleda ve slozce podle nastavitelneho vyrazu (vychozi OSO, appka vypisuje vsechny nalezene shody)
 - data se ctou z listu Organizace_Detail (LC nyni jako cely nazev, novy sloupec Telefon VT) a dočasna uzavreni z listu Zavrene_Openings (rozsahy Od-Do se jen doplnuji, rucni zadani se nikdy nemaze). Wizard: odstraneno pole URL slozky pro synchronizaci, konfiguruje se az v aplikaci. Sidebar: sekce Data site prejmenovana na Sit a logistika, polozka Synchronizace presunuta do teto sekce a prejmenovana na Aktualizace dat.
