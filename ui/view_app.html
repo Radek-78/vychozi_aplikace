@@ -687,6 +687,7 @@
       <div class="form-actions">
         <button class="button button-primary" type="button" id="dbCreateLcBtn">Vytvořit LC a pokračovat</button>
       </div>
+      <div id="dbLcResult"></div>
     </div>
 
     <div class="db-phase is-hidden" data-db-phase="stores">
@@ -3715,10 +3716,14 @@ _sfState: {},
 
     goToLcStep() {
       this.showPhase('lc');
+      document.querySelector('#dbLcResult').innerHTML = '';
       document.querySelector('#dbLcRows').innerHTML = '<tr><td colspan="4" style="color:var(--muted)">Načítám…</td></tr>';
       Ui.call('apiFindMissingLcInFile', { fileId: this._chosenFileId }, { silent: true })
         .then((r) => this._renderLcRows(r.missing || []))
-        .catch((e) => { document.querySelector('#dbLcRows').innerHTML = ''; Ui.toast(e.message, 'error'); });
+        .catch((e) => {
+          document.querySelector('#dbLcRows').innerHTML = '';
+          document.querySelector('#dbLcResult').innerHTML = '<p style="color:var(--lidl-red);font-size:13px">✕ ' + Ui.escape(e.message) + '</p>';
+        });
     },
 
     _renderLcRows(missing) {
@@ -3748,8 +3753,13 @@ _sfState: {},
         fields.forEach((el) => { row[el.dataset.lcField] = el.value.trim(); });
         rows.push(row);
       });
+      const resultEl = document.querySelector('#dbLcResult');
+      resultEl.innerHTML = '';
       if (!rows.length) { this.goToStoresStep(); return; }
-      if (rows.some((r) => !r.code || !r.abbreviation)) { Ui.toast('U vybraných LC vyplňte číslo i zkratku.', 'error'); return; }
+      if (rows.some((r) => !r.code || !r.abbreviation)) {
+        resultEl.innerHTML = '<p style="color:var(--lidl-red);font-size:13px">✕ U vybraných LC vyplňte číslo i zkratku.</p>';
+        return;
+      }
 
       const btn = document.querySelector('#dbCreateLcBtn');
       Ui.setButtonLoading(btn, true);
@@ -3757,10 +3767,16 @@ _sfState: {},
         .then((result) => {
           Ui.setButtonLoading(btn, false);
           const errs = result.errors || [];
-          if (errs.length) Ui.toast('Chyby: ' + errs.join('; '), 'error');
+          if (errs.length) {
+            resultEl.innerHTML = '<p style="color:var(--lidl-red);font-size:13px">✕ Chyby: ' + Ui.escape(errs.join('; ')) + '</p>';
+            return;
+          }
           this.goToStoresStep();
         })
-        .catch((e) => { Ui.setButtonLoading(btn, false); Ui.toast(e.message, 'error'); });
+        .catch((e) => {
+          Ui.setButtonLoading(btn, false);
+          resultEl.innerHTML = '<p style="color:var(--lidl-red);font-size:13px">✕ ' + Ui.escape(e.message) + '</p>';
+        });
     },
 
     goToStoresStep() {

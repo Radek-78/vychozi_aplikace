@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.46 - 04.08.2026 10:13
+- Pruvodce po prvnim spusteni (modal): chyby v kroku LC (nacteni chybejicich LC i vytvoreni LC) se nyni vypisuji primo v modalu misto toastu, ktery pod otevrenym modalem prosviti jen rozmazane a je necitelny. Pri chybe vytvoreni LC se navic uz needeme automaticky do dalsiho kroku, aby chyba zustala viditelna.
+
 ## v3.1.45 - 04.08.2026 10:03
 - Doplnovani chybejicich LC (pruvodce po prvnim spusteni i tlacitko Doplnit LC ze souboru v Log. centrech) nyni automaticky predvyplni cislo a zkratku podle zabudovaneho referencniho seznamu znamych LC (Brandys nad Labem/Olomouc/Cerhovice/Bustehrad/Bravantice) - uzivatel uz jen potvrdi, misto rucniho psani. Seznam chybejicich LC se navic radi vzestupne podle cisla LC (ciselne, ne textove - '0' a '000' se poradi stejne).
 
