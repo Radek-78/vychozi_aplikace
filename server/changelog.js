@@ -4,6 +4,7 @@
  * Nejnovejsi verze prvni.
  */
 const CHANGELOG = [
+  { version: 'v3.1.53', date: '5.8.2026', message: 'Dlazdice aplikaci: nove nepovinne pole Aktualizace dat (datum+cas, editace v modalu Upravit aplikaci) - zobrazi se jako \'Aktualizace: ...\' jen u aplikaci, kde je vyplnene. Pripraveno na budouci zapis primo z jednotlivych subaplikaci do hlavni databaze.' },
   { version: 'v3.1.52', date: '5.8.2026', message: 'Dlazdice aplikaci: poradi textu zmeneno na nadpis - popis - status (drive status mezi nadpisem a popisem). Pridan jemny teckovany vzor na pozadi telesa dlazdice (barva pruhu, 14px rastr) - stejny princip jako uz existujici vzor v hero boxu na Domu.' },
   { version: 'v3.1.51', date: '5.8.2026', message: 'Dlazdice aplikaci graficky obohaceny: cele telo dlazdice jemne podbarveno barvou pruhu (cca 3.5% opacity), v pravem okraji velky prosvitajici vodoznak s ikonou aplikace (7% opacity) - dlazdice pusobi barevne sladenejsi a mene prazdne. Barva se pocita z existujiciho vyberu barvy pruhu, zadna nova konfigurace.' },
   { version: 'v3.1.50', date: '5.8.2026', message: 'Filialky v menu se nyni vzdy otevrou bez filtru (drive mohl zustat aktivni filtr Uzavrene z klikuti v hero boxu). Hero box: polozka Zmena presunuta do paticky (prejmenovana na Log zmen, klikatelna do sekce Audit, jen pro admina) - na jeji misto v boxu presunuty Ucty, mrizka zpet na 3 sloupce. Mrizka aplikaci: superadmin ma u kazde dlazdice ikonu tuzky pro rychlou editaci (i u aplikaci ve stavu V priprave/Nedostupna).' },

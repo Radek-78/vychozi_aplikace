@@ -638,7 +638,7 @@ function apiSaveSyncSettings(payload) {
  * to omezí na jednou za běh skriptu, CacheService pak i napříč requesty.
  */
 let dbSchemaEnsuredThisRun_ = false;
-const SCHEMA_CHECK_CACHE_KEY_ = 'schema:checked:4'; // změna klíče vynutí novou kontrolu po přidání sloupce
+const SCHEMA_CHECK_CACHE_KEY_ = 'schema:checked:5'; // změna klíče vynutí novou kontrolu po přidání sloupce
 const SCHEMA_CHECK_TTL_ = 1800; // sekund
 
 function dbEnsureApps_() {
@@ -709,6 +709,12 @@ function apiSaveApp(payload) {
       order: parseInt(payload && payload.order) || 0,
       row: Math.max(1, parseInt(payload && payload.row) || 1),
       active: payload && payload.active !== false,
+      data_updated_at: (() => {
+        const raw = String((payload && payload.data_updated_at) || '').trim();
+        if (!raw) return '';
+        const d = new Date(raw);
+        return isNaN(d.getTime()) ? '' : d.toISOString();
+      })(),
     };
     const apps = dbGetAll_(SHEETS.APPS);
     const existing = payload && payload.id ? apps.find((a) => a.id === payload.id) : null;

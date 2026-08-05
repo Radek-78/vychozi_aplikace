@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.53 - 05.08.2026 10:06
+- Dlazdice aplikaci: nove nepovinne pole Aktualizace dat (datum+cas, editace v modalu Upravit aplikaci) - zobrazi se jako 'Aktualizace: ...' jen u aplikaci, kde je vyplnene. Pripraveno na budouci zapis primo z jednotlivych subaplikaci do hlavni databaze.
+
 ## v3.1.52 - 05.08.2026 10:00
 - Dlazdice aplikaci: poradi textu zmeneno na nadpis - popis - status (drive status mezi nadpisem a popisem). Pridan jemny teckovany vzor na pozadi telesa dlazdice (barva pruhu, 14px rastr) - stejny princip jako uz existujici vzor v hero boxu na Domu.
 
