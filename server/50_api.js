@@ -118,12 +118,14 @@ function apiGetHome() {
     }
     const stores = dbGetAll_(SHEETS.STORES);
     const logistics = dbGetAll_(SHEETS.LOGISTICS);
+    const users = dbGetAll_(SHEETS.USERS);
     return {
       warnings: warnings,
       lastSyncAt: s.lastSyncAt || null,
       storesActive: stores.filter((st) => st.active === true).length,
       storesTempClosed: stores.filter((st) => st.active === true && isTempClosedNow_(st)).length,
       logisticsActive: logistics.filter((lc) => lc.active === true).length,
+      usersActive: users.filter((u) => u.active === true).length,
       lastChange: isAdmin ? (dbReadTail_(SHEETS.AUDIT, 1)[0] || null) : null,
     };
   });

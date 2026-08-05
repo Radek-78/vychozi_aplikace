@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.48 - 05.08.2026 09:13
+- Hero box na Domu: nova dlazdice Ucty (celkovy pocet aktivnich uzivatelskych uctu) vedle LC/Filialky/Uzavrene - mrizka rozsirena ze 3 na 4 sloupce. Bez sledovani online stavu (zamerne, aby appka nemusela pravidelne kontrolovat stav na pozadi).
+
 ## v3.1.47 - 04.08.2026 10:31
 - Sync: filialky s cislem prodejny nad 900 se nikdy nenactou ani nezalozi (testovaci/vyhrazeny rozsah). Pruvodce po prvnim spusteni - krok Filialky: po uspesnem nacteni se zobrazi ukazka prvnich nekolika nactenych filialek a tlacitko Nacist filialky se deaktivuje (zustane aktivni jen Dokoncit), aby bylo jasne ze proces dobehl. Detail filialky: opravena oriznuta cisla v oteviracich dobach - modal siršsi (jen storeModal), mrizka dnu 7->4 sloupce (2 radky), vetsi font a padding vstupu.
 

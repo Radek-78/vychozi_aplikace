@@ -1267,6 +1267,7 @@ _sfState: {},
       const storesCount = typeof data.storesActive === 'number' ? data.storesActive : 0;
       const closedCount = typeof data.storesTempClosed === 'number' ? data.storesTempClosed : 0;
       const lcCount = typeof data.logisticsActive === 'number' ? data.logisticsActive : 0;
+      const usersCount = typeof data.usersActive === 'number' ? data.usersActive : 0;
       
       const closedClass = closedCount > 0 ? ' hero-grid-item--warn' : '';
       
@@ -1290,6 +1291,10 @@ _sfState: {},
         <div class="hero-grid-item${closedClass}${click ? ' hero-grid-item--click' : ''}"${click ? ' data-section-link="stores"' : ''} title="Dočasně uzavřené filiálky">
           <svg width="13" height="13" viewBox="0 0 24 24"><use href="#i-clock"></use></svg>
           <span>Uzavřené: <strong>${closedCount}</strong></span>
+        </div>
+        <div class="hero-grid-item${click ? ' hero-grid-item--click' : ''}"${click ? ' data-section-link="users"' : ''} title="Celkový počet aktivních účtů">
+          <svg width="13" height="13" viewBox="0 0 24 24"><use href="#i-users"></use></svg>
+          <span>Účty: <strong>${usersCount}</strong></span>
         </div>
 
         <!-- Řádek 2: Systémové informace (Login, Sync, Změna) -->
