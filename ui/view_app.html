@@ -2143,6 +2143,12 @@ _sfState: {},
       const STATUS_BADGE = { available: 'Dostupná', coming: 'V přípravě', inactive: 'Nedostupná' };
       const STATUS_ICON = { coming: '#i-clock', inactive: '#i-lock' };
       const isSuperAdmin = this.boot.user && this.boot.user.role === 'SUPERADMIN';
+      const fmtAppUpdated = (iso) => {
+        const d = new Date(iso);
+        if (isNaN(d.getTime())) return '';
+        const pad = (n) => String(n).padStart(2, '0');
+        return d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+      };
 
       const buildCard = (app) => {
         const colorCls = COLOR_CLASS[app.color] || '';
@@ -2166,7 +2172,7 @@ _sfState: {},
             ${statusIcon}
             <h2>${Ui.escape(app.name)}</h2>
             <p>${Ui.escape(app.description || '')}</p>
-            ${app.data_updated_at ? `<span class="mc-updated">Aktualizace: <strong>${Ui.escape(Ui.formatDateTime(app.data_updated_at))}</strong></span>` : ''}
+            ${app.data_updated_at ? `<span class="mc-updated">Aktualizace: <strong>${Ui.escape(fmtAppUpdated(app.data_updated_at))}</strong></span>` : ''}
             <footer>
               ${isSuperAdmin ? `<button class="icon-action" type="button" data-mc-edit="${Ui.escape(app.id)}" title="Upravit aplikaci" aria-label="Upravit aplikaci" style="margin-right:auto"><svg width="14" height="14" viewBox="0 0 24 24"><use href="#i-pencil"></use></svg></button>` : ''}
               <span class="mc-badge"><i class="mc-badge-dot"></i>${Ui.escape(STATUS_BADGE[app.status] || '')}</span>

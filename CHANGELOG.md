@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.55 - 05.08.2026 10:22
+- Dlazdice aplikaci: format data u Aktualizace zmenen na d.m.rrrr (bez vyplnujicich nul, konzistentni s formatem datumu jinde v appce), text posunut dolu az nad linku paticky.
+
 ## v3.1.54 - 05.08.2026 10:15
 - Dlazdice aplikaci: odstranen teckovany rastr pozadi (rusil vzhled), status presunut z tela dlazdice do paticky vpravo (vedle tlacitka Otevrit) - misto ciste barevneho stitku ted ma i malou tecku, u dostupnych aplikaci jemne pulzujici s jemnou zari kolem stitku.
 
