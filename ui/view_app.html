@@ -2238,13 +2238,6 @@ _sfState: {},
       const status = isNew ? 'coming' : (app.status || 'coming');
       const order = isNew ? '' : String(app.order || '');
       const row = isNew ? String(defaultRow || 1) : String(app.row || 1);
-      const dataUpdatedAt = (() => {
-        if (isNew || !app.data_updated_at) return '';
-        const d = new Date(app.data_updated_at);
-        if (isNaN(d.getTime())) return '';
-        const pad = (n) => String(n).padStart(2, '0');
-        return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
-      })();
       const COLORS = [
         { value: '',        label: 'Lidl modrá',    hex: '#0053b3' },
         { value: 'dark',    label: 'Tmavě modrá',   hex: '#002466' },
@@ -2340,10 +2333,6 @@ _sfState: {},
                     <input name="order" type="number" value="${Ui.escape(order)}" min="0" style="width: 100%; min-height: 34px; padding: 6px 10px;">
                   </label>
                 </div>
-                <label><span>Aktualizace dat (nepovinné)</span>
-                  <input name="data_updated_at" type="datetime-local" value="${Ui.escape(dataUpdatedAt)}" style="width: 100%; min-height: 34px; padding: 6px 10px;">
-                </label>
-                <small class="form-hint">Zobrazí se na dlaždici jako „Aktualizace: …" — vyplňte jen u aplikací, které se pravidelně aktualizují.</small>
               </div>
             </div>
           </div>
@@ -2408,7 +2397,7 @@ _sfState: {},
         const form = dialog.querySelector('#appForm');
         if (!form.reportValidity()) return;
         const fd = new FormData(form);
-        const payload = { id: fd.get('id') || undefined, name: fd.get('name'), description: fd.get('description'), slug: fd.get('slug'), icon: fd.get('icon'), color: fd.get('color'), status: fd.get('status'), order: parseInt(fd.get('order')) || 0, row: parseInt(fd.get('row')) || 1, data_updated_at: fd.get('data_updated_at') || '' };
+        const payload = { id: fd.get('id') || undefined, name: fd.get('name'), description: fd.get('description'), slug: fd.get('slug'), icon: fd.get('icon'), color: fd.get('color'), status: fd.get('status'), order: parseInt(fd.get('order')) || 0, row: parseInt(fd.get('row')) || 1 };
         // Dialog se zavře hned — spinner (busy overlay) by jinak zůstal schovaný pod ním.
         close();
         Ui.call('apiSaveApp', payload, { silent: true, busy: 'Ukládám aplikaci…' })

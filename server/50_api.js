@@ -709,12 +709,9 @@ function apiSaveApp(payload) {
       order: parseInt(payload && payload.order) || 0,
       row: Math.max(1, parseInt(payload && payload.row) || 1),
       active: payload && payload.active !== false,
-      data_updated_at: (() => {
-        const raw = String((payload && payload.data_updated_at) || '').trim();
-        if (!raw) return '';
-        const d = new Date(raw);
-        return isNaN(d.getTime()) ? '' : d.toISOString();
-      })(),
+      // data_updated_at se sem záměrně nezapisuje — je to "kdy má aplikace aktualizovaná
+      // svá data", ne "kdy admin naposledy upravil dlaždici". Píše ho jen subaplikace sama
+      // (přes budoucí vlastní endpoint), tahle editace dlaždice ho nesmí přepsat.
     };
     const apps = dbGetAll_(SHEETS.APPS);
     const existing = payload && payload.id ? apps.find((a) => a.id === payload.id) : null;

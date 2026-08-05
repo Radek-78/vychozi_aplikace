@@ -4,6 +4,7 @@
  * Nejnovejsi verze prvni.
  */
 const CHANGELOG = [
+  { version: 'v3.1.56', date: '5.8.2026', message: 'Odebrano rucni pole Aktualizace dat z modalu Upravit aplikaci - toto pole ma znamenat kdy aplikace aktualizovala sva zpracovavana data, ne kdy admin upravil dlazdici, takze nepatri do editace dlazdice. apiSaveApp uz pole data_updated_at vubec nezapisuje, takze ho editace dlazdice nemuze prepsat/vynulovat. Pole v databazi a zobrazeni na dlazdici (Aktualizace: ...) zustavaji - budou se plnit az pres budouci endpoint, ktery si napisou samotne subaplikace.' },
   { version: 'v3.1.55', date: '5.8.2026', message: 'Dlazdice aplikaci: format data u Aktualizace zmenen na d.m.rrrr (bez vyplnujicich nul, konzistentni s formatem datumu jinde v appce), text posunut dolu az nad linku paticky.' },
   { version: 'v3.1.54', date: '5.8.2026', message: 'Dlazdice aplikaci: odstranen teckovany rastr pozadi (rusil vzhled), status presunut z tela dlazdice do paticky vpravo (vedle tlacitka Otevrit) - misto ciste barevneho stitku ted ma i malou tecku, u dostupnych aplikaci jemne pulzujici s jemnou zari kolem stitku.' },
   { version: 'v3.1.53', date: '5.8.2026', message: 'Dlazdice aplikaci: nove nepovinne pole Aktualizace dat (datum+cas, editace v modalu Upravit aplikaci) - zobrazi se jako \'Aktualizace: ...\' jen u aplikaci, kde je vyplnene. Pripraveno na budouci zapis primo z jednotlivych subaplikaci do hlavni databaze.' },
