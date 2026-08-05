@@ -24,6 +24,15 @@ function nowIso_() {
   return new Date().toISOString();
 }
 
+/** Nastaví celému listu výchozí font appky (CONFIG.sheetFont) — volá se po vytvoření nového listu. */
+function applySheetFont_(sheet) {
+  try {
+    sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).setFontFamily(CONFIG.sheetFont);
+  } catch (e) {
+    console.error('Nastavení fontu listu selhalo: ' + e);
+  }
+}
+
 /**
  * Zapíše záznam do auditního logu. Selhání auditu nesmí shodit hlavní operaci.
  */

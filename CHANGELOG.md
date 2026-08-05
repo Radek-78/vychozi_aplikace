@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.58 - 05.08.2026 11:01
+- Nove listy v databazovem spreadsheetu (pri vytvareni nove DB v setupInitialize i pri pozdejsi migraci schematu) nyni dostanou vychozi font appky (CONFIG.sheetFont, Lidl Font Pro - stejny jako --font v ui/styles.html) pres novou applySheetFont_. Stejny osvedceny vzor jako v BNL Dashboard.
+
 ## v3.1.57 - 05.08.2026 10:50
 - Provadeci fronta pro editace/ukladani/mazani a prvni nacteni sekci: misto blokujiciho overlaye pres celou obrazovku bezi kazda takova akce sekvencne (jedna po druhe) a po celou dobu ma vlastni toast se spinnerem a popiskem, ktery zmizi az je hotovo - uzivatel muze mezitim normalne pracovat v appce. Cist tichá nacitani na pozadi (bez busy popisku, napr. autodoplnovani, periodicka obnova dat) beze zmeny beh souvezne. Odstranen ted nepouzivany globalni busy-overlay.
 
