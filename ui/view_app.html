@@ -2138,6 +2138,7 @@ _sfState: {},
       }
       if (empty) empty.classList.add('is-hidden');
       const COLOR_CLASS = { dark: 'mc-side--dark', light: 'mc-side--light', yellow: 'mc-side--yellow', red: 'mc-side--red', green: 'mc-side--green', teal: 'mc-side--teal', orange: 'mc-side--orange', purple: 'mc-side--purple', slate: 'mc-side--slate', pink: 'mc-side--pink', indigo: 'mc-side--indigo' };
+      const COLOR_HEX = { dark: '0,36,102', light: '0,140,210', yellow: '255,209,0', red: '230,10,20', green: '0,131,62', teal: '0,160,175', orange: '232,119,34', purple: '107,33,168', slate: '71,85,105', pink: '219,39,119', indigo: '67,56,202' };
       const STATUS_CLASS = { available: 'mc--available', coming: 'mc--coming', inactive: 'mc--inactive' };
       const STATUS_BADGE = { available: 'Dostupná', coming: 'V přípravě', inactive: 'Nedostupná' };
       const STATUS_ICON = { coming: '#i-clock', inactive: '#i-lock' };
@@ -2145,6 +2146,7 @@ _sfState: {},
 
       const buildCard = (app) => {
         const colorCls = COLOR_CLASS[app.color] || '';
+        const accentRgb = COLOR_HEX[app.color] || '0,83,179';
         const statusCls = STATUS_CLASS[app.status] || 'mc--coming';
         const statusIcon = STATUS_ICON[app.status] ? `<div class="mc-status-icon"><svg><use href="${STATUS_ICON[app.status]}"></use></svg></div>` : '';
         const isAvailable = app.status === 'available';
@@ -2153,12 +2155,14 @@ _sfState: {},
         const art = document.createElement('article');
         art.className = 'module-card mc--sidebar ' + statusCls;
         art.dataset.appId = app.id;
+        art.style.setProperty('--mc-accent-rgb', accentRgb);
         art.innerHTML = `
           <div class="mc-side ${colorCls}">
             <svg><use href="#i-${Ui.escape(sideIcon)}"></use></svg>
             <i></i>
           </div>
           <div class="mc-body">
+            <div class="mc-watermark"><svg><use href="#i-${Ui.escape(sideIcon)}"></use></svg></div>
             ${statusIcon}
             <h2>${Ui.escape(app.name)}</h2>
             <span class="mc-badge">${Ui.escape(STATUS_BADGE[app.status] || '')}</span>

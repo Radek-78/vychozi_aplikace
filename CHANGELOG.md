@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.51 - 05.08.2026 09:54
+- Dlazdice aplikaci graficky obohaceny: cele telo dlazdice jemne podbarveno barvou pruhu (cca 3.5% opacity), v pravem okraji velky prosvitajici vodoznak s ikonou aplikace (7% opacity) - dlazdice pusobi barevne sladenejsi a mene prazdne. Barva se pocita z existujiciho vyberu barvy pruhu, zadna nova konfigurace.
+
 ## v3.1.50 - 05.08.2026 09:46
 - Filialky v menu se nyni vzdy otevrou bez filtru (drive mohl zustat aktivni filtr Uzavrene z klikuti v hero boxu). Hero box: polozka Zmena presunuta do paticky (prejmenovana na Log zmen, klikatelna do sekce Audit, jen pro admina) - na jeji misto v boxu presunuty Ucty, mrizka zpet na 3 sloupce. Mrizka aplikaci: superadmin ma u kazde dlazdice ikonu tuzky pro rychlou editaci (i u aplikaci ve stavu V priprave/Nedostupna).
 
