@@ -1290,9 +1290,6 @@
   }
   .mc-body {
     background-color: rgba(var(--mc-accent-rgb, 0, 83, 179), 0.035);
-    background-image: radial-gradient(circle, rgba(var(--mc-accent-rgb, 0, 83, 179), 0.15) 1px, transparent 1px);
-    background-position: -6px -6px;
-    background-size: 14px 14px;
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -1350,16 +1347,26 @@
 
   /* Stavový badge */
   .mc-badge {
-    align-self: flex-start;
-    border-radius: 3px;
+    align-items: center;
+    border-radius: 10px;
+    display: inline-flex;
     font-size: 9px;
     font-weight: 700;
+    gap: 4px;
     letter-spacing: 0.04em;
-    padding: 2px 5px;
+    margin-right: 8px;
+    padding: 3px 8px 3px 6px;
     text-transform: uppercase;
   }
+  .mc-badge-dot {
+    border-radius: 50%;
+    flex-shrink: 0;
+    height: 5px;
+    width: 5px;
+  }
   .mc--available .mc-side i { background: #22c55e; }
-  .mc--available .mc-badge  { background: #dcfce7; color: #166534; }
+  .mc--available .mc-badge  { background: #dcfce7; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15); color: #166534; }
+  .mc--available .mc-badge-dot { animation: mc-dot-pulse 1.6s ease infinite; background: #22c55e; }
 
   .mc-updated {
     color: var(--muted);
@@ -1386,8 +1393,9 @@
     background: #fbbf24;
     color: #451a03;
     font-size: 10px;
-    padding: 3px 7px;
+    padding: 3px 8px 3px 6px;
   }
+  .mc--coming .mc-badge-dot { background: #92400e; }
   .mc--coming button:not([data-mc-edit]) { pointer-events: none; opacity: 0.5; }
   @keyframes mc-coming-pulse {
     0%, 100% { opacity: 0.65; }
@@ -1397,6 +1405,7 @@
   .mc--inactive .mc-side { filter: grayscale(1); opacity: 0.35; }
   .mc--inactive .mc-body { opacity: 0.3; }
   .mc--inactive .mc-badge { background: var(--surface); color: var(--muted); }
+  .mc--inactive .mc-badge-dot { background: var(--muted); }
   .mc--inactive button:not([data-mc-edit]) { pointer-events: none; }
 
   /* Stavová ikona v pravém horním rohu */

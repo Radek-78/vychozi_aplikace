@@ -4,6 +4,7 @@
  * Nejnovejsi verze prvni.
  */
 const CHANGELOG = [
+  { version: 'v3.1.54', date: '5.8.2026', message: 'Dlazdice aplikaci: odstranen teckovany rastr pozadi (rusil vzhled), status presunut z tela dlazdice do paticky vpravo (vedle tlacitka Otevrit) - misto ciste barevneho stitku ted ma i malou tecku, u dostupnych aplikaci jemne pulzujici s jemnou zari kolem stitku.' },
   { version: 'v3.1.53', date: '5.8.2026', message: 'Dlazdice aplikaci: nove nepovinne pole Aktualizace dat (datum+cas, editace v modalu Upravit aplikaci) - zobrazi se jako \'Aktualizace: ...\' jen u aplikaci, kde je vyplnene. Pripraveno na budouci zapis primo z jednotlivych subaplikaci do hlavni databaze.' },
   { version: 'v3.1.52', date: '5.8.2026', message: 'Dlazdice aplikaci: poradi textu zmeneno na nadpis - popis - status (drive status mezi nadpisem a popisem). Pridan jemny teckovany vzor na pozadi telesa dlazdice (barva pruhu, 14px rastr) - stejny princip jako uz existujici vzor v hero boxu na Domu.' },
   { version: 'v3.1.51', date: '5.8.2026', message: 'Dlazdice aplikaci graficky obohaceny: cele telo dlazdice jemne podbarveno barvou pruhu (cca 3.5% opacity), v pravem okraji velky prosvitajici vodoznak s ikonou aplikace (7% opacity) - dlazdice pusobi barevne sladenejsi a mene prazdne. Barva se pocita z existujiciho vyberu barvy pruhu, zadna nova konfigurace.' },

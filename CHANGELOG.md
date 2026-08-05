@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.54 - 05.08.2026 10:15
+- Dlazdice aplikaci: odstranen teckovany rastr pozadi (rusil vzhled), status presunut z tela dlazdice do paticky vpravo (vedle tlacitka Otevrit) - misto ciste barevneho stitku ted ma i malou tecku, u dostupnych aplikaci jemne pulzujici s jemnou zari kolem stitku.
+
 ## v3.1.53 - 05.08.2026 10:06
 - Dlazdice aplikaci: nove nepovinne pole Aktualizace dat (datum+cas, editace v modalu Upravit aplikaci) - zobrazi se jako 'Aktualizace: ...' jen u aplikaci, kde je vyplnene. Pripraveno na budouci zapis primo z jednotlivych subaplikaci do hlavni databaze.
 

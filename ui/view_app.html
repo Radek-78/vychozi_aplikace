@@ -2166,10 +2166,10 @@ _sfState: {},
             ${statusIcon}
             <h2>${Ui.escape(app.name)}</h2>
             <p>${Ui.escape(app.description || '')}</p>
-            <span class="mc-badge">${Ui.escape(STATUS_BADGE[app.status] || '')}</span>
             ${app.data_updated_at ? `<span class="mc-updated">Aktualizace: <strong>${Ui.escape(Ui.formatDateTime(app.data_updated_at))}</strong></span>` : ''}
             <footer>
               ${isSuperAdmin ? `<button class="icon-action" type="button" data-mc-edit="${Ui.escape(app.id)}" title="Upravit aplikaci" aria-label="Upravit aplikaci" style="margin-right:auto"><svg width="14" height="14" viewBox="0 0 24 24"><use href="#i-pencil"></use></svg></button>` : ''}
+              <span class="mc-badge"><i class="mc-badge-dot"></i>${Ui.escape(STATUS_BADGE[app.status] || '')}</span>
               ${isAvailable
                 ? `<a class="button button-secondary button-small" href="${Ui.escape((this.boot.execUrl || '') + '?app=' + (app.slug || app.id))}" target="_blank" rel="noopener">Otevřít</a>`
                 : '<button class="button button-secondary button-small" type="button" disabled>Otevřít</button>'}
@@ -2275,8 +2275,10 @@ _sfState: {},
           <div class="mc-body">${statusIconHtml}
             <h2>${pName || '<em style="opacity:.4">Název aplikace</em>'}</h2>
             <p>${pDesc || '<em style="opacity:.4">Popis aplikace</em>'}</p>
-            <span class="mc-badge">${STATUS_BADGE[pStatus] || ''}</span>
-            <footer><button class="button button-secondary button-small" ${isAvail ? '' : 'disabled'}>Otevřít</button></footer>
+            <footer>
+              <span class="mc-badge"><i class="mc-badge-dot"></i>${STATUS_BADGE[pStatus] || ''}</span>
+              <button class="button button-secondary button-small" ${isAvail ? '' : 'disabled'}>Otevřít</button>
+            </footer>
           </div></article>`;
       };
 
