@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.50 - 05.08.2026 09:46
+- Filialky v menu se nyni vzdy otevrou bez filtru (drive mohl zustat aktivni filtr Uzavrene z klikuti v hero boxu). Hero box: polozka Zmena presunuta do paticky (prejmenovana na Log zmen, klikatelna do sekce Audit, jen pro admina) - na jeji misto v boxu presunuty Ucty, mrizka zpet na 3 sloupce. Mrizka aplikaci: superadmin ma u kazde dlazdice ikonu tuzky pro rychlou editaci (i u aplikaci ve stavu V priprave/Nedostupna).
+
 ## v3.1.49 - 05.08.2026 09:31
 - Domu, klik na dlazdici Uzavrene v hero boxu nyni rovnou filtruje tabulku filialek na docasne uzavrene (drive zobrazil vsechny). Mrizka aplikaci: pevny rozmer 3 radky x 6 sloupcu vzdy vyplneny predpripravenymi misty (duchy) pro admina, misto puvodniho doplneni jen na minimum 4 dlazdice. Kazda aplikace ma nove pole Radek a Pozice v radku (editace v modalu Upravit aplikaci) - posun pozic pri vkladani je nyni omezeny na stejny radek. Klik na prazdne misto predvyplni radek v novem formulari.
 

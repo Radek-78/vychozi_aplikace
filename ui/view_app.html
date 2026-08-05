@@ -458,7 +458,7 @@
     <footer class="statusbar">
       <span>© <span id="footerYear"></span> Lidl</span>
       <span class="bg-activity" id="bgActivity"><span class="bg-activity-dot"></span><span class="bg-activity-text">Aktualizuji data…</span></span>
-      <span><a href="#" id="version" class="version-link"></a>&nbsp;&nbsp;|&nbsp;&nbsp;Aktualizace: <span id="updatedAt">-</span></span>
+      <span><a href="#" id="version" class="version-link"></a>&nbsp;&nbsp;|&nbsp;&nbsp;Aktualizace: <span id="updatedAt">-</span><span class="admin-only">&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#" id="footerAuditLink" class="version-link">Log změn</a>: <span id="footerLastChange">-</span></span></span>
     </footer>
   </main>
 </div>
@@ -1078,7 +1078,10 @@ _sfState: {},
       });
 
       document.querySelectorAll('.nav-link').forEach((button) => {
-        button.addEventListener('click', () => this.showSection(button.dataset.section));
+        button.addEventListener('click', () => {
+          if (button.dataset.section === 'stores') this._sfFilters.tc = false;
+          this.showSection(button.dataset.section);
+        });
       });
 
       document.querySelectorAll('[data-action="reload"]').forEach((btn) => {
@@ -1091,6 +1094,7 @@ _sfState: {},
       }
 
       document.querySelector('#version').addEventListener('click', (e) => { e.preventDefault(); this.openChangelog(); });
+      document.querySelector('#footerAuditLink').addEventListener('click', (e) => { e.preventDefault(); this.showSection('audit'); });
       document.querySelector('#closeChangelogModal').addEventListener('click', () => Ui.closeModal(document.querySelector('#changelogModal')));
 
       document.querySelector('#warningsBellBtn').addEventListener('click', () => {
@@ -1292,12 +1296,8 @@ _sfState: {},
           <svg width="13" height="13" viewBox="0 0 24 24"><use href="#i-clock"></use></svg>
           <span>Uzavřené: <strong>${closedCount}</strong></span>
         </div>
-        <div class="hero-grid-item${click ? ' hero-grid-item--click' : ''}"${click ? ' data-section-link="users"' : ''} title="Celkový počet aktivních účtů">
-          <svg width="13" height="13" viewBox="0 0 24 24"><use href="#i-users"></use></svg>
-          <span>Účty: <strong>${usersCount}</strong></span>
-        </div>
 
-        <!-- Řádek 2: Systémové informace (Login, Sync, Změna) -->
+        <!-- Řádek 2: Systémové informace (Login, Sync, Účty) -->
         <div class="hero-grid-item" title="Vaše poslední přihlášení">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           <span>Login: <strong id="lastVisitText">—</strong></span>
@@ -1306,9 +1306,9 @@ _sfState: {},
           <svg width="13" height="13" viewBox="0 0 24 24"><use href="#i-sync"></use></svg>
           <span>Sync: <strong id="heroSyncTime">—</strong></span>
         </div>
-        <div class="hero-grid-item${click ? ' hero-grid-item--click' : ''}"${click ? ' data-section-link="audit"' : ''} title="Poslední změna v databázi (${lastChangeUser})">
-          <svg width="13" height="13" viewBox="0 0 24 24"><use href="#i-pencil"></use></svg>
-          <span>Změna: <strong>${lastChangeText}</strong></span>
+        <div class="hero-grid-item${click ? ' hero-grid-item--click' : ''}"${click ? ' data-section-link="users"' : ''} title="Celkový počet aktivních účtů">
+          <svg width="13" height="13" viewBox="0 0 24 24"><use href="#i-users"></use></svg>
+          <span>Účty: <strong>${usersCount}</strong></span>
         </div>
       `;
 
@@ -1318,6 +1318,12 @@ _sfState: {},
           this.showSection(el.dataset.sectionLink);
         });
       });
+
+      const footerLastChange = document.querySelector('#footerLastChange');
+      if (footerLastChange) {
+        footerLastChange.textContent = lastChangeText;
+        footerLastChange.title = 'Poslední změna v databázi (' + lastChangeUser + ')';
+      }
 
       // Srozumitelný stav dat filiálek místo nejasného „Sync:"
       const syncEl = document.querySelector('#heroSyncTime');
@@ -2135,6 +2141,7 @@ _sfState: {},
       const STATUS_CLASS = { available: 'mc--available', coming: 'mc--coming', inactive: 'mc--inactive' };
       const STATUS_BADGE = { available: 'Dostupná', coming: 'V přípravě', inactive: 'Nedostupná' };
       const STATUS_ICON = { coming: '#i-clock', inactive: '#i-lock' };
+      const isSuperAdmin = this.boot.user && this.boot.user.role === 'SUPERADMIN';
 
       const buildCard = (app) => {
         const colorCls = COLOR_CLASS[app.color] || '';
@@ -2157,11 +2164,18 @@ _sfState: {},
             <span class="mc-badge">${Ui.escape(STATUS_BADGE[app.status] || '')}</span>
             <p>${Ui.escape(app.description || '')}</p>
             <footer>
+              ${isSuperAdmin ? `<button class="icon-action" type="button" data-mc-edit="${Ui.escape(app.id)}" title="Upravit aplikaci" aria-label="Upravit aplikaci" style="margin-right:auto"><svg width="14" height="14" viewBox="0 0 24 24"><use href="#i-pencil"></use></svg></button>` : ''}
               ${isAvailable
                 ? `<a class="button button-secondary button-small" href="${Ui.escape((this.boot.execUrl || '') + '?app=' + (app.slug || app.id))}" target="_blank" rel="noopener">Otevřít</a>`
                 : '<button class="button button-secondary button-small" type="button" disabled>Otevřít</button>'}
             </footer>
           </div>`;
+        if (isSuperAdmin) {
+          art.querySelector('[data-mc-edit]').addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.openAppModal(app.id);
+          });
+        }
         return art;
       };
 

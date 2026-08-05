@@ -1364,7 +1364,7 @@
     font-size: 10px;
     padding: 3px 7px;
   }
-  .mc--coming button    { pointer-events: none; opacity: 0.5; }
+  .mc--coming button:not([data-mc-edit]) { pointer-events: none; opacity: 0.5; }
   @keyframes mc-coming-pulse {
     0%, 100% { opacity: 0.65; }
     50%      { opacity: 0.88; }
@@ -1373,7 +1373,7 @@
   .mc--inactive .mc-side { filter: grayscale(1); opacity: 0.35; }
   .mc--inactive .mc-body { opacity: 0.3; }
   .mc--inactive .mc-badge { background: var(--surface); color: var(--muted); }
-  .mc--inactive button    { pointer-events: none; }
+  .mc--inactive button:not([data-mc-edit]) { pointer-events: none; }
 
   /* Stavová ikona v pravém horním rohu */
   .mc-status-icon {
@@ -1454,7 +1454,7 @@
   /* ── Hero Stats Grid & Interactive Grid Items ──────────── */
   .hero-stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, auto);
+    grid-template-columns: repeat(3, auto);
     gap: 6px 20px;
     justify-content: end;
     margin-right: 4px;
