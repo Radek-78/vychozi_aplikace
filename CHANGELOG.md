@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.61 - 05.08.2026 11:44
+- Oprava: hlavicka modalniho okna se v oknech s dlouhym obsahem (typicky Historie zmen s desitkami zaznamu) smrstila temer na nulu - jako polozka sloupcoveho flexboxu nemela flex-shrink: 0 a diky overflow: hidden ji zaroven odpadla minimalni vyska, takze absorbovala svuj podil z preteceni obsahu. Proto se ani zvetseni hlavicky v predchozi verzi neprojevilo. Paticka (.modal-footer/.modal-actions) uz flex-shrink: 0 mela, u hlavicky chybel.
+
 ## v3.1.60 - 05.08.2026 11:21
 - Hlavicka modalu je u sirsich oken (modal-large / modal-app - Historie zmen, detail filialky, editace aplikace) nyni robustnejsi: vetsi ikona (46px), vetsi padding, vetsi pismo nadpisu a kickeru. Kod hlavicky Historie zmen a editace aplikace byl uz predtim identicky, tak jsou ted obe vetsi spolecne.
 

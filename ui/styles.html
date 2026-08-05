@@ -2294,6 +2294,9 @@
       repeating-linear-gradient(0deg, transparent, transparent 15px, rgba(255, 255, 255, 0.035) 15px, rgba(255, 255, 255, 0.035) 16px),
       repeating-linear-gradient(90deg, transparent, transparent 15px, rgba(255, 255, 255, 0.035) 15px, rgba(255, 255, 255, 0.035) 16px);
     display: flex;
+    /* Bez flex-shrink: 0 by hlavičku v okně s dlouhým obsahem (např. Historie změn)
+       flexbox smrštil skoro na nulu — overflow: hidden jí navíc ruší minimální výšku. */
+    flex-shrink: 0;
     gap: 14px;
     overflow: hidden;
     padding: 13px 18px;
