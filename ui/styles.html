@@ -1219,38 +1219,95 @@
   /* ── Changelog modal ─────────────────────────────── */
 
   .changelog-entry {
-    border-bottom: 1px solid var(--line-soft);
     display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding: 10px 0;
+    gap: 14px;
   }
 
-  .changelog-entry:last-child {
-    border-bottom: none;
+  .changelog-rail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    padding-top: 3px;
+    position: relative;
+    width: 12px;
+  }
+
+  .changelog-rail::after {
+    background: var(--line-soft);
+    bottom: -18px;
+    content: '';
+    position: absolute;
+    top: 14px;
+    width: 2px;
+  }
+
+  .changelog-entry:last-child .changelog-rail::after {
+    display: none;
+  }
+
+  .changelog-dot {
+    background: var(--white);
+    border: 2px solid var(--lidl-blue);
+    border-radius: 50%;
+    flex-shrink: 0;
+    height: 10px;
+    width: 10px;
+    z-index: 1;
+  }
+
+  .changelog-entry--current .changelog-dot {
+    background: var(--lidl-blue);
+    box-shadow: 0 0 0 3px rgba(0, 83, 179, 0.18);
+  }
+
+  .changelog-content {
+    flex: 1;
+    min-width: 0;
+    padding-bottom: 18px;
+  }
+
+  .changelog-head {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 4px;
   }
 
   .changelog-version {
-    align-items: center;
-    color: var(--lidl-dark-blue);
-    display: flex;
-    font-size: 13px;
+    background: var(--lidl-dark-blue);
+    border-radius: 4px;
+    color: var(--white);
+    font-size: 11px;
     font-weight: 700;
-    gap: 8px;
-    justify-content: space-between;
+    letter-spacing: 0.02em;
+    padding: 2px 8px;
+  }
+
+  .changelog-current-badge {
+    background: #dcfce7;
+    border-radius: 4px;
+    color: #166534;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    padding: 2px 7px;
+    text-transform: uppercase;
   }
 
   .changelog-date {
     color: var(--muted);
     font-size: 11px;
-    font-weight: 400;
+    margin-left: auto;
   }
 
   .changelog-entry p {
     color: var(--text);
     font-size: 13px;
     line-height: 1.5;
-    margin: 4px 0 0;
+    margin: 0;
+    max-width: 680px;
   }
 
   /* ── Module card variants ────────────────────────── */

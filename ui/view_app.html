@@ -475,7 +475,7 @@
   <div class="modal-body" id="syncChangesBody"></div>
 </dialog>
 
-<dialog class="modal" id="changelogModal">
+<dialog class="modal modal-large" id="changelogModal">
   <div class="modal-header">
     <span class="modal-icon"><svg><use href="#i-info"></use></svg></span>
     <div class="modal-header-text">
@@ -1566,10 +1566,17 @@ _sfState: {},
     openChangelog() {
       Ui.call('apiGetChangelog', null, { silent: true, busy: 'Načítám historii změn…' })
         .then((entries) => {
-          document.querySelector('#changelogBody').innerHTML = entries.map((e) => `
-            <div class="changelog-entry">
-              <div class="changelog-version">${Ui.escape(e.version)}<span class="changelog-date">${Ui.escape(e.date)}</span></div>
-              <p>${Ui.escape(e.message)}</p>
+          document.querySelector('#changelogBody').innerHTML = entries.map((e, i) => `
+            <div class="changelog-entry${i === 0 ? ' changelog-entry--current' : ''}">
+              <div class="changelog-rail"><span class="changelog-dot"></span></div>
+              <div class="changelog-content">
+                <div class="changelog-head">
+                  <span class="changelog-version">${Ui.escape(e.version)}</span>
+                  ${i === 0 ? '<span class="changelog-current-badge">Aktuální</span>' : ''}
+                  <span class="changelog-date">${Ui.escape(e.date)}</span>
+                </div>
+                <p>${Ui.escape(e.message)}</p>
+              </div>
             </div>`).join('');
           Ui.openModal(document.querySelector('#changelogModal'));
         })

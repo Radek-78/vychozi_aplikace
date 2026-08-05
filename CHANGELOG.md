@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.59 - 05.08.2026 11:08
+- Historie zmen: modal rozsiren na stejnou sirku jako editace aplikace (860px misto puvodnich 480px). Jednotlive zaznamy nyni ve stylu casove osy - svisla linka s teckou u kazde verze, cislo verze jako oznacek (badge), nejnovejsi verze navic zvyraznena tecka a stitkem Aktualni.
+
 ## v3.1.58 - 05.08.2026 11:01
 - Nove listy v databazovem spreadsheetu (pri vytvareni nove DB v setupInitialize i pri pozdejsi migraci schematu) nyni dostanou vychozi font appky (CONFIG.sheetFont, Lidl Font Pro - stejny jako --font v ui/styles.html) pres novou applySheetFont_. Stejny osvedceny vzor jako v BNL Dashboard.
 
