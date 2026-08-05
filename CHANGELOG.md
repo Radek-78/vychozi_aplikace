@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.57 - 05.08.2026 10:50
+- Provadeci fronta pro editace/ukladani/mazani a prvni nacteni sekci: misto blokujiciho overlaye pres celou obrazovku bezi kazda takova akce sekvencne (jedna po druhe) a po celou dobu ma vlastni toast se spinnerem a popiskem, ktery zmizi az je hotovo - uzivatel muze mezitim normalne pracovat v appce. Cist tichá nacitani na pozadi (bez busy popisku, napr. autodoplnovani, periodicka obnova dat) beze zmeny beh souvezne. Odstranen ted nepouzivany globalni busy-overlay.
+
 ## v3.1.56 - 05.08.2026 10:30
 - Odebrano rucni pole Aktualizace dat z modalu Upravit aplikaci - toto pole ma znamenat kdy aplikace aktualizovala sva zpracovavana data, ne kdy admin upravil dlazdici, takze nepatri do editace dlazdice. apiSaveApp uz pole data_updated_at vubec nezapisuje, takze ho editace dlazdice nemuze prepsat/vynulovat. Pole v databazi a zobrazeni na dlazdici (Aktualizace: ...) zustavaji - budou se plnit az pres budouci endpoint, ktery si napisou samotne subaplikace.
 

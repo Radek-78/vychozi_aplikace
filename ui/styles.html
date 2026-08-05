@@ -1545,40 +1545,6 @@
     transform: scale(0.97);
   }
 
-  /* ── Busy overlay ────────────────────────────────── */
-
-  .busy-overlay {
-    align-items: center;
-    backdrop-filter: blur(5px);
-    background: rgba(240, 244, 250, 0.55);
-    display: none;
-    inset: 0;
-    justify-content: center;
-    position: fixed;
-    z-index: 80;
-  }
-
-  .busy-overlay.is-visible {
-    display: flex;
-  }
-
-  .busy-box {
-    align-items: center;
-    background: var(--white);
-    border-radius: 20px;
-    box-shadow: 0 24px 64px rgba(0, 36, 102, 0.2), 0 4px 16px rgba(0, 36, 102, 0.08);
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    padding: 36px 44px 28px;
-  }
-
-  .busy-label {
-    color: var(--lidl-dark-blue);
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-  }
 
   tr.is-muted td {
     color: var(--muted);
@@ -2139,6 +2105,65 @@
 
   .toast.is-error {
     border-left-color: var(--lidl-red);
+  }
+
+  /* ── Prováděcí fronta (toast se spinnerem, dokud akce neskončí) ──── */
+
+  .toast-queue {
+    align-items: center;
+    display: flex;
+    gap: 10px;
+    opacity: 0.55;
+    transition: opacity 0.15s;
+  }
+
+  .toast-queue.is-active {
+    opacity: 1;
+  }
+
+  .toast-queue.is-done {
+    border-left-color: #22c55e;
+  }
+
+  .toast-queue.is-error {
+    border-left-color: var(--lidl-red);
+  }
+
+  .toast-queue.is-leaving {
+    animation: toastOut 0.2s ease-in forwards;
+  }
+
+  .toast-queue-icon {
+    background: var(--muted);
+    border-radius: 50%;
+    flex-shrink: 0;
+    height: 10px;
+    width: 10px;
+  }
+
+  .toast-queue.is-active .toast-queue-icon {
+    animation: toast-queue-spin 0.7s linear infinite;
+    background: transparent;
+    border: 2px solid rgba(0, 83, 179, 0.2);
+    border-top-color: var(--lidl-blue);
+  }
+
+  .toast-queue.is-done .toast-queue-icon {
+    background: #22c55e;
+    border: none;
+  }
+
+  .toast-queue.is-error .toast-queue-icon {
+    background: var(--lidl-red);
+    border: none;
+  }
+
+  @keyframes toast-queue-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes toastOut {
+    to { opacity: 0; transform: translateX(10px); }
   }
 
   /* ── Modal ───────────────────────────────────────── */
