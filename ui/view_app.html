@@ -1288,7 +1288,7 @@ _sfState: {},
           <svg width="13" height="13" viewBox="0 0 24 24"><use href="#i-store"></use></svg>
           <span>Filiálky: <strong>${storesCount}</strong></span>
         </div>
-        <div class="hero-grid-item${closedClass}${click ? ' hero-grid-item--click' : ''}"${click ? ' data-section-link="stores"' : ''} title="Dočasně uzavřené filiálky">
+        <div class="hero-grid-item${closedClass}${click ? ' hero-grid-item--click' : ''}"${click ? ' data-section-link="stores" data-section-filter="tc"' : ''} title="Dočasně uzavřené filiálky">
           <svg width="13" height="13" viewBox="0 0 24 24"><use href="#i-clock"></use></svg>
           <span>Uzavřené: <strong>${closedCount}</strong></span>
         </div>
@@ -1313,7 +1313,10 @@ _sfState: {},
       `;
 
       grid.querySelectorAll('[data-section-link]').forEach((el) => {
-        el.addEventListener('click', () => this.showSection(el.dataset.sectionLink));
+        el.addEventListener('click', () => {
+          if (el.dataset.sectionFilter === 'tc') this._sfFilters.tc = true;
+          this.showSection(el.dataset.sectionLink);
+        });
       });
 
       // Srozumitelný stav dat filiálek místo nejasného „Sync:"
@@ -2113,8 +2116,9 @@ _sfState: {},
         .catch(() => {});
     },
 
-    /** Kolik "duchů" (volných slotů pro budoucí aplikace) se má doplnit do mřížky. */
-    GHOST_MIN_MODULES: 4,
+    /** Pevná mřížka předpřipravených míst (jen pro admina) — řádky × sloupce (viz .module-grid). */
+    GRID_ROWS: 3,
+    GRID_COLS: 6,
 
     renderModules() {
       const grid = document.querySelector('#moduleGrid');
@@ -2122,8 +2126,7 @@ _sfState: {},
       const active = this.apps || [];
       grid.querySelectorAll('.module-card, .mc-ghost').forEach((c) => c.remove());
 
-      const ghostCount = this.isAdmin ? Math.max(0, this.GHOST_MIN_MODULES - active.length) : 0;
-      if (!active.length && !ghostCount) {
+      if (!active.length && !this.isAdmin) {
         if (empty) empty.classList.remove('is-hidden');
         return;
       }
@@ -2132,7 +2135,8 @@ _sfState: {},
       const STATUS_CLASS = { available: 'mc--available', coming: 'mc--coming', inactive: 'mc--inactive' };
       const STATUS_BADGE = { available: 'Dostupná', coming: 'V přípravě', inactive: 'Nedostupná' };
       const STATUS_ICON = { coming: '#i-clock', inactive: '#i-lock' };
-      active.forEach((app) => {
+
+      const buildCard = (app) => {
         const colorCls = COLOR_CLASS[app.color] || '';
         const statusCls = STATUS_CLASS[app.status] || 'mc--coming';
         const statusIcon = STATUS_ICON[app.status] ? `<div class="mc-status-icon"><svg><use href="${STATUS_ICON[app.status]}"></use></svg></div>` : '';
@@ -2158,10 +2162,10 @@ _sfState: {},
                 : '<button class="button button-secondary button-small" type="button" disabled>Otevřít</button>'}
             </footer>
           </div>`;
-        grid.appendChild(art);
-      });
+        return art;
+      };
 
-      for (let i = 0; i < ghostCount; i++) {
+      const buildGhost = (rowNum) => {
         const ghost = document.createElement('article');
         ghost.className = 'mc-ghost';
         ghost.innerHTML = `
@@ -2169,12 +2173,34 @@ _sfState: {},
             <svg width="20" height="20" viewBox="0 0 24 24"><use href="#i-plus"></use></svg>
             <span>Přidat aplikaci</span>
           </div>`;
-        ghost.addEventListener('click', () => this.openAppModal(null));
-        grid.appendChild(ghost);
+        ghost.addEventListener('click', () => this.openAppModal(null, rowNum));
+        return ghost;
+      };
+
+      if (!this.isAdmin) {
+        active.forEach((app) => grid.appendChild(buildCard(app)));
+        return;
+      }
+
+      // Seskupit podle řádku (výchozí 1), seřadit v rámci řádku podle pozice.
+      const byRow = {};
+      active.forEach((app) => {
+        const r = Math.max(1, Number(app.row) || 1);
+        (byRow[r] = byRow[r] || []).push(app);
+      });
+      Object.keys(byRow).forEach((r) => byRow[r].sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0)));
+
+      const maxRow = Math.max(this.GRID_ROWS, ...Object.keys(byRow).map(Number), 0);
+      for (let r = 1; r <= maxRow; r++) {
+        (byRow[r] || []).forEach((app) => grid.appendChild(buildCard(app)));
+        if (r <= this.GRID_ROWS) {
+          const fillCount = Math.max(0, this.GRID_COLS - (byRow[r] || []).length);
+          for (let i = 0; i < fillCount; i++) grid.appendChild(buildGhost(r));
+        }
       }
     },
 
-    openAppModal(appIdOrObj) {
+    openAppModal(appIdOrObj, defaultRow) {
       document.querySelector('#appModal')?.remove();
       const app = typeof appIdOrObj === 'string'
         ? (this.apps || []).find((a) => a.id === appIdOrObj) || null
@@ -2186,6 +2212,7 @@ _sfState: {},
       const color = isNew ? '' : (app.color || '');
       const status = isNew ? 'coming' : (app.status || 'coming');
       const order = isNew ? '' : String(app.order || '');
+      const row = isNew ? String(defaultRow || 1) : String(app.row || 1);
       const COLORS = [
         { value: '',        label: 'Lidl modrá',    hex: '#0053b3' },
         { value: 'dark',    label: 'Tmavě modrá',   hex: '#002466' },
@@ -2268,11 +2295,14 @@ _sfState: {},
                     ${COLORS.map((c) => `<button type="button" class="color-picker-btn${c.value === color ? ' is-selected' : ''}" data-color="${c.value}" data-hex="${c.hex}" title="${c.label}" style="--swatch:${c.hex}"></button>`).join('')}
                   </div>
                 </div>
+                <label><span>Status</span>
+                  <select name="status" id="appStatus" style="width: 100%; min-height: 34px; padding: 6px 10px;">${statuses.map(([v, l]) => `<option value="${v}"${v === status ? ' selected' : ''}>${l}</option>`).join('')}</select>
+                </label>
                 <div class="form-row-2">
-                  <label><span>Status</span>
-                    <select name="status" id="appStatus" style="width: 100%; min-height: 34px; padding: 6px 10px;">${statuses.map(([v, l]) => `<option value="${v}"${v === status ? ' selected' : ''}>${l}</option>`).join('')}</select>
+                  <label><span>Řádek</span>
+                    <input name="row" type="number" value="${Ui.escape(row)}" min="1" style="width: 100%; min-height: 34px; padding: 6px 10px;">
                   </label>
-                  <label><span>Pořadí</span>
+                  <label><span>Pozice v řádku</span>
                     <input name="order" type="number" value="${Ui.escape(order)}" min="0" style="width: 100%; min-height: 34px; padding: 6px 10px;">
                   </label>
                 </div>
@@ -2340,7 +2370,7 @@ _sfState: {},
         const form = dialog.querySelector('#appForm');
         if (!form.reportValidity()) return;
         const fd = new FormData(form);
-        const payload = { id: fd.get('id') || undefined, name: fd.get('name'), description: fd.get('description'), slug: fd.get('slug'), icon: fd.get('icon'), color: fd.get('color'), status: fd.get('status'), order: parseInt(fd.get('order')) || 0 };
+        const payload = { id: fd.get('id') || undefined, name: fd.get('name'), description: fd.get('description'), slug: fd.get('slug'), icon: fd.get('icon'), color: fd.get('color'), status: fd.get('status'), order: parseInt(fd.get('order')) || 0, row: parseInt(fd.get('row')) || 1 };
         // Dialog se zavře hned — spinner (busy overlay) by jinak zůstal schovaný pod ním.
         close();
         Ui.call('apiSaveApp', payload, { silent: true, busy: 'Ukládám aplikaci…' })

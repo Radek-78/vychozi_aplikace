@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.49 - 05.08.2026 09:31
+- Domu, klik na dlazdici Uzavrene v hero boxu nyni rovnou filtruje tabulku filialek na docasne uzavrene (drive zobrazil vsechny). Mrizka aplikaci: pevny rozmer 3 radky x 6 sloupcu vzdy vyplneny predpripravenymi misty (duchy) pro admina, misto puvodniho doplneni jen na minimum 4 dlazdice. Kazda aplikace ma nove pole Radek a Pozice v radku (editace v modalu Upravit aplikaci) - posun pozic pri vkladani je nyni omezeny na stejny radek. Klik na prazdne misto predvyplni radek v novem formulari.
+
 ## v3.1.48 - 05.08.2026 09:13
 - Hero box na Domu: nova dlazdice Ucty (celkovy pocet aktivnich uzivatelskych uctu) vedle LC/Filialky/Uzavrene - mrizka rozsirena ze 3 na 4 sloupce. Bez sledovani online stavu (zamerne, aby appka nemusela pravidelne kontrolovat stav na pozadi).
 

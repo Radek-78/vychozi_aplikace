@@ -38,7 +38,7 @@ function apiGetBootstrap() {
     const data = {
       apps: dbGetAll_(SHEETS.APPS)
         .filter((a) => a.active === true && (isAdmin || isAppAllowedForUser_(user, a)))
-        .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0)),
+        .sort((a, b) => (Number(a.row) || 1) - (Number(b.row) || 1) || (Number(a.order) || 0) - (Number(b.order) || 0)),
     };
     if (isAdmin) {
       const s = settingsAll_();
@@ -638,7 +638,7 @@ function apiSaveSyncSettings(payload) {
  * to omezí na jednou za běh skriptu, CacheService pak i napříč requesty.
  */
 let dbSchemaEnsuredThisRun_ = false;
-const SCHEMA_CHECK_CACHE_KEY_ = 'schema:checked:3'; // změna klíče vynutí novou kontrolu po přidání sloupce
+const SCHEMA_CHECK_CACHE_KEY_ = 'schema:checked:4'; // změna klíče vynutí novou kontrolu po přidání sloupce
 const SCHEMA_CHECK_TTL_ = 1800; // sekund
 
 function dbEnsureApps_() {
@@ -690,7 +690,7 @@ function apiListApps() {
     const isAdmin = (ROLE_LEVEL[user.role] || 0) >= ROLE_LEVEL[ROLES.ADMIN];
     return dbGetAll_(SHEETS.APPS)
       .filter((a) => a.active === true && (isAdmin || isAppAllowedForUser_(user, a)))
-      .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+      .sort((a, b) => (Number(a.row) || 1) - (Number(b.row) || 1) || (Number(a.order) || 0) - (Number(b.order) || 0));
   });
 }
 
@@ -707,6 +707,7 @@ function apiSaveApp(payload) {
       color: COLORS.includes(payload && payload.color) ? (payload.color || '') : '',
       status: STATUSES.includes(payload && payload.status) ? payload.status : 'coming',
       order: parseInt(payload && payload.order) || 0,
+      row: Math.max(1, parseInt(payload && payload.row) || 1),
       active: payload && payload.active !== false,
     };
     const apps = dbGetAll_(SHEETS.APPS);
@@ -723,13 +724,14 @@ function apiSaveApp(payload) {
       ? dbUpdate_(SHEETS.APPS, existing.id, data)
       : dbInsert_(SHEETS.APPS, data);
 
-    // Posun ostatních aplikací pokud bylo zadáno konkrétní pořadí — jedním dávkovým zápisem
-    // místo N jednotlivých dbUpdate_ (každý čte a zamyká celý list zvlášť).
+    // Posun ostatních aplikací ve stejném řádku pokud bylo zadáno konkrétní pořadí —
+    // jedním dávkovým zápisem místo N jednotlivých dbUpdate_ (každý čte a zamyká celý list zvlášť).
     const targetOrder = data.order;
     if (targetOrder > 0) {
       const shiftIds = new Set(
         apps
           .filter((a) => a.active !== false && (!existing || a.id !== existing.id))
+          .filter((a) => (Number(a.row) || 1) === data.row)
           .filter((a) => (Number(a.order) || 0) >= targetOrder)
           .map((a) => a.id)
       );
