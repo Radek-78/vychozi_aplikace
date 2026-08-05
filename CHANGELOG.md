@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.52 - 05.08.2026 10:00
+- Dlazdice aplikaci: poradi textu zmeneno na nadpis - popis - status (drive status mezi nadpisem a popisem). Pridan jemny teckovany vzor na pozadi telesa dlazdice (barva pruhu, 14px rastr) - stejny princip jako uz existujici vzor v hero boxu na Domu.
+
 ## v3.1.51 - 05.08.2026 09:54
 - Dlazdice aplikaci graficky obohaceny: cele telo dlazdice jemne podbarveno barvou pruhu (cca 3.5% opacity), v pravem okraji velky prosvitajici vodoznak s ikonou aplikace (7% opacity) - dlazdice pusobi barevne sladenejsi a mene prazdne. Barva se pocita z existujiciho vyberu barvy pruhu, zadna nova konfigurace.
 

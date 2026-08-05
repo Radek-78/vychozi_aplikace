@@ -2165,8 +2165,8 @@ _sfState: {},
             <div class="mc-watermark"><svg><use href="#i-${Ui.escape(sideIcon)}"></use></svg></div>
             ${statusIcon}
             <h2>${Ui.escape(app.name)}</h2>
-            <span class="mc-badge">${Ui.escape(STATUS_BADGE[app.status] || '')}</span>
             <p>${Ui.escape(app.description || '')}</p>
+            <span class="mc-badge">${Ui.escape(STATUS_BADGE[app.status] || '')}</span>
             <footer>
               ${isSuperAdmin ? `<button class="icon-action" type="button" data-mc-edit="${Ui.escape(app.id)}" title="Upravit aplikaci" aria-label="Upravit aplikaci" style="margin-right:auto"><svg width="14" height="14" viewBox="0 0 24 24"><use href="#i-pencil"></use></svg></button>` : ''}
               ${isAvailable
@@ -2266,8 +2266,8 @@ _sfState: {},
           <div class="mc-side ${colorCls}"><svg><use href="#i-${pIcon || 'info'}"></use></svg><i></i></div>
           <div class="mc-body">${statusIconHtml}
             <h2>${pName || '<em style="opacity:.4">Název aplikace</em>'}</h2>
-            <span class="mc-badge">${STATUS_BADGE[pStatus] || ''}</span>
             <p>${pDesc || '<em style="opacity:.4">Popis aplikace</em>'}</p>
+            <span class="mc-badge">${STATUS_BADGE[pStatus] || ''}</span>
             <footer><button class="button button-secondary button-small" ${isAvail ? '' : 'disabled'}>Otevřít</button></footer>
           </div></article>`;
       };
