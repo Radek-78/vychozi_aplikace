@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.60 - 05.08.2026 11:21
+- Hlavicka modalu je u sirsich oken (modal-large / modal-app - Historie zmen, detail filialky, editace aplikace) nyni robustnejsi: vetsi ikona (46px), vetsi padding, vetsi pismo nadpisu a kickeru. Kod hlavicky Historie zmen a editace aplikace byl uz predtim identicky, tak jsou ted obe vetsi spolecne.
+
 ## v3.1.59 - 05.08.2026 11:08
 - Historie zmen: modal rozsiren na stejnou sirku jako editace aplikace (860px misto puvodnich 480px). Jednotlive zaznamy nyni ve stylu casove osy - svisla linka s teckou u kazde verze, cislo verze jako oznacek (badge), nejnovejsi verze navic zvyraznena tecka a stitkem Aktualni.
 

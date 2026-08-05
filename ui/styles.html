@@ -2369,6 +2369,34 @@
     margin-bottom: 0;
   }
 
+  /* Širší modaly (detail/editace, historie změn) mají robustnější hlavičku. */
+  .modal-large .modal-header,
+  .modal-app .modal-header {
+    padding: 18px 24px;
+  }
+
+  .modal-large .modal-icon,
+  .modal-app .modal-icon {
+    height: 46px;
+    width: 46px;
+  }
+
+  .modal-large .modal-icon svg,
+  .modal-app .modal-icon svg {
+    height: 22px;
+    width: 22px;
+  }
+
+  .modal-large .modal-header h2,
+  .modal-app .modal-header h2 {
+    font-size: 19px;
+  }
+
+  .modal-large .modal-header .kicker,
+  .modal-app .modal-header .kicker {
+    font-size: 12px;
+  }
+
   .modal-close {
     align-items: center;
     background: transparent;
