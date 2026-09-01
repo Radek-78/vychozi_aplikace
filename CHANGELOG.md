@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.65 - 01.09.2026 09:32
+- Pruvodce po prvnim spusteni, krok Zdroj dat: zluty focus prsten nahrazen modrym (stejne jako v uvodnim wizardu). Ikona blesku pro vyplneni vychozi slozky uz neni prekryta pres pole, ale je to samostatne popsane tlacitko (Vyplnit vychozi odkaz na slozku). Tlacitko Najit soubor je aktivni az po vyplneni odkazu. Tlacitko Preskocit cervene (button-danger).
+
 ## v3.1.64 - 01.09.2026 09:09
 - Wizard: telo okna (#wizBody) ma nyni pevnou vysku 300px se scrollovanim jako pojistkou - modal uz nemeni velikost mezi jednotlivymi kroky (drive kazdy krok mel jinak vysoky obsah, takze se cela karta zvetsovala/zmensovala).
 

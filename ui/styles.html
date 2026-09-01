@@ -3173,10 +3173,12 @@
   }
 
   /* Tlumenější, modrá varianta focusu místo appwide žlutého prstenu (viz
-     input:focus-visible) — jen ve wizardu, ať to ladí s klidnějším vzhledem
-     průvodce. */
+     input:focus-visible) — jen ve wizardu a v navazujícím průvodci prvotním
+     načtením dat, ať to ladí s klidnějším vzhledem obou průvodců. */
   .wizard-panel input:focus-visible,
-  .wizard-panel textarea:focus-visible {
+  .wizard-panel textarea:focus-visible,
+  #dataBootstrapModal input:focus-visible,
+  #dataBootstrapModal textarea:focus-visible {
     box-shadow: 0 0 0 3px rgba(0, 83, 179, 0.2);
   }
 

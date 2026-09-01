@@ -4,6 +4,7 @@
  * Nejnovejsi verze prvni.
  */
 const CHANGELOG = [
+  { version: 'v3.1.65', date: '1.9.2026', message: 'Pruvodce po prvnim spusteni, krok Zdroj dat: zluty focus prsten nahrazen modrym (stejne jako v uvodnim wizardu). Ikona blesku pro vyplneni vychozi slozky uz neni prekryta pres pole, ale je to samostatne popsane tlacitko (Vyplnit vychozi odkaz na slozku). Tlacitko Najit soubor je aktivni az po vyplneni odkazu. Tlacitko Preskocit cervene (button-danger).' },
   { version: 'v3.1.64', date: '1.9.2026', message: 'Wizard: telo okna (#wizBody) ma nyni pevnou vysku 300px se scrollovanim jako pojistkou - modal uz nemeni velikost mezi jednotlivymi kroky (drive kazdy krok mel jinak vysoky obsah, takze se cela karta zvetsovala/zmensovala).' },
   { version: 'v3.1.63', date: '1.9.2026', message: 'Wizard krok 2 (Aplikace): pole rozdelena do dvou vizualne oddelenych boxu s kickerem (Aplikace: nazev+podtitul / Superadmin: jmeno+prijmeni) - jasne seskupeni misto spolehani na jemne rozdily v mezerach mezi popiskem a polem.' },
   { version: 'v3.1.62', date: '1.9.2026', message: 'Wizard: pole ve druhem kroku maji tlumenejsi modry focus prsten misto appwide zluteho (scoped jen na .wizard-panel), popisek je bliz ke svemu poli (mensi mezera uvnitr paru) a mezi jednotlivymi radky poli je vetsi odstup - jasnejsi, ktery popisek patri ke kteremu poli.' },

@@ -654,22 +654,21 @@
   </div>
   <div class="modal-body">
     <div class="db-phase" data-db-phase="source">
-      <p class="form-hint" style="margin:0 0 12px">Aplikace je připravena — teď načteme data ze zdrojového souboru filiálek a logistických center.</p>
+      <p class="form-hint" style="margin:0 0 12px">Nejprve vložte odkaz na složku v Google Drive, pak klikněte na „Najít soubor".</p>
       <label>
         <span>URL složky v Google Drive</span>
-        <div class="input-with-action">
-          <input id="dbSrcFolderUrl" type="text" placeholder="https://drive.google.com/drive/folders/...">
-          <button class="icon-action input-action-btn" type="button" id="dbFillFolderBtn" title="Vyplnit výchozí složku" aria-label="Vyplnit výchozí složku">
-            <svg width="14" height="14" viewBox="0 0 24 24"><use href="#i-zap"></use></svg>
-          </button>
-        </div>
+        <input id="dbSrcFolderUrl" type="text" placeholder="https://drive.google.com/drive/folders/...">
       </label>
+      <button class="button button-secondary button-small" type="button" id="dbFillFolderBtn" style="width:fit-content;margin-top:-4px">
+        <svg width="14" height="14" viewBox="0 0 24 24"><use href="#i-zap"></use></svg>
+        Vyplnit výchozí odkaz na složku
+      </button>
       <label>
         <span>Hledaný výraz v názvu souboru</span>
         <input id="dbSrcSearchTerm" type="text" value="OSO">
       </label>
       <div class="form-actions">
-        <button class="button button-secondary" type="button" id="dbFindFileBtn">Najít soubor</button>
+        <button class="button button-secondary" type="button" id="dbFindFileBtn" disabled>Najít soubor</button>
         <button class="button button-primary is-hidden" type="button" id="dbSourceContinueBtn">Pokračovat</button>
       </div>
       <div id="dbSrcResult"></div>
@@ -700,7 +699,7 @@
     </div>
   </div>
   <footer class="modal-actions">
-    <button class="button button-secondary" type="button" id="dbSkipButton">Přeskočit, nastavím později</button>
+    <button class="button button-danger" type="button" id="dbSkipButton">Přeskočit, nastavím později</button>
   </footer>
 </dialog>
 
@@ -3675,9 +3674,11 @@ _sfState: {},
     _chosenFileId: null,
 
     bindEvents() {
+      document.querySelector('#dbSrcFolderUrl').addEventListener('input', () => this._updateFindFileBtn());
       document.querySelector('#dbFillFolderBtn').addEventListener('click', () => {
         document.querySelector('#dbSrcFolderUrl').value =
           'https://drive.google.com/drive/folders/1DX1VFWt5fAztALgMdVGJvLwQEjm-t83B?lfhs=2';
+        this._updateFindFileBtn();
       });
       document.querySelector('#dbFindFileBtn').addEventListener('click', () => this.findSourceFile());
       document.querySelector('#dbSourceContinueBtn').addEventListener('click', () => this.goToLcStep());
@@ -3693,8 +3694,15 @@ _sfState: {},
       document.querySelector('#dbSrcResult').innerHTML = '';
       document.querySelector('#dbSrcCandidates').innerHTML = '';
       document.querySelector('#dbSourceContinueBtn').classList.add('is-hidden');
+      this._updateFindFileBtn();
       this.showPhase('source');
       Ui.openModal(document.querySelector('#dataBootstrapModal'));
+    },
+
+    /** Tlačítko „Najít soubor" jde použít až po vyplnění odkazu na složku. */
+    _updateFindFileBtn() {
+      const url = document.querySelector('#dbSrcFolderUrl').value.trim();
+      document.querySelector('#dbFindFileBtn').disabled = !url;
     },
 
     showPhase(name) {
