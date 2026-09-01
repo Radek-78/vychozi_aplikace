@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.70 - 01.09.2026 10:28
+- Modal vytvoreni/editace aplikace: sirsi panel nahledu (260px na 300px, modal 860px na 900px) a badge se stavem uz nema zalamovat text (white-space: nowrap) - V PRIPRAVE se drive na uzsim panelu zalomilo na dva radky. Sloupec s ikonami pro editaci/mazani (Uzivatele, Aplikace, Log. centra) nyni ma popisek Akce misto prazdne hlavicky - stejny vzor jako uz mela tabulka Filialky.
+
 ## v3.1.69 - 01.09.2026 10:17
 - Zluty focus prsten nahrazen modrym globalne v cele aplikaci (uz ne jen ve wizardu/pruvodci - scoped pravidlo zruseno jako duplicitni). Modal pridani uzivatele: odstraneno pole Hledat zamestnance v Google Workspace vcetne server funkce apiSearchWorkspaceUsers (automaticke doplneni e-mailu ze jmena/prijmeni zustava). Modal vytvoreni/editace aplikace: nahled dlazdice ted presne odpovida vzhledu na plose dashboardu (watermark ikony, barevny akcent, ikona hodin misto zvolene ve stavu V priprave). Dlazdice na dashboardu je nyni klikatelna cela (ne jen tlacitko Otevrit) a ve stavu V priprave je aktivni/oteviratelna pro roli Superadmin, pro ostatni role zustava neaktivni.
 
