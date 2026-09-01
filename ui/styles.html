@@ -3157,6 +3157,19 @@
     gap: 4px;
   }
 
+  /* Krok 2: pole rozdělená do samostatných boxů (Aplikace / Superadmin) —
+     jasné vizuální seskupení místo spoléhání na jemné rozdíly v mezerách. */
+  .wizard-field-group {
+    background: var(--page);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+  }
+
+  .wizard-field-group .kicker {
+    margin-bottom: 10px;
+  }
+
   /* Tlumenější, modrá varianta focusu místo appwide žlutého prstenu (viz
      input:focus-visible) — jen ve wizardu, ať to ladí s klidnějším vzhledem
      průvodce. */

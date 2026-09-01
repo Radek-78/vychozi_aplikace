@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.63 - 01.09.2026 09:05
+- Wizard krok 2 (Aplikace): pole rozdelena do dvou vizualne oddelenych boxu s kickerem (Aplikace: nazev+podtitul / Superadmin: jmeno+prijmeni) - jasne seskupeni misto spolehani na jemne rozdily v mezerach mezi popiskem a polem.
+
 ## v3.1.62 - 01.09.2026 08:53
 - Wizard: pole ve druhem kroku maji tlumenejsi modry focus prsten misto appwide zluteho (scoped jen na .wizard-panel), popisek je bliz ke svemu poli (mensi mezera uvnitr paru) a mezi jednotlivymi radky poli je vetsi odstup - jasnejsi, ktery popisek patri ke kteremu poli.
 
