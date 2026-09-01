@@ -607,7 +607,7 @@
   .nav-link:focus-visible,
   input:focus-visible,
   textarea:focus-visible {
-    box-shadow: 0 0 0 3px rgba(255, 240, 0, 0.9), 0 0 0 5px rgba(0, 80, 170, 0.3);
+    box-shadow: 0 0 0 3px rgba(0, 83, 179, 0.2);
     outline: none;
   }
 
@@ -1388,6 +1388,9 @@
   .mc-side--slate  { background: #475569; }
   .mc-side--pink   { background: #db2777; }
   .mc-side--indigo { background: #4338ca; }
+
+  /* Celá dlaždice je klikatelná (ne jen tlačítko Otevřít) - viz mc--clickable v JS. */
+  .mc--sidebar.mc--clickable { cursor: pointer; }
 
   /* Hover — viditelné ohraničení + animace ikony a dotu */
   .mc--sidebar { transition: border-color 0.18s ease, box-shadow 0.18s ease; }
@@ -2436,83 +2439,6 @@
     padding: 20px 22px 22px;
   }
 
-  /* ── User workspace search widget ── */
-  .uw-search-wrap { position: relative; }
-
-  .uw-search-row {
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
-
-  .uw-search-input {
-    width: 100%;
-    padding-right: 28px;
-  }
-
-  .uw-search-spinner {
-    position: absolute;
-    right: 8px;
-    display: flex;
-    align-items: center;
-    color: var(--text-muted);
-  }
-
-  @keyframes uw-spin { to { transform: rotate(360deg); } }
-  .uw-spin { animation: uw-spin 0.8s linear infinite; }
-
-  .uw-search-results {
-    position: absolute;
-    top: calc(100% + 2px);
-    left: 0; right: 0;
-    background: var(--white);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-    list-style: none;
-    margin: 0; padding: 4px 0;
-    z-index: 50;
-    max-height: 220px;
-    overflow-y: auto;
-  }
-
-  .uw-result-item {
-    padding: 8px 12px;
-    cursor: pointer;
-    font-size: 0.83rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .uw-result-item:hover { background: #f0f4ff; }
-
-  .uw-result-email {
-    color: var(--text-muted);
-    font-size: 0.75rem;
-    margin-left: auto;
-  }
-
-  .uw-no-results {
-    padding: 8px 12px;
-    font-size: 0.83rem;
-    color: var(--text-muted);
-  }
-
-  .uw-divider {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--text-muted);
-    font-size: 0.75rem;
-    margin: 4px 0;
-  }
-  .uw-divider::before, .uw-divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--line);
-  }
-
   .uw-email-row {
     display: flex;
     gap: 6px;
@@ -3270,15 +3196,6 @@
     width: 14px;
   }
 
-  /* Tlumenější, modrá varianta focusu místo appwide žlutého prstenu (viz
-     input:focus-visible) — jen ve wizardu a v navazujícím průvodci prvotním
-     načtením dat, ať to ladí s klidnějším vzhledem obou průvodců. */
-  .wizard-panel input:focus-visible,
-  .wizard-panel textarea:focus-visible,
-  #dataBootstrapModal input:focus-visible,
-  #dataBootstrapModal textarea:focus-visible {
-    box-shadow: 0 0 0 3px rgba(0, 83, 179, 0.2);
-  }
 
   .wizard-body[data-dir="forward"] .wizard-panel.is-active {
     animation: wizSlideForward 0.25s ease;

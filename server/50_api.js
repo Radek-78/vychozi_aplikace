@@ -398,39 +398,6 @@ function apiToggleStoreActive(id) {
   });
 }
 
-function apiSearchWorkspaceUsers(query) {
-  return guard_(ROLES.ADMIN, () => {
-    if (!query || String(query).trim().length < 2) return [];
-    var q = String(query).trim();
-    try {
-      var url = 'https://people.googleapis.com/v1/people:searchDirectoryPeople'
-        + '?query=' + encodeURIComponent(q)
-        + '&readMask=names%2CemailAddresses'
-        + '&sources=DIRECTORY_SOURCE_TYPE_DOMAIN_PROFILE'
-        + '&pageSize=20';
-      var resp = UrlFetchApp.fetch(url, {
-        headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() },
-        muteHttpExceptions: true,
-      });
-      if (resp.getResponseCode() !== 200) {
-        throw new Error(JSON.parse(resp.getContentText()).error.message);
-      }
-      var result = JSON.parse(resp.getContentText());
-      return (result.people || []).map(function(p) {
-        var name  = (p.names && p.names[0]) || {};
-        var email = (p.emailAddresses && p.emailAddresses[0]) || {};
-        return {
-          email:     email.value     || '',
-          firstName: name.givenName  || '',
-          lastName:  name.familyName || '',
-        };
-      });
-    } catch (e) {
-      throw new Error('Nepodařilo se načíst uživatele z Google Workspace: ' + e.message);
-    }
-  });
-}
-
 function apiSaveStoreTempRanges(payload) {
   return guard_(ROLES.USER, (actor) => {
     if (!isAllowed_(actor, 'stores_write')) {

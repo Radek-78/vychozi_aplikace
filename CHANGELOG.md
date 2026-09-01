@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.69 - 01.09.2026 10:17
+- Zluty focus prsten nahrazen modrym globalne v cele aplikaci (uz ne jen ve wizardu/pruvodci - scoped pravidlo zruseno jako duplicitni). Modal pridani uzivatele: odstraneno pole Hledat zamestnance v Google Workspace vcetne server funkce apiSearchWorkspaceUsers (automaticke doplneni e-mailu ze jmena/prijmeni zustava). Modal vytvoreni/editace aplikace: nahled dlazdice ted presne odpovida vzhledu na plose dashboardu (watermark ikony, barevny akcent, ikona hodin misto zvolene ve stavu V priprave). Dlazdice na dashboardu je nyni klikatelna cela (ne jen tlacitko Otevrit) a ve stavu V priprave je aktivni/oteviratelna pro roli Superadmin, pro ostatni role zustava neaktivni.
+
 ## v3.1.68 - 01.09.2026 10:01
 - DataBootstrap: indikace probihajiciho hledani/overovani souboru a nacitani filialek uz nejde pres toast frontu (busy: vzdy vyhraje nad silent: a zatimco je modal otevreny, toast prosviti jen rozmazane zpod backdrop-blur), ale primo do tela okna - novy sdileny styl .db-loading/.db-loading-spinner.
 

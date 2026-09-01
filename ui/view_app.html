@@ -502,17 +502,6 @@
     <div class="modal-body">
       <div class="form form-plain">
         <input name="id" type="hidden">
-        <div class="uw-search-wrap" id="uwSearchWrap">
-          <label><span>Hledat zaměstnance v Google Workspace</span></label>
-          <div class="uw-search-row">
-            <input type="text" id="uwSearchInput" class="uw-search-input" placeholder="Jméno nebo e-mail…" autocomplete="off">
-            <span class="uw-search-spinner" id="uwSearchSpinner" hidden>
-              <svg class="uw-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-            </span>
-          </div>
-          <ul class="uw-search-results" id="uwSearchResults" hidden></ul>
-        </div>
-        <div class="uw-divider" id="uwDivider" hidden><span>nebo vyplňte ručně</span></div>
         <label>
           <span>E-mail</span>
           <input name="email" type="email" placeholder="jmeno@firma.cz" required>
@@ -1680,31 +1669,18 @@ _sfState: {},
 
       this.renderUserAppsChecklist(user);
 
-      // Search widget — zobrazit jen při vytváření nového uživatele
       const isNew = !user;
-      document.querySelector('#uwSearchWrap').hidden = !isNew;
-      document.querySelector('#uwDivider').hidden = !isNew;
-      const searchInput = document.querySelector('#uwSearchInput');
-      if (searchInput) searchInput.value = '';
-      const resultsList = document.querySelector('#uwSearchResults');
-      if (resultsList) { resultsList.hidden = true; resultsList.innerHTML = ''; }
-
       if (isNew && !this._uwBound) {
         this._uwBound = true;
-        this._uwInitSearch();
+        this._uwInitEmailSync();
       }
 
       Ui.setText('#userModalTitle', user ? 'Upravit uživatele' : 'Přidat uživatele');
       Ui.openModal(document.querySelector('#userModal'));
     },
 
-    _uwTimer: null,
-
-    _uwInitSearch() {
-      const input   = document.querySelector('#uwSearchInput');
-      const spinner = document.querySelector('#uwSearchSpinner');
-      const results = document.querySelector('#uwSearchResults');
-      const form    = document.querySelector('#userForm');
+    _uwInitEmailSync() {
+      const form = document.querySelector('#userForm');
 
       const stripDia = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '');
       let _lastAutoEmail = '';
@@ -1721,49 +1697,6 @@ _sfState: {},
       };
       form.elements.firstName.addEventListener('input', syncEmail);
       form.elements.lastName.addEventListener('input', syncEmail);
-
-      const showResults = (users) => {
-        if (!users.length) {
-          results.innerHTML = '<li class="uw-no-results">Žádné výsledky</li>';
-        } else {
-          results.innerHTML = users.map((u, i) =>
-            `<li class="uw-result-item" data-idx="${i}">${Ui.escape(u.firstName)} ${Ui.escape(u.lastName)} <span class="uw-result-email">${Ui.escape(u.email)}</span></li>`
-          ).join('');
-          results.querySelectorAll('.uw-result-item').forEach((li) => {
-            li.addEventListener('mousedown', (e) => {
-              e.preventDefault();
-              const u = users[Number(li.dataset.idx)];
-              form.elements.firstName.value = u.firstName;
-              form.elements.lastName.value  = u.lastName;
-              form.elements.email.value     = u.email;
-              results.hidden = true;
-              input.value = '';
-            });
-          });
-        }
-        results.hidden = false;
-      };
-
-      input.addEventListener('input', () => {
-        clearTimeout(this._uwTimer);
-        const q = input.value.trim();
-        if (q.length < 2) { results.hidden = true; return; }
-        spinner.hidden = false;
-        this._uwTimer = setTimeout(() => {
-          Ui.call('apiSearchWorkspaceUsers', q, { silent: true })
-            .then((users) => { spinner.hidden = true; showResults(users); })
-            .catch((e) => {
-              spinner.hidden = true;
-              const msg = /authorization|permission|Insufficient|scope/i.test(e.message)
-                ? 'Vyhledávání vyžaduje nové oprávnění — otevřete aplikaci znovu pro opětovnou autorizaci.'
-                : e.message;
-              results.innerHTML = `<li class="uw-no-results">${Ui.escape(msg)}</li>`;
-              results.hidden = false;
-            });
-        }, 350);
-      });
-
-      input.addEventListener('blur', () => setTimeout(() => { results.hidden = true; }, 150));
     },
 
     renderUserAppsChecklist(user) {
@@ -2169,9 +2102,13 @@ _sfState: {},
         const statusIcon = STATUS_ICON[app.status] ? `<div class="mc-status-icon"><svg><use href="${STATUS_ICON[app.status]}"></use></svg></div>` : '';
         const isAvailable = app.status === 'available';
         const isComing = app.status === 'coming';
+        // V přípravě: pro superadmina dlaždice zůstává otevíratelná (může si rozdělanou
+        // aplikaci prohlédnout), pro ostatní role je i nadále neaktivní.
+        const isClickable = isAvailable || (isComing && isSuperAdmin);
+        const openUrl = (this.boot.execUrl || '') + '?app=' + (app.slug || app.id);
         const sideIcon = isComing ? 'clock' : (app.icon || 'info');
         const art = document.createElement('article');
-        art.className = 'module-card mc--sidebar ' + statusCls;
+        art.className = 'module-card mc--sidebar ' + statusCls + (isClickable ? ' mc--clickable' : '');
         art.dataset.appId = app.id;
         art.style.setProperty('--mc-accent-rgb', accentRgb);
         art.innerHTML = `
@@ -2188,8 +2125,8 @@ _sfState: {},
             <footer>
               ${isSuperAdmin ? `<button class="icon-action" type="button" data-mc-edit="${Ui.escape(app.id)}" title="Upravit aplikaci" aria-label="Upravit aplikaci" style="margin-right:auto"><svg width="14" height="14" viewBox="0 0 24 24"><use href="#i-pencil"></use></svg></button>` : ''}
               <span class="mc-badge"><i class="mc-badge-dot"></i>${Ui.escape(STATUS_BADGE[app.status] || '')}</span>
-              ${isAvailable
-                ? `<a class="button button-secondary button-small" href="${Ui.escape((this.boot.execUrl || '') + '?app=' + (app.slug || app.id))}" target="_blank" rel="noopener">Otevřít</a>`
+              ${isClickable
+                ? `<a class="button button-secondary button-small" href="${Ui.escape(openUrl)}" target="_blank" rel="noopener">Otevřít</a>`
                 : '<button class="button button-secondary button-small" type="button" disabled>Otevřít</button>'}
             </footer>
           </div>`;
@@ -2197,6 +2134,12 @@ _sfState: {},
           art.querySelector('[data-mc-edit]').addEventListener('click', (e) => {
             e.stopPropagation();
             this.openAppModal(app.id);
+          });
+        }
+        if (isClickable) {
+          art.addEventListener('click', (e) => {
+            if (e.target.closest('a, button')) return; // odkaz/tlačítko uvnitř si klik obslouží samo
+            window.open(openUrl, '_blank', 'noopener');
           });
         }
         return art;
@@ -2273,17 +2216,25 @@ _sfState: {},
         { label: 'Obecné', icons: [['home','Domů'],['calendar','Kalendář'],['folder','Složka'],['list','Seznam'],['info','Info'],['refresh','Obnovit']] },
       ];
       const COLOR_CLASS = { dark: 'mc-side--dark', light: 'mc-side--light', yellow: 'mc-side--yellow', red: 'mc-side--red', green: 'mc-side--green', teal: 'mc-side--teal', orange: 'mc-side--orange', purple: 'mc-side--purple', slate: 'mc-side--slate', pink: 'mc-side--pink', indigo: 'mc-side--indigo' };
+      const COLOR_HEX = { dark: '0,36,102', light: '0,140,210', yellow: '255,209,0', red: '230,10,20', green: '0,131,62', teal: '0,160,175', orange: '232,119,34', purple: '107,33,168', slate: '71,85,105', pink: '219,39,119', indigo: '67,56,202' };
       const STATUS_CLASS = { available: 'mc--available', coming: 'mc--coming', inactive: 'mc--inactive' };
       const STATUS_ICON_REF = { coming: '#i-clock', inactive: '#i-lock' };
 
+      // Přesně stejná dlaždice jako na ploše dashboardu (viz buildCard v renderApps) -
+      // stejné třídy, watermark i přebarvení přes --mc-accent-rgb, jen needitovatelná.
       const buildPreviewHTML = (pName, pDesc, pIcon, pColor, pStatus) => {
         const colorCls = COLOR_CLASS[pColor] || '';
+        const accentRgb = COLOR_HEX[pColor] || '0,83,179';
         const statusCls = STATUS_CLASS[pStatus] || '';
         const statusIconHtml = STATUS_ICON_REF[pStatus] ? `<div class="mc-status-icon"><svg><use href="${STATUS_ICON_REF[pStatus]}"></use></svg></div>` : '';
+        const isComing = pStatus === 'coming';
         const isAvail = pStatus === 'available';
-        return `<article class="module-card mc--sidebar ${statusCls}" style="pointer-events:none;width:100%">
-          <div class="mc-side ${colorCls}"><svg><use href="#i-${pIcon || 'info'}"></use></svg><i></i></div>
-          <div class="mc-body">${statusIconHtml}
+        const sideIcon = isComing ? 'clock' : (pIcon || 'info');
+        return `<article class="module-card mc--sidebar ${statusCls}" style="pointer-events:none;width:100%;--mc-accent-rgb:${accentRgb}">
+          <div class="mc-side ${colorCls}"><svg><use href="#i-${sideIcon}"></use></svg><i></i></div>
+          <div class="mc-body">
+            <div class="mc-watermark"><svg><use href="#i-${sideIcon}"></use></svg></div>
+            ${statusIconHtml}
             <h2>${pName || '<em style="opacity:.4">Název aplikace</em>'}</h2>
             <p>${pDesc || '<em style="opacity:.4">Popis aplikace</em>'}</p>
             <footer>
