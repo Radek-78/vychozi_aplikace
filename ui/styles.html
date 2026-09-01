@@ -3159,17 +3159,28 @@
     gap: 4px;
   }
 
-  /* Krok 2: pole rozdělená do samostatných boxů (Aplikace / Superadmin) —
-     jasné vizuální seskupení místo spoléhání na jemné rozdíly v mezerách. */
-  .wizard-field-group {
+  /* Sdílený vzor pro seskupení souvisejících polí do vlastního boxu s kickerem
+     — použito v kroku 2 wizardu (Aplikace/Superadmin) i v průvodci prvotním
+     načtením dat (Umístění/Vyhledávání). Explicitní gap místo spoléhání na
+     "náhodnou" mezeru mezi prvky bez definovaného odstupu. */
+  .field-group {
     background: var(--page);
     border: 1px solid var(--line-soft);
     border-radius: var(--radius);
+    display: grid;
+    gap: 10px;
     padding: 14px 16px;
   }
 
-  .wizard-field-group .kicker {
-    margin-bottom: 10px;
+  .field-group .kicker {
+    margin-bottom: 0;
+  }
+
+  /* Explicitní odstup mezi boxy/tlačítky v jedné fázi průvodce prvotním
+     načtením dat — bez tohoto by mezery mezi prvky nebyly definované vůbec. */
+  .db-phase {
+    display: grid;
+    gap: 14px;
   }
 
   /* Tlumenější, modrá varianta focusu místo appwide žlutého prstenu (viz

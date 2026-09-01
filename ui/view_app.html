@@ -655,18 +655,24 @@
   <div class="modal-body">
     <div class="db-phase" data-db-phase="source">
       <p class="form-hint" style="margin:0 0 12px">Nejprve vložte odkaz na složku v Google Drive, pak klikněte na „Najít soubor".</p>
-      <label>
-        <span>URL složky v Google Drive</span>
-        <input id="dbSrcFolderUrl" type="text" placeholder="https://drive.google.com/drive/folders/...">
-      </label>
-      <button class="button button-secondary button-small" type="button" id="dbFillFolderBtn" style="width:fit-content;margin-top:-4px">
-        <svg width="14" height="14" viewBox="0 0 24 24"><use href="#i-zap"></use></svg>
-        Vyplnit výchozí odkaz na složku
-      </button>
-      <label>
-        <span>Hledaný výraz v názvu souboru</span>
-        <input id="dbSrcSearchTerm" type="text" value="OSO">
-      </label>
+      <div class="field-group">
+        <p class="kicker">Umístění souboru</p>
+        <label>
+          <span>URL složky v Google Drive</span>
+          <input id="dbSrcFolderUrl" type="text" placeholder="https://drive.google.com/drive/folders/...">
+        </label>
+        <button class="button button-secondary button-small" type="button" id="dbFillFolderBtn" style="width:fit-content">
+          <svg width="14" height="14" viewBox="0 0 24 24"><use href="#i-zap"></use></svg>
+          Vyplnit výchozí odkaz na složku
+        </button>
+      </div>
+      <div class="field-group">
+        <p class="kicker">Vyhledávání souboru</p>
+        <label>
+          <span>Hledaný výraz v názvu souboru</span>
+          <input id="dbSrcSearchTerm" type="text" value="OSO">
+        </label>
+      </div>
       <div class="form-actions">
         <button class="button button-secondary" type="button" id="dbFindFileBtn" disabled>Najít soubor</button>
         <button class="button button-primary is-hidden" type="button" id="dbSourceContinueBtn">Pokračovat</button>

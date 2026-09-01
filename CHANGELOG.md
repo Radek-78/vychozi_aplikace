@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.66 - 01.09.2026 09:40
+- Oprava prekryvu tlacitka Vyplnit vychozi odkaz (zaporny margin pretahoval tlacitko do pole - misto toho ted ma cela faze prieice explicitni grid gap, misto spolehani na nedefinovanou mezeru). Krok Zdroj dat v pruvodci nactenim dat rozdelen do dvou boxu (Umisteni souboru / Vyhledavani souboru), stejny vzor jako v kroku 2 uvodniho wizardu - trida wizard-field-group prejmenovana na field-group a sdilena mezi obema pruvodci.
+
 ## v3.1.65 - 01.09.2026 09:32
 - Pruvodce po prvnim spusteni, krok Zdroj dat: zluty focus prsten nahrazen modrym (stejne jako v uvodnim wizardu). Ikona blesku pro vyplneni vychozi slozky uz neni prekryta pres pole, ale je to samostatne popsane tlacitko (Vyplnit vychozi odkaz na slozku). Tlacitko Najit soubor je aktivni az po vyplneni odkazu. Tlacitko Preskocit cervene (button-danger).
 

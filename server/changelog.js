@@ -4,6 +4,7 @@
  * Nejnovejsi verze prvni.
  */
 const CHANGELOG = [
+  { version: 'v3.1.66', date: '1.9.2026', message: 'Oprava prekryvu tlacitka Vyplnit vychozi odkaz (zaporny margin pretahoval tlacitko do pole - misto toho ted ma cela faze prieice explicitni grid gap, misto spolehani na nedefinovanou mezeru). Krok Zdroj dat v pruvodci nactenim dat rozdelen do dvou boxu (Umisteni souboru / Vyhledavani souboru), stejny vzor jako v kroku 2 uvodniho wizardu - trida wizard-field-group prejmenovana na field-group a sdilena mezi obema pruvodci.' },
   { version: 'v3.1.65', date: '1.9.2026', message: 'Pruvodce po prvnim spusteni, krok Zdroj dat: zluty focus prsten nahrazen modrym (stejne jako v uvodnim wizardu). Ikona blesku pro vyplneni vychozi slozky uz neni prekryta pres pole, ale je to samostatne popsane tlacitko (Vyplnit vychozi odkaz na slozku). Tlacitko Najit soubor je aktivni az po vyplneni odkazu. Tlacitko Preskocit cervene (button-danger).' },
   { version: 'v3.1.64', date: '1.9.2026', message: 'Wizard: telo okna (#wizBody) ma nyni pevnou vysku 300px se scrollovanim jako pojistkou - modal uz nemeni velikost mezi jednotlivymi kroky (drive kazdy krok mel jinak vysoky obsah, takze se cela karta zvetsovala/zmensovala).' },
   { version: 'v3.1.63', date: '1.9.2026', message: 'Wizard krok 2 (Aplikace): pole rozdelena do dvou vizualne oddelenych boxu s kickerem (Aplikace: nazev+podtitul / Superadmin: jmeno+prijmeni) - jasne seskupeni misto spolehani na jemne rozdily v mezerach mezi popiskem a polem.' },
