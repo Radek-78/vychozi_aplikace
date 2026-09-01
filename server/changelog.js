@@ -4,6 +4,7 @@
  * Nejnovejsi verze prvni.
  */
 const CHANGELOG = [
+  { version: 'v3.1.64', date: '1.9.2026', message: 'Wizard: telo okna (#wizBody) ma nyni pevnou vysku 300px se scrollovanim jako pojistkou - modal uz nemeni velikost mezi jednotlivymi kroky (drive kazdy krok mel jinak vysoky obsah, takze se cela karta zvetsovala/zmensovala).' },
   { version: 'v3.1.63', date: '1.9.2026', message: 'Wizard krok 2 (Aplikace): pole rozdelena do dvou vizualne oddelenych boxu s kickerem (Aplikace: nazev+podtitul / Superadmin: jmeno+prijmeni) - jasne seskupeni misto spolehani na jemne rozdily v mezerach mezi popiskem a polem.' },
   { version: 'v3.1.62', date: '1.9.2026', message: 'Wizard: pole ve druhem kroku maji tlumenejsi modry focus prsten misto appwide zluteho (scoped jen na .wizard-panel), popisek je bliz ke svemu poli (mensi mezera uvnitr paru) a mezi jednotlivymi radky poli je vetsi odstup - jasnejsi, ktery popisek patri ke kteremu poli.' },
   { version: 'v3.1.61', date: '5.8.2026', message: 'Oprava: hlavicka modalniho okna se v oknech s dlouhym obsahem (typicky Historie zmen s desitkami zaznamu) smrstila temer na nulu - jako polozka sloupcoveho flexboxu nemela flex-shrink: 0 a diky overflow: hidden ji zaroven odpadla minimalni vyska, takze absorbovala svuj podil z preteceni obsahu. Proto se ani zvetseni hlavicky v predchozi verzi neprojevilo. Paticka (.modal-footer/.modal-actions) uz flex-shrink: 0 mela, u hlavicky chybel.' },

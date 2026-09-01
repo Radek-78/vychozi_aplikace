@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.64 - 01.09.2026 09:09
+- Wizard: telo okna (#wizBody) ma nyni pevnou vysku 300px se scrollovanim jako pojistkou - modal uz nemeni velikost mezi jednotlivymi kroky (drive kazdy krok mel jinak vysoky obsah, takze se cela karta zvetsovala/zmensovala).
+
 ## v3.1.63 - 01.09.2026 09:05
 - Wizard krok 2 (Aplikace): pole rozdelena do dvou vizualne oddelenych boxu s kickerem (Aplikace: nazev+podtitul / Superadmin: jmeno+prijmeni) - jasne seskupeni misto spolehani na jemne rozdily v mezerach mezi popiskem a polem.
 
