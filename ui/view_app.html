@@ -3732,10 +3732,17 @@ _sfState: {},
         .catch(() => {});
     },
 
+    _showSearching(label) {
+      document.querySelector('#dbSrcResult').innerHTML =
+        '<div class="db-loading"><span class="db-loading-spinner"></span>' + Ui.escape(label) + '</div>';
+      document.querySelector('#dbSrcCandidates').innerHTML = '';
+    },
+
     checkSource(fileId) {
       const btn = document.querySelector('#dbFindFileBtn');
       Ui.setButtonLoading(btn, true);
-      Ui.call('apiCheckSyncSource', fileId ? { fileId } : null, { busy: 'Ověřuji vybraný soubor…' })
+      this._showSearching('Ověřuji vybraný soubor…');
+      Ui.call('apiCheckSyncSource', fileId ? { fileId } : null, { silent: true })
         .then((r) => { Ui.setButtonLoading(btn, false); this.renderSourceCheck(r); })
         .catch((e) => {
           Ui.setButtonLoading(btn, false);
@@ -3749,12 +3756,16 @@ _sfState: {},
       if (!url) { Ui.toast('Vyplňte URL složky.', 'error'); return; }
       const btn = document.querySelector('#dbFindFileBtn');
       Ui.setButtonLoading(btn, true);
+      this._showSearching('Ukládám nastavení…');
       Ui.call('apiSaveSyncSettings', {
         syncFolderUrl: url, syncFileSearchTerm: term,
         syncStoresSheet: 'Organizace_Detail', syncClosuresSheet: 'Zavrene_Openings',
         autoSyncEnabled: false, autoSyncHour: 3,
-      }, { busy: 'Ukládám nastavení…' })
-        .then(() => Ui.call('apiCheckSyncSource', null, { busy: 'Hledám soubor ve složce…' }))
+      }, { silent: true })
+        .then(() => {
+          this._showSearching('Hledám soubor ve složce…');
+          return Ui.call('apiCheckSyncSource', null, { silent: true });
+        })
         .then((r) => { Ui.setButtonLoading(btn, false); this.renderSourceCheck(r); })
         .catch((e) => {
           Ui.setButtonLoading(btn, false);
@@ -3891,8 +3902,9 @@ _sfState: {},
     runStoresSync() {
       const btn = document.querySelector('#dbRunStoresBtn');
       Ui.setButtonLoading(btn, true);
-      document.querySelector('#dbStoresResult').innerHTML = '<p style="color:var(--muted);font-size:13px">⏳ Načítám filiálky…</p>';
-      Ui.call('apiRunSync', { fileId: this._chosenFileId }, { silent: true, busy: 'Načítám filiálky… může to trvat až minutu' })
+      document.querySelector('#dbStoresResult').innerHTML =
+        '<div class="db-loading"><span class="db-loading-spinner"></span>Načítám filiálky… může to trvat až minutu</div>';
+      Ui.call('apiRunSync', { fileId: this._chosenFileId }, { silent: true })
         .then((result) => {
           Ui.setButtonLoading(btn, false);
           const esc = Ui.escape.bind(Ui);

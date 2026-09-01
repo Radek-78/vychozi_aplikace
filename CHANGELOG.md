@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.68 - 01.09.2026 10:01
+- DataBootstrap: indikace probihajiciho hledani/overovani souboru a nacitani filialek uz nejde pres toast frontu (busy: vzdy vyhraje nad silent: a zatimco je modal otevreny, toast prosviti jen rozmazane zpod backdrop-blur), ale primo do tela okna - novy sdileny styl .db-loading/.db-loading-spinner.
+
 ## v3.1.67 - 01.09.2026 09:51
 - Pruvodce nactenim dat: vsechna tlacitka (Preskocit, Najit soubor/Pokracovat, Vytvorit LC, Nacist filialky/Dokoncit) presunuta do spolecne paticky dole - Preskocit vlevo, akcni tlacitko aktualni faze vpravo, uz nejsou rozeseta v obsahu. Vysledek hledani souboru prepracovan na prehlednou kartu (slozka/soubor/listy) misto seznamu radku. Seznam vice nalezenych souboru kompaktnejsi, aktualne vybrany zvyraznen modrym rameckem a plnym tlacitkem. Hledani souboru ted ukazuje spinner s popiskem (sdilena fronta akci).
 

@@ -3248,6 +3248,28 @@
     border-color: var(--lidl-blue);
   }
 
+  /* Indikace probíhajícího hledání/ověřování přímo v těle okna - okno zůstává
+     otevřené celou dobu, takže toast fronty (viz .toast-queue) by byl schovaný
+     za rozmazaným pozadím dialogu a nešel by přečíst. */
+  .db-loading {
+    align-items: center;
+    color: var(--muted);
+    display: flex;
+    font-size: 13px;
+    gap: 8px;
+  }
+
+  .db-loading-spinner {
+    animation: toast-queue-spin 0.7s linear infinite;
+    background: transparent;
+    border: 2px solid rgba(0, 83, 179, 0.2);
+    border-radius: 50%;
+    border-top-color: var(--lidl-blue);
+    flex-shrink: 0;
+    height: 14px;
+    width: 14px;
+  }
+
   /* Tlumenější, modrá varianta focusu místo appwide žlutého prstenu (viz
      input:focus-visible) — jen ve wizardu a v navazujícím průvodci prvotním
      načtením dat, ať to ladí s klidnějším vzhledem obou průvodců. */
