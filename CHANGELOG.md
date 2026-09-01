@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.67 - 01.09.2026 09:51
+- Pruvodce nactenim dat: vsechna tlacitka (Preskocit, Najit soubor/Pokracovat, Vytvorit LC, Nacist filialky/Dokoncit) presunuta do spolecne paticky dole - Preskocit vlevo, akcni tlacitko aktualni faze vpravo, uz nejsou rozeseta v obsahu. Vysledek hledani souboru prepracovan na prehlednou kartu (slozka/soubor/listy) misto seznamu radku. Seznam vice nalezenych souboru kompaktnejsi, aktualne vybrany zvyraznen modrym rameckem a plnym tlacitkem. Hledani souboru ted ukazuje spinner s popiskem (sdilena fronta akci).
+
 ## v3.1.66 - 01.09.2026 09:40
 - Oprava prekryvu tlacitka Vyplnit vychozi odkaz (zaporny margin pretahoval tlacitko do pole - misto toho ted ma cela faze prieice explicitni grid gap, misto spolehani na nedefinovanou mezeru). Krok Zdroj dat v pruvodci nactenim dat rozdelen do dvou boxu (Umisteni souboru / Vyhledavani souboru), stejny vzor jako v kroku 2 uvodniho wizardu - trida wizard-field-group prejmenovana na field-group a sdilena mezi obema pruvodci.
 

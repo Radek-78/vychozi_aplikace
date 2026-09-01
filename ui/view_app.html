@@ -673,10 +673,6 @@
           <input id="dbSrcSearchTerm" type="text" value="OSO">
         </label>
       </div>
-      <div class="form-actions">
-        <button class="button button-secondary" type="button" id="dbFindFileBtn" disabled>Najít soubor</button>
-        <button class="button button-primary is-hidden" type="button" id="dbSourceContinueBtn">Pokračovat</button>
-      </div>
       <div id="dbSrcResult"></div>
       <div id="dbSrcCandidates"></div>
     </div>
@@ -689,23 +685,27 @@
           <tbody id="dbLcRows"></tbody>
         </table>
       </div>
-      <div class="form-actions">
-        <button class="button button-primary" type="button" id="dbCreateLcBtn">Vytvořit LC a pokračovat</button>
-      </div>
       <div id="dbLcResult"></div>
     </div>
 
     <div class="db-phase is-hidden" data-db-phase="stores">
       <p class="form-hint" style="margin:0 0 12px">Poslední krok — načtení filiálek ze zvoleného souboru.</p>
-      <div class="form-actions">
-        <button class="button button-primary" type="button" id="dbRunStoresBtn">Načíst filiálky</button>
-        <button class="button button-primary is-hidden" type="button" id="dbStoresContinueBtn">Dokončit</button>
-      </div>
       <div id="dbStoresResult"></div>
     </div>
   </div>
   <footer class="modal-actions">
     <button class="button button-danger" type="button" id="dbSkipButton">Přeskočit, nastavím později</button>
+    <div class="form-actions" data-db-footer="source">
+      <button class="button button-secondary" type="button" id="dbFindFileBtn" disabled>Najít soubor</button>
+      <button class="button button-primary is-hidden" type="button" id="dbSourceContinueBtn">Pokračovat</button>
+    </div>
+    <div class="form-actions is-hidden" data-db-footer="lc">
+      <button class="button button-primary" type="button" id="dbCreateLcBtn">Vytvořit LC a pokračovat</button>
+    </div>
+    <div class="form-actions is-hidden" data-db-footer="stores">
+      <button class="button button-primary" type="button" id="dbRunStoresBtn">Načíst filiálky</button>
+      <button class="button button-primary is-hidden" type="button" id="dbStoresContinueBtn">Dokončit</button>
+    </div>
   </footer>
 </dialog>
 
@@ -3715,6 +3715,9 @@ _sfState: {},
       document.querySelectorAll('.db-phase').forEach((el) => {
         el.classList.toggle('is-hidden', el.dataset.dbPhase !== name);
       });
+      document.querySelectorAll('[data-db-footer]').forEach((el) => {
+        el.classList.toggle('is-hidden', el.dataset.dbFooter !== name);
+      });
     },
 
     skip() {
@@ -3732,7 +3735,7 @@ _sfState: {},
     checkSource(fileId) {
       const btn = document.querySelector('#dbFindFileBtn');
       Ui.setButtonLoading(btn, true);
-      Ui.call('apiCheckSyncSource', fileId ? { fileId } : null, { silent: true })
+      Ui.call('apiCheckSyncSource', fileId ? { fileId } : null, { busy: 'Ověřuji vybraný soubor…' })
         .then((r) => { Ui.setButtonLoading(btn, false); this.renderSourceCheck(r); })
         .catch((e) => {
           Ui.setButtonLoading(btn, false);
@@ -3750,8 +3753,8 @@ _sfState: {},
         syncFolderUrl: url, syncFileSearchTerm: term,
         syncStoresSheet: 'Organizace_Detail', syncClosuresSheet: 'Zavrene_Openings',
         autoSyncEnabled: false, autoSyncHour: 3,
-      }, { silent: true })
-        .then(() => Ui.call('apiCheckSyncSource', null, { silent: true }))
+      }, { busy: 'Ukládám nastavení…' })
+        .then(() => Ui.call('apiCheckSyncSource', null, { busy: 'Hledám soubor ve složce…' }))
         .then((r) => { Ui.setButtonLoading(btn, false); this.renderSourceCheck(r); })
         .catch((e) => {
           Ui.setButtonLoading(btn, false);
@@ -3764,26 +3767,44 @@ _sfState: {},
       const resultEl = document.querySelector('#dbSrcResult');
       const candEl = document.querySelector('#dbSrcCandidates');
       const continueBtn = document.querySelector('#dbSourceContinueBtn');
-      const line = (ok, text) => `<p style="font-size:13px;margin:4px 0;color:${ok ? '#007a45' : 'var(--lidl-red)'}">${ok ? '✓' : '✕'} ${text}</p>`;
+      const errLine = (text) => `<p style="font-size:13px;margin:4px 0;color:var(--lidl-red)">✕ ${text}</p>`;
+      const check = (ok, text) => `<div class="db-check${ok ? ' is-ok' : ' is-error'}">${ok ? '✓' : '✕'} ${text}</div>`;
 
       candEl.innerHTML = '';
       continueBtn.classList.add('is-hidden');
       this._chosenFileId = null;
 
-      if (!r.folderOk) { resultEl.innerHTML = line(false, esc(r.message || 'Složku se nepodařilo ověřit.')); return; }
-      let html = line(true, 'Složka nalezena: <strong>' + esc(r.folderName) + '</strong>');
-      if (!r.fileFound) { html += line(false, esc(r.message || 'Soubor nebyl nalezen.')); resultEl.innerHTML = html; return; }
+      if (!r.folderOk) { resultEl.innerHTML = errLine(esc(r.message || 'Složku se nepodařilo ověřit.')); return; }
+      if (!r.fileFound) {
+        resultEl.innerHTML =
+          `<div class="db-result-card"><div class="db-result-row"><span class="db-result-label">Složka</span><strong>${esc(r.folderName)}</strong></div></div>` +
+          errLine(esc(r.message || 'Soubor nebyl nalezen.'));
+        return;
+      }
 
-      html += line(true, 'Vybraný soubor: <strong>' + esc(r.fileName) + '</strong>');
-      html += line(r.storesSheetFound, 'List „' + esc(r.storesSheetName) + '"' + (r.storesSheetFound ? ' nalezen' : ' nenalezen'));
-      if (r.storesSheetFound && r.storesMissingColumns.length) html += line(false, 'Chybí sloupce: ' + r.storesMissingColumns.map(esc).join(', '));
-      html += line(r.closuresSheetFound, 'List „' + esc(r.closuresSheetName) + '"' + (r.closuresSheetFound ? ' nalezen' : ' nenalezen'));
-      if (r.closuresSheetFound && r.closuresMissingColumns.length) html += line(false, 'Chybí sloupce: ' + r.closuresMissingColumns.map(esc).join(', '));
-      resultEl.innerHTML = html;
+      resultEl.innerHTML = `
+        <div class="db-result-card">
+          <div class="db-result-row"><span class="db-result-label">Složka</span><strong>${esc(r.folderName)}</strong></div>
+          <div class="db-result-row"><span class="db-result-label">Soubor</span><strong>${esc(r.fileName)}</strong></div>
+          <div class="db-result-checks">
+            ${check(r.storesSheetFound, 'List „' + esc(r.storesSheetName) + '"')}
+            ${r.storesSheetFound && r.storesMissingColumns.length ? errLine('Chybí sloupce: ' + esc(r.storesMissingColumns.join(', '))) : ''}
+            ${check(r.closuresSheetFound, 'List „' + esc(r.closuresSheetName) + '"')}
+            ${r.closuresSheetFound && r.closuresMissingColumns.length ? errLine('Chybí sloupce: ' + esc(r.closuresMissingColumns.join(', '))) : ''}
+          </div>
+        </div>`;
 
       if (r.candidates && r.candidates.length > 1) {
-        candEl.innerHTML = '<p class="form-hint">Nalezeno více souborů, vyberte který použít:</p>' +
-          r.candidates.map((c) => `<div class="info-row"><div><strong>${esc(c.name)}</strong></div><button class="button button-secondary button-small db-pick-file" type="button" data-file-id="${esc(c.id)}">${c.id === r.chosenFileId ? 'Vybráno' : 'Použít'}</button></div>`).join('');
+        candEl.innerHTML = '<p class="form-hint" style="margin:10px 0 6px">Nalezeno více souborů, vyberte který použít:</p>' +
+          '<div class="db-candidate-list">' +
+          r.candidates.map((c) => {
+            const isSelected = c.id === r.chosenFileId;
+            return `<div class="db-candidate-row${isSelected ? ' is-selected' : ''}">
+              <span>${esc(c.name)}</span>
+              <button class="button ${isSelected ? 'button-primary' : 'button-secondary'} button-small db-pick-file" type="button" data-file-id="${esc(c.id)}">${isSelected ? 'Vybráno' : 'Použít'}</button>
+            </div>`;
+          }).join('') +
+          '</div>';
         candEl.querySelectorAll('.db-pick-file').forEach((btn) => {
           btn.addEventListener('click', () => this.checkSource(btn.dataset.fileId));
         });

@@ -3183,6 +3183,71 @@
     gap: 14px;
   }
 
+  /* Přeskočit vlevo, akční tlačítko aktuální fáze vpravo — všechna tlačítka
+     průvodce zůstávají u spodního okraje okna, ne rozeseta v obsahu. */
+  #dataBootstrapModal .modal-actions {
+    justify-content: space-between;
+  }
+
+  /* Přehledná karta s výsledkem ověření zdroje (složka/soubor/listy). */
+  .db-result-card {
+    background: var(--white);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius);
+    display: grid;
+    gap: 6px;
+    padding: 12px 14px;
+  }
+
+  .db-result-row {
+    display: flex;
+    font-size: 13px;
+    gap: 8px;
+    justify-content: space-between;
+  }
+
+  .db-result-label {
+    color: var(--muted);
+  }
+
+  .db-result-checks {
+    border-top: 1px solid var(--line-soft);
+    display: grid;
+    gap: 4px;
+    margin-top: 2px;
+    padding-top: 8px;
+  }
+
+  .db-check {
+    font-size: 12.5px;
+  }
+
+  .db-check.is-ok { color: #007a45; }
+  .db-check.is-error { color: var(--lidl-red); }
+
+  /* Kompaktní seznam nalezených souborů s výběrem — aktuálně vybraný
+     zvýrazněný modrým rámečkem a plným tlačítkem místo obrysového. */
+  .db-candidate-list {
+    display: grid;
+    gap: 6px;
+  }
+
+  .db-candidate-row {
+    align-items: center;
+    background: var(--white);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius);
+    display: flex;
+    font-size: 13px;
+    gap: 10px;
+    justify-content: space-between;
+    padding: 8px 10px;
+  }
+
+  .db-candidate-row.is-selected {
+    border-color: var(--lidl-blue);
+  }
+
   /* Tlumenější, modrá varianta focusu místo appwide žlutého prstenu (viz
      input:focus-visible) — jen ve wizardu a v navazujícím průvodci prvotním
      načtením dat, ať to ladí s klidnějším vzhledem obou průvodců. */
