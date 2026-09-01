@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.71 - 01.09.2026 10:31
+- appsscript.json: odstraneny nepouzivane OAuth scopy directory.readonly a script.external_request - byly potreba jen pro drive smazanou funkci apiSearchWorkspaceUsers (server-side UrlFetchApp na Google People API), nic jineho na serveru UrlFetchApp nevolá. Klientske fetch() na pocasi (Open-Meteo) beha v prohlizeci a zadny scope Apps Scriptu nepotrebuje.
+
 ## v3.1.70 - 01.09.2026 10:28
 - Modal vytvoreni/editace aplikace: sirsi panel nahledu (260px na 300px, modal 860px na 900px) a badge se stavem uz nema zalamovat text (white-space: nowrap) - V PRIPRAVE se drive na uzsim panelu zalomilo na dva radky. Sloupec s ikonami pro editaci/mazani (Uzivatele, Aplikace, Log. centra) nyni ma popisek Akce misto prazdne hlavicky - stejny vzor jako uz mela tabulka Filialky.
 
