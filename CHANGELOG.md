@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.62 - 01.09.2026 08:53
+- Wizard: pole ve druhem kroku maji tlumenejsi modry focus prsten misto appwide zluteho (scoped jen na .wizard-panel), popisek je bliz ke svemu poli (mensi mezera uvnitr paru) a mezi jednotlivymi radky poli je vetsi odstup - jasnejsi, ktery popisek patri ke kteremu poli.
+
 ## v3.1.61 - 05.08.2026 11:44
 - Oprava: hlavicka modalniho okna se v oknech s dlouhym obsahem (typicky Historie zmen s desitkami zaznamu) smrstila temer na nulu - jako polozka sloupcoveho flexboxu nemela flex-shrink: 0 a diky overflow: hidden ji zaroven odpadla minimalni vyska, takze absorbovala svuj podil z preteceni obsahu. Proto se ani zvetseni hlavicky v predchozi verzi neprojevilo. Paticka (.modal-footer/.modal-actions) uz flex-shrink: 0 mela, u hlavicky chybel.
 

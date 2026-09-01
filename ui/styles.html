@@ -3147,8 +3147,22 @@
 
   .wizard-panel.is-active {
     display: grid;
-    gap: 14px;
+    gap: 20px;
     padding: 20px 22px;
+  }
+
+  /* Popisek blíž ke svému poli (menší mezera uvnitř páru než mezi páry výše) —
+     jasnější, ke kterému poli popisek patří. */
+  .wizard-panel label {
+    gap: 4px;
+  }
+
+  /* Tlumenější, modrá varianta focusu místo appwide žlutého prstenu (viz
+     input:focus-visible) — jen ve wizardu, ať to ladí s klidnějším vzhledem
+     průvodce. */
+  .wizard-panel input:focus-visible,
+  .wizard-panel textarea:focus-visible {
+    box-shadow: 0 0 0 3px rgba(0, 83, 179, 0.2);
   }
 
   .wizard-body[data-dir="forward"] .wizard-panel.is-active {

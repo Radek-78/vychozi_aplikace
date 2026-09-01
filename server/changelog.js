@@ -4,6 +4,7 @@
  * Nejnovejsi verze prvni.
  */
 const CHANGELOG = [
+  { version: 'v3.1.62', date: '1.9.2026', message: 'Wizard: pole ve druhem kroku maji tlumenejsi modry focus prsten misto appwide zluteho (scoped jen na .wizard-panel), popisek je bliz ke svemu poli (mensi mezera uvnitr paru) a mezi jednotlivymi radky poli je vetsi odstup - jasnejsi, ktery popisek patri ke kteremu poli.' },
   { version: 'v3.1.61', date: '5.8.2026', message: 'Oprava: hlavicka modalniho okna se v oknech s dlouhym obsahem (typicky Historie zmen s desitkami zaznamu) smrstila temer na nulu - jako polozka sloupcoveho flexboxu nemela flex-shrink: 0 a diky overflow: hidden ji zaroven odpadla minimalni vyska, takze absorbovala svuj podil z preteceni obsahu. Proto se ani zvetseni hlavicky v predchozi verzi neprojevilo. Paticka (.modal-footer/.modal-actions) uz flex-shrink: 0 mela, u hlavicky chybel.' },
   { version: 'v3.1.60', date: '5.8.2026', message: 'Hlavicka modalu je u sirsich oken (modal-large / modal-app - Historie zmen, detail filialky, editace aplikace) nyni robustnejsi: vetsi ikona (46px), vetsi padding, vetsi pismo nadpisu a kickeru. Kod hlavicky Historie zmen a editace aplikace byl uz predtim identicky, tak jsou ted obe vetsi spolecne.' },
   { version: 'v3.1.59', date: '5.8.2026', message: 'Historie zmen: modal rozsiren na stejnou sirku jako editace aplikace (860px misto puvodnich 480px). Jednotlive zaznamy nyni ve stylu casove osy - svisla linka s teckou u kazde verze, cislo verze jako oznacek (badge), nejnovejsi verze navic zvyraznena tecka a stitkem Aktualni.' },
